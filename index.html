@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Erick D</title>
+  <meta name="description" content="Asesoría personalizada, trámites ante el SAT y contabilidad digital para personas físicas y PyMEs." />
+  <meta name="theme-color" content="#004CFF" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet" >
+  <link rel="stylesheet" href="css/styles.css" />
+
+</head>
+<body>
+<header class="">
+ 
+</header>
+
+<section class="hero">
+  <div class="media">
+    <!-- EDITABLE: reemplaza el src de video y poster por tus archivos -->
+    <video autoplay muted loop playsinline poster="assets/images/hero-poster.jpg">
+      <source src="assets/videos/hero1.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="container content">
+    <h1 class="reveal delay-0">Erick Domínguez</h1>
+    <p class="sub reveal delay-1">Hago simple tu vida fiscal.</p>
+    <div class="ctas reveal delay-2">
+      <a class="btn btn-primary" data-whatsapp target="_blank">Escríbeme por WhatsApp</a>
+    <!-- =========================  <a class="btn btn-ghost" href="#casos">Ver certificaciones y casos</a>  ========================= -->
+    </div>
+    <div class="micro reveal delay-3"></div>
+  </div>
+</section>
+
+<!-- =========================
+     SERVICIOS — SNAP SLIDES
+     ========================= -->
+<section id="servicios" class="svcX" aria-label="Servicios EVORIX">
+
+  <!-- Header local (titulo fijo arriba del carrusel) -->
+  <div class="svcX-head container">
+    <h2>Servicios</h2>
+    <nav class="svcX-dots" aria-label="Progreso">
+      <button class="on" aria-label="SAT" aria-controls="svcX-sat"></button>
+      <button aria-label="Contabilidad" aria-controls="svcX-contab"></button>
+      <button aria-label="Automatización" aria-controls="svcX-tools"></button>
+    </nav>
+  </div>
+
+  <!-- Carrusel vertical con scroll-snap -->
+  <div class="svcX-viewport" role="region" aria-roledescription="carrusel" aria-label="Secciones de servicio">
+
+    <!-- Slide 1 — SAT -->
+    <section id="svcX-sat" class="svcX-slide svcX-sat" aria-label="Asesoría y trámites con el SAT">
+      <div class="svcX-grid">
+        <!-- Lado texto -->
+        <header class="svcX-copy">
+          <h3>Asesoría y trámites con el SAT</h3>
+          <p class="lead">Altas, bajas, declaraciones, aclaraciones y regularizaciones. Te explico cada paso y te acompaño hasta resolverlo.</p>
+          <ul class="svcX-list">
+            <li><span class="box" aria-hidden="true"></span> Alta/baja RFC</li>
+            <li><span class="box" aria-hidden="true"></span> Declaración mensual</li>
+            <li><span class="box" aria-hidden="true"></span> Aclaración de requerimiento</li>
+            <li><span class="box" aria-hidden="true"></span> Regularización</li>
+          </ul>
+          <div class="svcX-cta">
+            <a class="btn btn-secondary" data-whatsapp target="_blank" rel="noopener">Cuéntame tu situación</a>
+          </div>
+        </header>
+
+        <!-- Lado demo / animación -->
+        <div class="svcX-demo">
+          <!-- SVG “flujo” + badge (el CSS/JS lo animará) -->
+          <svg class="flow" viewBox="0 0 520 260" aria-hidden="true">
+            <defs>
+              <linearGradient id="gSat" x1="0" x2="1">
+                <stop offset="0" stop-color="rgba(0,76,255,1)"/>
+                <stop offset="1" stop-color="rgba(0,176,255,1)"/>
+              </linearGradient>
+            </defs>
+            <path class="pipe" d="M20,220 C120,200 160,80 300,110 400,130 460,60 500,40" fill="none"/>
+            <g class="stamps">
+              <circle cx="120" cy="200" r="4"></circle>
+              <circle cx="220" cy="160" r="4"></circle>
+              <circle cx="320" cy="120" r="4"></circle>
+              <circle cx="420" cy="80"  r="4"></circle>
+            </g>
+          </svg>
+          <div class="badge" role="status" aria-live="polite">Acuse generado</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2 — Contabilidad -->
+    <section id="svcX-contab" class="svcX-slide svcX-contab" aria-label="Contabilidad y gestión fiscal">
+      <div class="svcX-grid">
+
+        <!-- Lado texto -->
+        <header class="svcX-copy">
+          <h3>Contabilidad y gestión fiscal (PF y PyMEs)</h3>
+          <p class="lead">Conciliaciones, CFDI 4.0, proyección de impuestos y cumplimiento mensual/anual. Todo documentado y a tiempo.</p>
+
+          <!-- KPIs con contador (JS) -->
+          <div class="svcX-kpis" aria-label="Resultados">
+            <div class="kpi"><span class="num" data-count="18">0</span><small>% menos carga</small></div>
+            <div class="kpi"><span class="num" data-count="70">0</span><small>% menos tiempo</small></div>
+            <div class="kpi"><span class="num" data-count="30">0</span><small>% decisiones +rápidas</small></div>
+          </div>
+
+          <div class="svcX-cta">
+            <a class="btn btn-secondary" data-whatsapp target="_blank" rel="noopener">Agendar diagnóstico</a>
+          </div>
+        </header>
+
+        <!-- Lado demo -->
+        <div class="svcX-demo">
+          <!-- Sparkline -->
+          <figure class="chart">
+            <svg class="spark" viewBox="0 0 480 120" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="0,90 40,84 80,88 120,40 160,54 200,30 240,44 300,26 360,38 420,20 480,14"/>
+            </svg>
+            <figcaption>Flujo mensual (demo)</figcaption>
+          </figure>
+
+          <!-- Barras -->
+          <figure class="chart bars">
+            <div class="bar" style="--v:45%"></div>
+            <div class="bar" style="--v:62%"></div>
+            <div class="bar" style="--v:38%"></div>
+            <div class="bar" style="--v:70%"></div>
+            <div class="bar" style="--v:52%"></div>
+            <div class="bar" style="--v:66%"></div>
+            <figcaption>Comparativo de tiempos (demo)</figcaption>
+          </figure>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================
+     SLIDE 3 — HERRAMIENTAS
+     ========================= -->
+<article class="svcX-slide svcX-tools" id="svcX-tools" aria-labelledby="svcX-tools-title">
+  <div class="svcX-grid">
+
+    <!-- Lado: copy -->
+    <div class="svcX-copy">
+      <h3 id="svcX-tools-title">Herramientas digitales para simplificar</h3>
+      <p class="lead">
+        Excel / Power Query, validadores masivos de XML, flujos con Python,
+        tableros y alertas. Yo preparo el flujo, tú te enfocas en decidir.
+      </p>
+
+      <!-- Chips de tecnologías (quedan, por si quieres mantenerlos) -->
+      <div class="svcX-chips" aria-label="Tecnologías que uso">
+        <span class="chip"><i class="i i-xml"></i> XML</span>
+        <span class="chip"><i class="i i-cfdi"></i> CFDI 4.0</span>
+        <span class="chip"><i class="i i-excel"></i> Excel / PQ</span>
+        <span class="chip"><i class="i i-coi"></i> COI</span>
+        <span class="chip"><i class="i i-diot"></i> DIOT</span>
+        <span class="chip"><i class="i i-bi"></i> BI</span>
+      </div>
+
+      <a class="btn btn-secondary svcX-cta" data-whatsapp target="_blank" rel="noopener">
+        Quiero automatizar
+      </a>
+    </div>
+
+    <!-- Lado: DEMO — Terminal de automatizaciones -->
+    <div class="svcX-demo">
+
+      <!-- Barra superior estilo terminal -->
+      <div class="term-head" aria-hidden="true">
+        <i></i><i></i><i></i>
+        <span>evorix@runner — automations.py</span>
+      </div>
+
+      <!-- Consola. El JS leerá data-commands y las irá “logueando” aquí -->
+      <div class="term-body"
+           role="log"
+           aria-live="polite"
+           aria-label="Consola de automatizaciones"
+           data-commands='[
+             {"t": "bootstrap", "msg": "Inicializando entorno…", "delay": 500},
+             {"t": "info",      "msg": "Cargando lote de XML (1,248 archivos)…", "delay": 900},
+             {"t": "ok",        "msg": "XML validados: 1,248 ✓", "delay": 700},
+             {"t": "info",      "msg": "Agrupando por régimen fiscal…", "delay": 650},
+             {"t": "ok",        "msg": "5 grupos generados (RIF, Régimen General, Asimilados, Honorarios, Arrendamiento) ✓", "delay": 800},
+             {"t": "info",      "msg": "Calculando IVA/ISR, retenciones y traslados…", "delay": 900},
+             {"t": "warn",      "msg": "3 CFDI con fechas fuera de periodo — marcados para revisión.", "delay": 900},
+             {"t": "ok",        "msg": "Cálculos completados ✓", "delay": 600},
+             {"t": "info",      "msg": "Exportando pólizas a COI…", "delay": 700},
+             {"t": "ok",        "msg": "Archivo: 2025_01_pólizas_coi.txt ✓", "delay": 600},
+             {"t": "info",      "msg": "Publicando dashboard (ventas, impuestos, bancos)…", "delay": 900},
+             {"t": "ok",        "msg": "Dashboard actualizado: finanzas/enero-2025 ✓", "delay": 700},
+             {"t": "done",      "msg": "Proceso finalizado en 00:01:37", "delay": 400}
+           ]'>
+        <!-- línea de ejemplo inicial; el JS irá agregando más -->
+        <pre class="term-line term-muted">validarXML(lote) → agrupar → calcular → exportar COI() → publicar dashboard()</pre>
+      </div>
+
+      <!-- barra de estado / progreso simple -->
+      <div class="term-status" aria-hidden="true">
+        <div class="term-bar"><b style="width:0%"></b></div>
+        <span class="term-txt">Esperando…</span>
+      </div>
+
+    </div>
+  </div>
+</article>
+
+
+      </div>
+    </section>
+
+  </div>
+</section>
+
+
+
+<section id="competencias" class="section alt">
+  <div class="container">
+    <h2 class="reveal">Competencias y herramientas</h2>
+    <div class="grid-3">
+      <div class="card reveal delay-1">
+        <h3>Automatización y control</h3>
+        <ul>
+          <li>Validación masiva de CFDI 4.0 (XML) con reglas personalizadas.</li>
+          <li>Macros/Power Query para conciliaciones, pólizas y DIOT.</li>
+          <li>Integraciones con Aspel COI (exportaciones/auxiliares), SAP (reportes), SAT (consultas).</li>
+          <li>Scripts para clasificación de comprobantes por régimen, uso, método/forma de pago.</li>
+        </ul>
+      </div>
+      <div class="card reveal delay-2">
+        <h3>Visualización y toma de decisiones</h3>
+        <ul>
+          <li>Dashboards en Power BI / Data Studio (ingresos, gastos, impuestos, flujo).</li>
+          <li>Alertas de vencimientos y pagos programados.</li>
+        </ul>
+      </div>
+      <div class="card reveal delay-3">
+        <h3>Beneficio explícito</h3>
+        <p>Menos horas en tareas repetitivas, más control sobre tus números y tus decisiones.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="segmentos" class="section">
+  <div class="container">
+    <h2 class="reveal">Para quién trabajo</h2>
+    <div class="grid-3">
+      <div class="card reveal delay-1">
+        <h3>Personas físicas y RESICO</h3>
+        <p>Cumplimiento mensual, deducciones claras y proyección anual para evitar sorpresas.</p>
+      </div>
+      <div class="card reveal delay-2">
+        <h3>Conductores y plataformas</h3>
+        <p>CFDI, comisiones, retenciones e IVA/ISR sin enredos. Lo dejas en mis manos.</p>
+      </div>
+      <div class="card reveal delay-3">
+        <h3>PyMEs</h3>
+        <p>Orden contable, tableros de control y planeación fiscal con foco en caja y crecimiento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="casos" class="section alt">
+  <div class="container">
+    <h2 class="reveal">Casos y resultados</h2>
+    <div class="grid-3">
+      <div class="card reveal delay-1">
+        <div class="kpi">-18% <small style="font-size:12px;color:var(--muted)">carga fiscal anual</small></div>
+        <p>PF profesional de salud: regularización + proyección → -18% carga fiscal anual vs año anterior.</p>
+      </div>
+      <div class="card reveal delay-2">
+        <div class="kpi">-70% <small style="font-size:12px;color:var(--muted)">tiempo operativo</small></div>
+        <p>PyME comercio: macros y conciliación bancaria → -70% tiempo operativo mensual.</p>
+      </div>
+      <div class="card reveal delay-3">
+        <div class="kpi">+30% <small style="font-size:12px;color:var(--muted)">velocidad decisiones</small></div>
+        <p>Servicios digitales: dashboard ventas/impuestos → +30% velocidad en decisiones.</p>
+      </div>
+    </div>
+    <div style="margin-top:14px" class="reveal delay-3">
+      <a class="btn btn-ghost" href="https://nsl-reconocimientos.blogspot.com/">Ver más casos y certificaciones</a>
+    </div>
+  </div>
+</section>
+
+<section id="proceso" class="section">
+  <div class="container">
+    <h2 class="reveal">Cómo trabajo</h2>
+    <div class="steps">
+      <div class="step reveal delay-1">
+        <h3>Diagnóstico</h3>
+        <p>— entendemos tu situación y prioridades.</p>
+      </div>
+      <div class="step reveal delay-2">
+        <h3>Plan claro</h3>
+        <p>— acciones, tiempos y costos por escrito.</p>
+      </div>
+      <div class="step reveal delay-3">
+        <h3>Ejecución y soporte</h3>
+        <p>— te acompaño hasta la entrega final.</p>
+      </div>
+    </div>
+<p class="reveal delay-3 clarity-line">
+  <span class="highlight">Primero claridad</span>, luego acción.  
+  Si algo no queda claro, no avanzamos.
+</p>
+  </div>
+</section>
+
+<section id="contacto" class="section alt">
+  <div class="container">
+    <h2 class="reveal">Contacto</h2>
+    <form id="contact-form" class="form reveal delay-1">
+      <input class="input" type="text" name="name" placeholder="Nombre" required aria-label="Nombre">
+      <input class="input" type="email" name="email" placeholder="Email" required aria-label="Email">
+      <select class="select" name="need" aria-label="¿Qué necesitas?">
+        <option value="asesoria">Asesoría y trámites con el SAT</option>
+        <option value="contabilidad">Contabilidad y gestión fiscal</option>
+        <option value="herramientas">Herramientas y automatización</option>
+      </select>
+      <textarea class="textarea" name="message" placeholder="Cuéntame brevemente qué necesitas..."></textarea>
+      <button class="btn btn-primary" type="submit">Enviar</button>
+      
+      <p style="font-size:12px;color:var(--muted)">Tu información fiscal se maneja con confidencialidad.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container">© 2025 EVORIX — Todos los derechos reservados · <a href="privacy.html">Política de privacidad</a></div>
+</footer>
+<script src="js/main.js"></script>
+</body>
+</html>
