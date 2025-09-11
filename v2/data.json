@@ -1,0 +1,32 @@
+{
+  "colors": {
+    "primary": "#004CFF",
+    "background_light": "#FFFFFF",
+    "text_light": "#0B1E3D",
+    "muted_light": "#5E708A",
+    "surface_light": "#F7FAFC",
+    "background_dark": "#0B1220",
+    "text_dark": "#F5F7FA",
+    "muted_dark": "#A9B4C3",
+    "surface_dark": "#121A2A"
+  },
+  "fonts": {
+    "heading": "Manrope, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+    "body": "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+  },
+  "radii": {
+    "sm": "8px",
+    "md": "12px",
+    "lg": "16px",
+    "xl": "24px",
+    "pill": "999px"
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "xxl": 48
+  }
+}
