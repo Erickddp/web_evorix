@@ -25,7 +25,7 @@ body {
   line-height: 1.6;
 }
 .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-.section { padding: 70px 0; }
+.section { padding: 48px 0; }
 .section.alt { background: var(--surface); }
 h1, h2, h3 {
   font-family: Manrope, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -38,6 +38,33 @@ h3 { font-weight: 700; font-size: clamp(20px, 3vw, 24px); }
 p { margin: 0 0 10px; color: var(--muted); }
 a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+
+
+
+
+
+
+/* =========================
+   Sección Contacto (layout)
+   ========================= */
+
+   #contacto.section.alt {
+    position: relative;
+    overflow: hidden;
+    padding: 96px 0 80px;
+    /* Fondo distinto al de arriba: más profundo y verdoso */
+    background:
+      radial-gradient(circle at top,
+        #02101f 0%,
+        #020617 35%,
+        #000814 100%);
+  }
+  
+
+
+
+
 
 /* Header flotante + glass + compacto al hacer scroll */
 /* HEADER: flotante, compacto y con glass — forzado */
@@ -405,22 +432,23 @@ footer {
 /* Reveal animations */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity .6s ease, transform .6s ease;
+  transform: translateY(30px) scale(0.98);
+  transition: opacity .8s ease, transform .8s ease;
 }
 .reveal.in {
   opacity: 1;
   transform: none;
 }
 .reveal.delay-1 {
-  transition-delay: .4s;
+  transition-delay: .3s;
 }
 .reveal.delay-2 {
-  transition-delay: .4s;
-}
-.reveal.delay-3 {
   transition-delay: .6s;
 }
+.reveal.delay-3 {
+  transition-delay: .9s;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 960px) {
@@ -1101,4 +1129,410 @@ section.svcX{ padding: 0; }
   height: 28px;
   box-shadow: 0 6px 16px rgba(0, 76, 255, .35);
   margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+/* Reducir aire entre “Servicios” y “Sectores con los que colaboro” */
+#segmentos.section {
+  padding-top: 5px; /* antes 70px */
+  padding-bottom: 50px;
+}
+
+
+#servicios.section {
+  padding-bottom: 1px;
+}
+
+
+
+
+/* esto centra la frase de  Sin un mapa claro, cualquier camino falla.
+Primero entendemos, luego construimos.*/
+.clarity-line {
+  text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===========================
+   Sección: Mis certificaciones
+   =========================== */
+
+   .cert-banner {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 36px 44px;
+    border-radius: 24px;
+  
+    /* Más dramatismo pero encerrado en la tarjeta */
+    max-width: 880px;
+    margin: 0 auto;
+  
+    background:
+      radial-gradient(circle at top left,
+        rgba(0, 76, 255, 0.30),
+        transparent 55%),
+      radial-gradient(circle at bottom right,
+        rgba(0, 188, 255, 0.25),
+        transparent 60%),
+      linear-gradient(135deg,
+        #0B1220,
+        #050814 70%);
+  
+    border: 1px solid rgba(0, 76, 255, 0.75);
+    box-shadow:
+      0 22px 50px rgba(0, 0, 0, 0.75),
+      0 0 55px rgba(0, 76, 255, 0.45);
+    overflow: hidden;
+  }
+  
+  /* Barrido de luz más marcado pero contenido dentro */
+  .cert-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      rgba(0, 76, 255, 0.45),
+      transparent,
+      rgba(0, 188, 255, 0.35)
+    );
+    mix-blend-mode: screen;
+    opacity: 0;
+    transform: translateX(-35%);
+    pointer-events: none;
+    animation: certSweep 8s infinite ease-in-out;
+  }
+  
+  /* Halo suave interno en los bordes (no se sale de la tarjeta) */
+  .cert-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 15% 0%,
+        rgba(0, 76, 255, 0.35),
+        transparent 55%),
+      radial-gradient(circle at 100% 80%,
+        rgba(0, 188, 255, 0.25),
+        transparent 60%);
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  @keyframes certSweep {
+    0%   { opacity: 0;   transform: translateX(-45%); }
+    12%  { opacity: 0.9; transform: translateX(0%);   }
+    28%  { opacity: 0.0; transform: translateX(40%);  }
+    100% { opacity: 0.0; transform: translateX(40%);  }
+  }
+  
+  /* --- Contenido --- */
+  
+  .cert-text h2 {
+    margin-bottom: 4px;
+  }
+  
+  .cert-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(5, 8, 20, 0.94);
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  
+  .cert-sub {
+    color: var(--muted);
+    max-width: 440px;
+  }
+  
+  /* Lado derecho: numerito + botón */
+  .cert-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    text-align: right;
+  }
+  
+  .cert-kpi {
+    font-size: 13px;
+    color: var(--muted);
+    opacity: 0.9;
+  }
+  
+  /* Botón con pulso + énfasis extra */
+  .cert-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding-inline: 4px; /* para que el halo no se corte raro */
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  
+  /* Halo detrás del texto del botón */
+  .cert-pulse {
+    position: absolute;
+    inset: 50%;
+    width: 16px;
+    height: 16px;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    background: radial-gradient(circle,
+                rgba(111, 136, 193, 0.95),
+                transparent 72%);
+    opacity: 0;
+    pointer-events: none;
+    animation: certPulse 2.2s infinite ease-out;
+  }
+  
+  @keyframes certPulse {
+    0%   { opacity: 0;   transform: translate(-50%, -50%) scale(0.5); }
+    20%  { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+    50%  { opacity: 0;   transform: translate(-50%, -50%) scale(1.7); }
+    100% { opacity: 0;   transform: translate(-50%, -50%) scale(1.7); }
+  }
+  
+  /* Hover más llamativo pero limpio */
+  .cert-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(221, 227, 239, 0.55);
+  }
+  
+  /* Pequeño lift del banner completo al hover (sensación de módulo especial) */
+  .cert-banner:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 26px 60px rgba(0, 0, 0, 0.85),
+      0 0 60px rgba(209, 211, 215, 0.55);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+  
+  /* Responsivo: columna, pero manteniendo el glow centrado */
+  @media (max-width: 768px) {
+    .cert-banner {
+      padding: 24px 20px;
+      align-items: flex-start;
+    }
+  
+    .cert-cta {
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+  
+  .cert-banner a {
+    color: #ffffff !important;
+    text-decoration: underline;
+    text-decoration-color: rgba(255,255,255,0.8);
+  }
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* ===========================
+   Sección: Contacto
+   =========================== */
+
+#contacto {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Video de fondo suave */
+#contacto .contact-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.3) contrast(1.1) brightness(0.9);
+  opacity: 0.99; /* que se note el movimiento pero no distraiga */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Capa de color encima del video */
+#contacto .contact-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top,
+      rgba(6, 148, 162, 0.25) 0%,   /* un toque turquesa arriba */
+      rgba(15, 23, 42, 0.90) 40%,   /* centro oscuro */
+      rgba(2, 6, 23, 1) 100%);      /* borde casi negro */
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+/* Contenido centrado sobre el video */
+#contacto .contact-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Subtítulo corto */
+#contacto .contact-sub {
+  margin-top: 8px;
+  margin-bottom: 24px;
+  color: var(--muted);
+}
+
+/* Formulario como tarjeta centrada */
+#contacto .contact-form {
+  background: radial-gradient(circle at top left,
+                rgba(0, 172, 255, 0.18),
+                rgba(8, 23, 45, 0.98));
+  border-radius: 24px;
+  padding: 24px 24px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.65),
+    0 0 30px rgba(0, 76, 255, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* Inputs, select, textarea dentro del contacto */
+#contacto .contact-form .input,
+#contacto .contact-form .select,
+#contacto .contact-form .textarea {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.92);
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+              background 0.18s ease, transform 0.12s ease;
+}
+
+/* Textarea con bordes suaves, no tan “pill” */
+#contacto .contact-form .textarea {
+  border-radius: 18px;
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Placeholder más suave */
+#contacto .contact-form .input::placeholder,
+#contacto .contact-form .select::placeholder,
+#contacto .contact-form .textarea::placeholder {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+/* Focus */
+#contacto .contact-form .input:focus,
+#contacto .contact-form .select:focus,
+#contacto .contact-form .textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(0, 172, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Botón centrado con glow */
+#contacto .contact-btn {
+  align-self: center;
+  min-width: 180px;
+  margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Halo suave al rededor del botón */
+#contacto .contact-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center,
+              rgba(0, 172, 255, 0.45),
+              transparent 70%);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+#contacto .contact-btn:hover::before {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Texto de confidencialidad */
+#contacto .contact-privacy {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Responsive: un poco menos padding en móvil */
+@media (max-width: 768px) {
+  #contacto .contact-content {
+    max-width: 100%;
+  }
+
+  #contacto .contact-form {
+    padding: 20px 18px 18px;
+    border-radius: 20px;
+  }
 }
