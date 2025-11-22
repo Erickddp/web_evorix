@@ -15,6 +15,7 @@
   <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png?v=2">
 
 
+
 </head>
 <body>
 <header class="">
@@ -63,12 +64,12 @@
         <!-- Lado texto -->
         <header class="svcX-copy">
           <h3>Asesoría y trámites con el SAT</h3>
-          <p class="lead">Altas, bajas, declaraciones, aclaraciones y regularizaciones. Te explico cada paso y te acompaño hasta resolverlo.</p>
+          <p class="lead">Te puedo ayudar con distintos trámites y servicios <strong>desde $200</strong>, que incluyen asesoría y acompañamiento personalizado en cada paso.</p>
           <ul class="svcX-list">
-            <li><span class="box" aria-hidden="true"></span> Alta/baja RFC</li>
-            <li><span class="box" aria-hidden="true"></span> Declaración mensual</li>
-            <li><span class="box" aria-hidden="true"></span> Aclaración de requerimiento</li>
-            <li><span class="box" aria-hidden="true"></span> Regularización</li>
+            <li><span class="box" aria-hidden="true"></span> Declaraciones de impuestos</li>
+            <li><span class="box" aria-hidden="true"></span> Aclaración de requerimientos</li>
+            <li><span class="box" aria-hidden="true"></span> Regularización fiscal</li>
+            <li><span class="box" aria-hidden="true"></span> Altas y bajas de RFC</li>
           </ul>
           <div class="svcX-cta">
             <a class="btn btn-secondary" data-whatsapp target="_blank" rel="noopener">Cuéntame tu situación</a>
@@ -105,13 +106,14 @@
         <!-- Lado texto -->
         <header class="svcX-copy">
           <h3>Contabilidad y gestión fiscal (PF y PyMEs)</h3>
-          <p class="lead">Conciliaciones, CFDI 4.0, proyección de impuestos y cumplimiento mensual/anual. Todo documentado y a tiempo.</p>
+          <p class="lead">Llevo tu contabilidad de forma <strong>clara, automatizada y al día.</strong> <br> 
+          Conciliaciones, CFDI 4.0, proyección de impuestos y cumplimiento mensual o anual, todo documentado y presentado a tiempo.</p>
 
           <!-- KPIs con contador (JS) -->
           <div class="svcX-kpis" aria-label="Resultados">
-            <div class="kpi"><span class="num" data-count="18">0</span><small>% menos carga</small></div>
-            <div class="kpi"><span class="num" data-count="70">0</span><small>% menos tiempo</small></div>
-            <div class="kpi"><span class="num" data-count="30">0</span><small>% decisiones +rápidas</small></div>
+            <div class="kpi"><span class="num" data-count="19">0</span><small>% menos carga</small></div>
+            <div class="kpi"><span class="num" data-count="50">0</span><small>% menos tiempo</small></div>
+            <div class="kpi"><span class="num" data-count="80">0</span><small>% decisiones +rápidas</small></div>
           </div>
 
           <div class="svcX-cta">
@@ -154,8 +156,9 @@
     <div class="svcX-copy">
       <h3 id="svcX-tools-title">Herramientas digitales para simplificar</h3>
       <p class="lead">
-        Excel / Power Query, validadores masivos de XML, flujos con Python,
-        tableros y alertas. Yo preparo el flujo, tú te enfocas en decidir.
+        Automatizo tus procesos contables con Excel, Power Query y Python: 
+        validadores masivos de XML, flujos inteligentes, tableros en tiempo real y alertas personalizadas. <br>
+        <strong>Yo construyo el sistema, tú tomas el control.</strong>
       </p>
 
       <!-- Chips de tecnologías (quedan, por si quieres mantenerlos) -->
@@ -188,20 +191,37 @@
            aria-live="polite"
            aria-label="Consola de automatizaciones"
            data-commands='[
-             {"t": "bootstrap", "msg": "Inicializando entorno…", "delay": 500},
-             {"t": "info",      "msg": "Cargando lote de XML (1,248 archivos)…", "delay": 900},
-             {"t": "ok",        "msg": "XML validados: 1,248 ✓", "delay": 700},
-             {"t": "info",      "msg": "Agrupando por régimen fiscal…", "delay": 650},
-             {"t": "ok",        "msg": "5 grupos generados (RIF, Régimen General, Asimilados, Honorarios, Arrendamiento) ✓", "delay": 800},
-             {"t": "info",      "msg": "Calculando IVA/ISR, retenciones y traslados…", "delay": 900},
-             {"t": "warn",      "msg": "3 CFDI con fechas fuera de periodo — marcados para revisión.", "delay": 900},
-             {"t": "ok",        "msg": "Cálculos completados ✓", "delay": 600},
-             {"t": "info",      "msg": "Exportando pólizas a COI…", "delay": 700},
-             {"t": "ok",        "msg": "Archivo: 2025_01_pólizas_coi.txt ✓", "delay": 600},
-             {"t": "info",      "msg": "Publicando dashboard (ventas, impuestos, bancos)…", "delay": 900},
-             {"t": "ok",        "msg": "Dashboard actualizado: finanzas/enero-2025 ✓", "delay": 700},
-             {"t": "done",      "msg": "Proceso finalizado en 00:01:37", "delay": 400}
-           ]'>
+           {"t":"info","msg":"Analizando integridad de XML (hash SHA-256)…","delay":800},
+           {"t":"warn","msg":"5 XML presentan inconsistencias menores — aplicando correcciones automáticas.","delay":1100},
+           {"t":"info","msg":"Conectando a SAT WebService para validación en línea…","delay":900},
+           {"t":"ok","msg":"Conexión establecida. Certificados verificados ✓","delay":700},
+           {"t":"info","msg":"Descargando tasas de ISR actualizadas…","delay":600},
+           {"t":"ok","msg":"Parámetros fiscales cargados correctamente.","delay":500},
+         
+           {"t":"info","msg":"Clasificando CFDI por patrones de comportamiento…","delay":900},
+           {"t":"info","msg":"Detectando operaciones recurrentes y proveedores clave…","delay":950},
+           {"t":"ok","msg":"Matrices de patrones generadas (7 grupos).","delay":700},
+         
+           {"t":"info","msg":"Evaluando discrepancias entre ingresos VS XML timbrados…","delay":900},
+           {"t":"warn","msg":"Advertencia: Se detectaron diferencias en 2 periodos. Revisión sugerida.","delay":1100},
+         
+           {"t":"info","msg":"Armando conciliación bancaria automática…","delay":900},
+           {"t":"ok","msg":"Conciliación completada — 98.7% de precisión.","delay":900},
+         
+           {"t":"info","msg":"Generando pólizas inteligentes por prioridad de impacto contable…","delay":900},
+           {"t":"ok","msg":"Pólizas generadas (45 movimientos).","delay":800},
+         
+           {"t":"info","msg":"Simulando cálculo mensual de impuestos para estimación rápida…","delay":1000},
+           {"t":"ok","msg":"Proyección generada. Monto estimado listo.","delay":600},
+         
+           {"t":"info","msg":"Aplicando reglas EVORIX Anti-Errores Nivel I, II y III…","delay":1000},
+           {"t":"ok","msg":"Sistema limpio. Sin riesgos contables aparentes.","delay":700},
+         
+           {"t":"info","msg":"Compilando reporte final para dashboard…","delay":900},
+           {"t":"ok","msg":"Dashboard actualizado: fiscal, ingresos, egresos, proveedores.","delay":800},
+         
+           {"t":"done","msg":"Proceso EVORIX completado sin intervención humana.","delay":600}
+         ]'>
         <!-- línea de ejemplo inicial; el JS irá agregando más -->
         <pre class="term-line term-muted">validarXML(lote) → agrupar → calcular → exportar COI() → publicar dashboard()</pre>
       </div>
@@ -216,7 +236,6 @@
   </div>
 </article>
 
-
       </div>
     </section>
 
@@ -224,123 +243,183 @@
 </section>
 
 
-
-<section id="competencias" class="section alt">
-  <div class="container">
-    <h2 class="reveal">Competencias y herramientas</h2>
-    <div class="grid-3">
-      <div class="card reveal delay-1">
-        <h3>Automatización y control</h3>
-        <ul>
-          <li>Validación masiva de CFDI 4.0 (XML) con reglas personalizadas.</li>
-          <li>Macros/Power Query para conciliaciones, pólizas y DIOT.</li>
-          <li>Integraciones con Aspel COI (exportaciones/auxiliares), SAP (reportes), SAT (consultas).</li>
-          <li>Scripts para clasificación de comprobantes por régimen, uso, método/forma de pago.</li>
-        </ul>
-      </div>
-      <div class="card reveal delay-2">
-        <h3>Visualización y toma de decisiones</h3>
-        <ul>
-          <li>Dashboards en Power BI / Data Studio (ingresos, gastos, impuestos, flujo).</li>
-          <li>Alertas de vencimientos y pagos programados.</li>
-        </ul>
-      </div>
-      <div class="card reveal delay-3">
-        <h3>Beneficio explícito</h3>
-        <p>Menos horas en tareas repetitivas, más control sobre tus números y tus decisiones.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="segmentos" class="section">
   <div class="container">
-    <h2 class="reveal">Para quién trabajo</h2>
+    <h2 class="reveal">Sectores con los que colaboro</h2>
     <div class="grid-3">
       <div class="card reveal delay-1">
         <h3>Personas físicas y RESICO</h3>
-        <p>Cumplimiento mensual, deducciones claras y proyección anual para evitar sorpresas.</p>
+        <p>Cumplimiento mensual y proyección anual eficiente.</p>
       </div>
       <div class="card reveal delay-2">
-        <h3>Conductores y plataformas</h3>
-        <p>CFDI, comisiones, retenciones e IVA/ISR sin enredos. Lo dejas en mis manos.</p>
+        <h3>Conductores y plataformas digitales</h3>
+        <p>Administración fiscal completa: CFDI, IVA/ISR y comisiones.</p>
       </div>
       <div class="card reveal delay-3">
-        <h3>PyMEs</h3>
-        <p>Orden contable, tableros de control y planeación fiscal con foco en caja y crecimiento.</p>
+        <h3>Pequeñas y medianas empresas</h3>
+        <p>Integración contable, análisis de flujo y control fiscal centralizado.</p>
       </div>
     </div>
   </div>
 </section>
+
 
 <section id="casos" class="section alt">
   <div class="container">
     <h2 class="reveal">Casos y resultados</h2>
     <div class="grid-3">
       <div class="card reveal delay-1">
-        <div class="kpi">-18% <small style="font-size:12px;color:var(--muted)">carga fiscal anual</small></div>
-        <p>PF profesional de salud: regularización + proyección → -18% carga fiscal anual vs año anterior.</p>
+        <div class="kpi">-40% <small style="font-size:12px;color:var(--muted)">carga fiscal anual</small></div>
+        <p> Reestructura fiscal y optimización de deducciones. Reducción de la carga impositiva anual mediante proyección y control mensual.</p>
       </div>
       <div class="card reveal delay-2">
-        <div class="kpi">-70% <small style="font-size:12px;color:var(--muted)">tiempo operativo</small></div>
-        <p>PyME comercio: macros y conciliación bancaria → -70% tiempo operativo mensual.</p>
+        <div class="kpi">-20% <small style="font-size:12px;color:var(--muted)">tiempo operativo</small></div>
+        <p> Automatización de conciliaciones y flujos contables. Ahorro del 20% del tiempo operativo gracias a macros y validadores personalizados.</p>
       </div>
       <div class="card reveal delay-3">
-        <div class="kpi">+30% <small style="font-size:12px;color:var(--muted)">velocidad decisiones</small></div>
-        <p>Servicios digitales: dashboard ventas/impuestos → +30% velocidad en decisiones.</p>
+        <div class="kpi">+70% <small style="font-size:12px;color:var(--muted)">velocidad en decisiones</small></div>
+        <p> Dashboards de ventas e impuestos en tiempo real. Incremento del 70% en la velocidad de análisis y decisiones clave.</p>
       </div>
     </div>
-    <div style="margin-top:14px" class="reveal delay-3">
-      <a class="btn btn-ghost" href="https://nsl-reconocimientos.blogspot.com/">Ver más casos y certificaciones</a>
-    </div>
+    
   </div>
 </section>
+
+
+
+
+
+
+
+
+
+
 
 <section id="proceso" class="section">
   <div class="container">
     <h2 class="reveal">Cómo trabajo</h2>
     <div class="steps">
       <div class="step reveal delay-1">
-        <h3>Diagnóstico</h3>
-        <p>— entendemos tu situación y prioridades.</p>
+        <h3>Diagnóstico profundo</h3>
+        <p> Aquí no solo te pregunto “qué necesitas”; aprendo cómo entiendes tu negocio, tu ritmo, tus miedos y tus prioridades.
+           Traduzco tus dudas en un mapa claro: qué está pasando, qué falta y qué se puede mejorar.</p>
       </div>
       <div class="step reveal delay-2">
-        <h3>Plan claro</h3>
-        <p>— acciones, tiempos y costos por escrito.</p>
+        <h3>Diseño del sistema</h3>
+        <p> Con tu forma de trabajar, creo procesos, modelos, calendarios y automatizaciones que se adapten a ti, no al revés.
+          Todo queda en un plan con tiempos, costos y entregables sin ruido ni sorpresas.</p>
       </div>
       <div class="step reveal delay-3">
-        <h3>Ejecución y soporte</h3>
-        <p>— te acompaño hasta la entrega final.</p>
+        <h3>Ejecución y adaptación continua</h3>
+        <p> Implemento lo que diseñamos, pero no como robot: ajusto contigo.
+          Con el uso real aprendo qué te funciona mejor, qué te estresa menos y qué te da más claridad.</p>
       </div>
     </div>
-<p class="reveal delay-3 clarity-line">
-  <span class="highlight">Primero claridad</span>, luego acción.  
-  Si algo no queda claro, no avanzamos.
-</p>
+
+    <p class="reveal delay-3 clarity-line">
+      <span id="clarityText" class="highlight"></span>
+    </p>
+    
+
   </div>
 </section>
 
-<section id="contacto" class="section alt">
+
+
+
+
+
+
+
+
+<section id="pruebas" class="section alt">
   <div class="container">
+
+    <div class="cert-banner reveal">
+      <div class="cert-text">
+        <p class="cert-chip">Portafolio</p>
+        <h2>Formación y resultados</h2>
+        <p class="cert-sub">Casos documentados, y proyectos aplicados.</p>
+      </div>
+
+      <div class="cert-cta">
+        <p class="cert-kpi"></p>
+        <a
+          class="btn cta-more cert-btn"
+          href="https://nsl-reconocimientos.blogspot.com/"
+          target="_blank" rel="noopener noreferrer"
+        >
+          <span class="cert-pulse"></span>
+          Ver certificados y proyectos
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+
+
+
+
+<section id="contacto" class="section alt">
+
+  <video class="contact-video" autoplay muted loop playsinline>
+    <source src="assets/videos/contact-bg.mp4" type="video/mp4">
+  </video>
+
+  <div class="contact-overlay"></div>
+
+  <div class="container contact-content">
     <h2 class="reveal">Contacto</h2>
-    <form id="contact-form" class="form reveal delay-1">
+    <p class="contact-sub reveal delay-1">
+      Hablemos y vemos qué podemos construir a partir de tu caso.
+    </p>
+
+    <form id="contact-form" class="form contact-form reveal delay-2">
       <input class="input" type="text" name="name" placeholder="Nombre" required aria-label="Nombre">
       <input class="input" type="email" name="email" placeholder="Email" required aria-label="Email">
+      
       <select class="select" name="need" aria-label="¿Qué necesitas?">
         <option value="asesoria">Asesoría y trámites con el SAT</option>
         <option value="contabilidad">Contabilidad y gestión fiscal</option>
         <option value="herramientas">Herramientas y automatización</option>
+        <option value="herramientas">Otro</option>
       </select>
+
       <textarea class="textarea" name="message" placeholder="Cuéntame brevemente qué necesitas..."></textarea>
-      <button class="btn btn-primary" type="submit">Enviar</button>
-      
-      <p style="font-size:12px;color:var(--muted)">Tu información fiscal se maneja con confidencialidad.</p>
+
+      <button class="btn btn-primary contact-btn" type="submit">Enviar</button>
+
+      <p class="contact-privacy">
+        Tu información fiscal se maneja con confidencialidad.
+      </p>
     </form>
   </div>
+
 </section>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <footer>
-  <div class="container">© 2025 EVORIX — Todos los derechos reservados · <a href="privacy.html">Política de privacidad</a></div>
+  <div class="container">©EVORIX 2025 — Todos los derechos reservados · <a href="privacy.html">Política de privacidad</a></div>
 </footer>
 <script src="js/main.js"></script>
 </body>
