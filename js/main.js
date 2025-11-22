@@ -28,7 +28,7 @@ const observer = new IntersectionObserver(entries => {
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.25 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // Contact form fallback
@@ -99,6 +99,10 @@ Mensaje: ${message}`);
 })();
 
 
+
+
+
+
 // ===== Casos: activar uno a uno, contador KPI, mini-gráfica y "Cómo se logró" =====
 (function(){
   const section = document.querySelector('#casos');
@@ -109,6 +113,40 @@ Mensaje: ${message}`);
 
   // 1) Preparar KPI: localizar número y convertirlo a <span class="num" data-target="...">
   cards.forEach((card, idx) => {
+
+
+
+    // === NUEVO: animar número por tiempo y forzar aparición en cascada ===
+
+// helper mínimo para contar 0 -> target (respeta motion reducido)
+function animarNumero(el, target, dur = 900) {
+  const prefiereReducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefiereReducir) { el.textContent = String(target); return; }
+  const inicio = performance.now();
+  const desde = 0;
+  function tick(t) {
+    const p = Math.min(1, (t - inicio) / dur);
+    const val = Math.round(desde + (target - desde) * (1 - Math.pow(1 - p, 3))); // easeOutCubic
+    el.textContent = String(val);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// activar tarjetas por tiempo (fallback: siempre aparecen)
+cards.forEach((card, i) => {
+  setTimeout(() => {
+    card.classList.add('is-visible'); // tu CSS/IO ya entiende esta clase
+
+    const num = card.querySelector('.num');
+    const to = num ? parseInt(num.getAttribute('data-target') || '', 10) : NaN;
+    if (!isNaN(to)) animarNumero(num, to, 900);
+
+    // si ya tienes otro dibujado de sparkline, NO tocamos nada aquí
+    // (solo aseguramos que el canvas exista arriba)
+  }, 200 + i * 220); // 200ms, luego 420ms, 640ms…
+});
+
     const kpi = card.querySelector('.kpi');
     if (!kpi) return;
 
@@ -127,10 +165,17 @@ Mensaje: ${message}`);
     `;
 
     // 2) Agregar un canvas para sparkline
+    
     const spark = document.createElement('canvas');
     spark.className = 'spark';
     card.appendChild(spark);
   });
+
+
+
+
+  
+
 
   // 3) Data de ejemplo para sparkline y "cómo se logró"
   //    Puedes editar estos arrays luego con tus datos reales.
@@ -151,11 +196,20 @@ Mensaje: ${message}`);
       'Revisión de pricing y costos transaccionales.'
     ]
   ];
+ 
   const SPARK = [
-    [100, 98, 96, 94, 92, 90, 88, 84],     // tendencia a la baja (-18%)
-    [100, 95, 90, 80, 70, 40, 35, 30],     // caída de tiempo operativo (-70%)
-    [70, 72, 75, 80, 85, 88, 95, 100],     // mejora de velocidad (+30%)
+    // -40% carga fiscal anual (100 → 60)
+    [100, 97, 93, 88, 82, 75, 67, 60],
+  
+    // -20% tiempo operativo (100 → 80) con caída un poco más marcada al final
+    [100, 99, 98, 96, 92, 87, 83, 80],
+  
+    // +70% velocidad en decisiones. Normalizado (≈59 → 100) para representar 170 sobre base 100
+    [55, 60, 68, 77, 85, 92, 98, 100],
   ];
+  
+
+
 
   // 4) Dibujo de sparkline muy ligero (Canvas 2D)
   function drawSpark(canvas, points, color) {
@@ -191,7 +245,7 @@ Mensaje: ${message}`);
     const target = parseInt(el.dataset.target, 10);
     if (isNaN(target)) return;
     const start = 0;
-    const dur = 900; // ms
+    const dur = 3900; // ms
     const t0 = performance.now();
 
     function tick(t){
@@ -238,18 +292,50 @@ Mensaje: ${message}`);
     card.classList.add('active', 'just-activated');
     setTimeout(() => card.classList.remove('just-activated'), 400);
 
-    // KPI + spark + how (una sola vez)
-    if (!seen.has(card)) {
-      const numEl = card.querySelector('.kpi .num');
-      if (numEl) countTo(numEl);
 
-      const spark = card.querySelector('canvas.spark');
-      const idx = cards.indexOf(card);
-      if (spark && SPARK[idx]) drawSpark(spark, SPARK[idx], colorPrimary);
 
-      ensureHow(card, idx);
-      seen.add(card);
+      // KPI + spark + how (una sola vez) PARA CADA TARJETA QUE ENTRE EN PANTALLA
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+
+    const card = e.target;
+    if (seen.has(card)) return;
+
+    const numEl = card.querySelector('.kpi .num');
+    if (numEl) countTo(numEl);
+
+    const spark = card.querySelector('canvas.spark');
+    const idx = cards.indexOf(card);
+    if (spark && SPARK[idx]) {
+      drawSpark(spark, SPARK[idx], colorPrimary);
     }
+
+    ensureHow(card, idx);
+    seen.add(card);
+  });
+
+
+
+
+
+
+    // KPI + spark + how (una sola vez)
+    //if (!seen.has(card)) {
+    //  const numEl = card.querySelector('.kpi .num');
+    //  if (numEl) countTo(numEl);
+
+    //  const spark = card.querySelector('canvas.spark');
+    //  const idx = cards.indexOf(card);
+    //  if (spark && SPARK[idx]) drawSpark(spark, SPARK[idx], colorPrimary);
+
+    //  ensureHow(card, idx);
+    //  seen.add(card);
+    //}
+
+
+
+
+
   }, { root: null, threshold: [0.25, 0.5, 0.75] });
 
   cards.forEach(c => io.observe(c));
@@ -778,3 +864,21 @@ Mensaje: ${message}`);
     });
   });
 })();
+
+
+
+
+
+  // se agrega animacion a "Primero claridad, luego acción. Si algo no queda claro, no avanzamos."
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("clarityText");
+  const txt = "Sin un mapa claro, cualquier camino falla...  Primero entendemos, luego construimos.";
+  let i = 0;
+
+  function type() {
+    el.textContent = txt.slice(0, i++);
+    if (i <= txt.length) setTimeout(type, 60); // ← velocidad
+  }
+
+  type();
+});
