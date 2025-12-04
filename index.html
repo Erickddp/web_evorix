@@ -3,424 +3,294 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Erick D</title>
-  <meta name="description" content="Asesoría personalizada, trámites ante el SAT y contabilidad digital para personas físicas y PyMEs." />
+  <title>EVORIX | Erick Domínguez</title>
+  <meta name="description" content="Erick Domínguez — Estratega Tecnológico, Contador Moderno y Fundador de EVORIX. Donde la inteligencia se diseña, y el futuro aprende de ti." />
   <meta name="theme-color" content="#004CFF" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet" >
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" >
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png?v=2">
   <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png?v=2">
-
-
-
 </head>
 <body>
-<header class="">
- 
+
+<header class="site">
+  <div class="container row">
+    <a href="#" class="logo" aria-label="Inicio">EVORIX</a>
+    <nav class="desktop-menu">
+      <a href="#servicios">Servicios</a>
+      <a href="#proyectos">Ecosistema</a>
+      <a href="#referencias">Referencias</a>
+      <a href="#reconocimientos">Reconocimientos</a>
+      <a href="#sobre-mi">Sobre mí</a>
+      <a href="#contacto" class="btn btn-sm btn-primary">Contacto</a>
+    </nav>
+    <button class="theme-btn" data-theme-toggle aria-label="Alternar tema">
+      <span class="icon-theme"></span>
+    </button>
+  </div>
 </header>
 
-<section class="hero">
-  <div class="media">
-    <!-- EDITABLE: reemplaza el src de video y poster por tus archivos -->
-    <video autoplay muted loop playsinline poster="assets/images/hero-poster.jpg">
-      <source src="assets/videos/hero1.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="container content">
-    <h1 class="reveal delay-0">Erick Domínguez</h1>
-    <p class="sub reveal delay-1">Diseño procesos que sostienen la vida que quieres.</p>
-    <div class="ctas reveal delay-2">
-      <a class="btn btn-primary" data-whatsapp target="_blank">Escríbeme por WhatsApp</a>
-    <!-- =========================  <a class="btn btn-ghost" href="#casos">Ver certificaciones y casos</a>  ========================= -->
+<main>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="inicio">
+    <div class="media">
+      <video autoplay muted loop playsinline poster="assets/images/hero-poster.jpg">
+        <source src="assets/videos/hero1.mp4" type="video/mp4">
+      </video>
     </div>
-    <div class="micro reveal delay-3"></div>
-  </div>
-</section>
+    <div class="container content">
+      <h1 class="reveal delay-0">Donde la inteligencia se diseña, y el futuro aprende de ti.</h1>
+      <p class="sub reveal delay-1">Erick Domínguez — Estratega Tecnológico, Contador Moderno y Fundador de EVORIX.</p>
+      <div class="ctas reveal delay-2">
+        <a href="#proyectos" class="btn btn-primary">Explorar EVORIX</a>
+        <a href="#contacto" class="btn btn-ghost">Solicitar servicios contables</a>
+      </div>
+    </div>
+  </section>
 
-<!-- =========================
-     SERVICIOS — SNAP SLIDES
-     ========================= -->
-<section id="servicios" class="svcX" aria-label="Servicios EVORIX">
-
-  <!-- Header local (titulo fijo arriba del carrusel) -->
-  <div class="svcX-head container">
-    <h2>Servicios</h2>
-    <nav class="svcX-dots" aria-label="Progreso">
-      <button class="on" aria-label="SAT" aria-controls="svcX-sat"></button>
-      <button aria-label="Contabilidad" aria-controls="svcX-contab"></button>
-      <button aria-label="Automatización" aria-controls="svcX-tools"></button>
-    </nav>
-  </div>
-
-  <!-- Carrusel vertical con scroll-snap -->
-  <div class="svcX-viewport" role="region" aria-roledescription="carrusel" aria-label="Secciones de servicio">
-
-    <!-- Slide 1 — SAT -->
-    <section id="svcX-sat" class="svcX-slide svcX-sat" aria-label="Asesoría y trámites con el SAT">
-      <div class="svcX-grid">
-        <!-- Lado texto -->
-        <header class="svcX-copy">
-          <h3>Asesoría y trámites con el SAT</h3>
-          <p class="lead">Te puedo ayudar con distintos trámites y servicios <strong>desde $200</strong>, que incluyen asesoría y acompañamiento personalizado en cada paso.</p>
-          <ul class="svcX-list">
-            <li><span class="box" aria-hidden="true"></span> Declaraciones de impuestos</li>
-            <li><span class="box" aria-hidden="true"></span> Aclaración de requerimientos</li>
-            <li><span class="box" aria-hidden="true"></span> Regularización fiscal</li>
-            <li><span class="box" aria-hidden="true"></span> Altas y bajas de RFC</li>
+  <!-- SERVICIOS PROFESIONALES -->
+  <section id="servicios" class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Servicios Profesionales</h2>
+        <p>Soluciones fiscales y contables potenciadas por tecnología.</p>
+      </div>
+      
+      <div class="grid-cards">
+        <!-- Card 1 -->
+        <article class="card service-card reveal delay-1">
+          <h3>Asesoría fiscal inteligente</h3>
+          <ul class="card-list">
+            <li>Diagnóstico fiscal profundo y corrección de anomalías.</li>
+            <li>Estrategias para optimizar tu carga tributaria legalmente.</li>
+            <li>Acompañamiento en trámites complejos ante el SAT.</li>
           </ul>
-          <div class="svcX-cta">
-            <a class="btn btn-secondary" data-whatsapp target="_blank" rel="noopener">Cuéntame tu situación</a>
+          <div class="card-footer">
+            <span class="badge">Desde: $Consultar</span>
+            <a href="#contacto" class="link-arrow">Agendar sesión</a>
           </div>
-        </header>
+        </article>
 
-        <!-- Lado demo / animación -->
-        <div class="svcX-demo">
-          <!-- SVG “flujo” + badge (el CSS/JS lo animará) -->
-          <svg class="flow" viewBox="0 0 520 260" aria-hidden="true">
-            <defs>
-              <linearGradient id="gSat" x1="0" x2="1">
-                <stop offset="0" stop-color="rgba(0,76,255,1)"/>
-                <stop offset="1" stop-color="rgba(0,176,255,1)"/>
-              </linearGradient>
-            </defs>
-            <path class="pipe" d="M20,220 C120,200 160,80 300,110 400,130 460,60 500,40" fill="none"/>
-            <g class="stamps">
-              <circle cx="120" cy="200" r="4"></circle>
-              <circle cx="220" cy="160" r="4"></circle>
-              <circle cx="320" cy="120" r="4"></circle>
-              <circle cx="420" cy="80"  r="4"></circle>
-            </g>
-          </svg>
-          <div class="badge" role="status" aria-live="polite">Acuse generado</div>
+        <!-- Card 2 -->
+        <article class="card service-card reveal delay-2">
+          <h3>Contabilidad para personas y empresas</h3>
+          <ul class="card-list">
+            <li>Gestión contable mensual automatizada y sin errores.</li>
+            <li>Cumplimiento total de obligaciones fiscales (PF y PM).</li>
+            <li>Reportes financieros claros para la toma de decisiones.</li>
+          </ul>
+          <div class="card-footer">
+            <span class="badge">Planes mensuales</span>
+            <a href="#contacto" class="link-arrow">Ver planes</a>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="card service-card reveal delay-3">
+          <h3>Automatización contable</h3>
+          <ul class="card-list">
+            <li>Implementación de herramientas digitales y scripts.</li>
+            <li>Reducción de carga operativa manual hasta un 80%.</li>
+            <li>Integración de flujos de datos entre sistemas.</li>
+          </ul>
+          <div class="card-footer">
+            <span class="badge">Proyectos a medida</span>
+            <a href="#contacto" class="link-arrow">Automatizar ahora</a>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="card service-card reveal delay-4">
+          <h3>Proyecciones e impuestos basados en datos</h3>
+          <ul class="card-list">
+            <li>Análisis predictivo de impuestos por pagar.</li>
+            <li>Simulaciones de escenarios fiscales.</li>
+            <li>Control de flujo de efectivo en tiempo real.</li>
+          </ul>
+          <div class="card-footer">
+            <span class="badge">Análisis avanzado</span>
+            <a href="#contacto" class="link-arrow">Solicitar análisis</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECOSISTEMA EVORIX / PROYECTOS -->
+  <section id="proyectos" class="section alt">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Ecosistema EVORIX</h2>
+        <p>Innovación y herramientas propias para el control total.</p>
+      </div>
+
+      <div class="grid-dashboard">
+        <!-- EVOAPP Module -->
+        <div class="dash-module evoapp reveal delay-1">
+          <div class="module-header">
+            <h3>EVOAPP</h3>
+            <span class="status-dot active"></span>
+          </div>
+          <p>Mi sistema operativo personal. Asistente financiero y de datos.</p>
+          <div class="module-visual">
+            <!-- Abstract UI representation -->
+            <div class="ui-mockup">
+              <div class="ui-bar"></div>
+              <div class="ui-content"></div>
+            </div>
+          </div>
+          <a href="/evoapp/" class="btn btn-sm btn-outline full-width">Abrir EVOAPP (versión web)</a>
+        </div>
+
+        <!-- EVORIX Tools Module -->
+        <div class="dash-module tools reveal delay-2">
+          <div class="module-header">
+            <h3>EVORIX Tools</h3>
+            <span class="status-dot"></span>
+          </div>
+          <p>Validadores, gestores de ingresos y automatizaciones.</p>
+          <ul class="tech-stack">
+            <li>Python</li>
+            <li>Excel Avanzado</li>
+            <li>Power Query</li>
+          </ul>
+        </div>
+
+        <!-- Laboratorio IA Module -->
+        <div class="dash-module lab reveal delay-3">
+          <div class="module-header">
+            <h3>Laboratorio de IA y Datos</h3>
+            <span class="status-dot warning"></span>
+          </div>
+          <p>Experimentos en Business Intelligence y modelos predictivos.</p>
+          <div class="data-viz-placeholder">
+            <div class="bar" style="height: 40%"></div>
+            <div class="bar" style="height: 70%"></div>
+            <div class="bar" style="height: 50%"></div>
+            <div class="bar" style="height: 85%"></div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Slide 2 — Contabilidad -->
-    <section id="svcX-contab" class="svcX-slide svcX-contab" aria-label="Contabilidad y gestión fiscal">
-      <div class="svcX-grid">
-
-        <!-- Lado texto -->
-        <header class="svcX-copy">
-          <h3>Contabilidad y gestión fiscal (PF y PyMEs)</h3>
-          <p class="lead">Llevo tu contabilidad de forma <strong>clara, automatizada y al día.</strong> <br> 
-          Conciliaciones, CFDI 4.0, proyección de impuestos y cumplimiento mensual o anual, todo documentado y presentado a tiempo.</p>
-
-          <!-- KPIs con contador (JS) -->
-          <div class="svcX-kpis" aria-label="Resultados">
-            <div class="kpi"><span class="num" data-count="19">0</span><small>% menos carga</small></div>
-            <div class="kpi"><span class="num" data-count="50">0</span><small>% menos tiempo</small></div>
-            <div class="kpi"><span class="num" data-count="80">0</span><small>% decisiones +rápidas</small></div>
+  <!-- REFERENCIAS / TESTIMONIOS -->
+  <section id="referencias" class="section">
+    <div class="container">
+      <h2 class="reveal">Referencias</h2>
+      <div class="testimonials-grid">
+        <div class="chat-bubble reveal delay-1">
+          <p>"Erick transformó completamente mi caos fiscal en un sistema ordenado. Ahora entiendo mis números."</p>
+          <div class="chat-meta">
+            <span class="chat-name">Cliente PyME</span>
+            <span class="chat-role">Servicios Contables</span>
           </div>
-
-          <div class="svcX-cta">
-            <a class="btn btn-secondary" data-whatsapp target="_blank" rel="noopener">Agendar diagnóstico</a>
-          </div>
-        </header>
-
-        <!-- Lado demo -->
-        <div class="svcX-demo">
-          <!-- Sparkline -->
-          <figure class="chart">
-            <svg class="spark" viewBox="0 0 480 120" preserveAspectRatio="none" aria-hidden="true">
-              <polyline points="0,90 40,84 80,88 120,40 160,54 200,30 240,44 300,26 360,38 420,20 480,14"/>
-            </svg>
-            <figcaption>Flujo mensual (demo)</figcaption>
-          </figure>
-
-          <!-- Barras -->
-          <figure class="chart bars">
-            <div class="bar" style="--v:45%"></div>
-            <div class="bar" style="--v:62%"></div>
-            <div class="bar" style="--v:38%"></div>
-            <div class="bar" style="--v:70%"></div>
-            <div class="bar" style="--v:52%"></div>
-            <div class="bar" style="--v:66%"></div>
-            <figcaption>Comparativo de tiempos (demo)</figcaption>
-          </figure>
         </div>
-
-      </div>
-    </section>
-
-    <!-- =========================
-     SLIDE 3 — HERRAMIENTAS
-     ========================= -->
-<article class="svcX-slide svcX-tools" id="svcX-tools" aria-labelledby="svcX-tools-title">
-  <div class="svcX-grid">
-
-    <!-- Lado: copy -->
-    <div class="svcX-copy">
-      <h3 id="svcX-tools-title">Herramientas digitales para simplificar</h3>
-      <p class="lead">
-        Automatizo tus procesos contables con Excel, Power Query y Python: 
-        validadores masivos de XML, flujos inteligentes, tableros en tiempo real y alertas personalizadas. <br>
-        <strong>Yo construyo el sistema, tú tomas el control.</strong>
-      </p>
-
-      <!-- Chips de tecnologías (quedan, por si quieres mantenerlos) -->
-      <div class="svcX-chips" aria-label="Tecnologías que uso">
-        <span class="chip"><i class="i i-xml"></i> XML</span>
-        <span class="chip"><i class="i i-cfdi"></i> CFDI 4.0</span>
-        <span class="chip"><i class="i i-excel"></i> Excel / PQ</span>
-        <span class="chip"><i class="i i-coi"></i> COI</span>
-        <span class="chip"><i class="i i-diot"></i> DIOT</span>
-        <span class="chip"><i class="i i-bi"></i> BI</span>
-      </div>
-
-      <a class="btn btn-secondary svcX-cta" data-whatsapp target="_blank" rel="noopener">
-        Quiero automatizar
-      </a>
-    </div>
-
-    <!-- Lado: DEMO — Terminal de automatizaciones -->
-    <div class="svcX-demo">
-
-      <!-- Barra superior estilo terminal -->
-      <div class="term-head" aria-hidden="true">
-        <i></i><i></i><i></i>
-        <span>evorix@runner — automations.py</span>
-      </div>
-
-      <!-- Consola. El JS leerá data-commands y las irá “logueando” aquí -->
-      <div class="term-body"
-           role="log"
-           aria-live="polite"
-           aria-label="Consola de automatizaciones"
-           data-commands='[
-           {"t":"info","msg":"Analizando integridad de XML (hash SHA-256)…","delay":800},
-           {"t":"warn","msg":"5 XML presentan inconsistencias menores — aplicando correcciones automáticas.","delay":1100},
-           {"t":"info","msg":"Conectando a SAT WebService para validación en línea…","delay":900},
-           {"t":"ok","msg":"Conexión establecida. Certificados verificados ✓","delay":700},
-           {"t":"info","msg":"Descargando tasas de ISR actualizadas…","delay":600},
-           {"t":"ok","msg":"Parámetros fiscales cargados correctamente.","delay":500},
-         
-           {"t":"info","msg":"Clasificando CFDI por patrones de comportamiento…","delay":900},
-           {"t":"info","msg":"Detectando operaciones recurrentes y proveedores clave…","delay":950},
-           {"t":"ok","msg":"Matrices de patrones generadas (7 grupos).","delay":700},
-         
-           {"t":"info","msg":"Evaluando discrepancias entre ingresos VS XML timbrados…","delay":900},
-           {"t":"warn","msg":"Advertencia: Se detectaron diferencias en 2 periodos. Revisión sugerida.","delay":1100},
-         
-           {"t":"info","msg":"Armando conciliación bancaria automática…","delay":900},
-           {"t":"ok","msg":"Conciliación completada — 98.7% de precisión.","delay":900},
-         
-           {"t":"info","msg":"Generando pólizas inteligentes por prioridad de impacto contable…","delay":900},
-           {"t":"ok","msg":"Pólizas generadas (45 movimientos).","delay":800},
-         
-           {"t":"info","msg":"Simulando cálculo mensual de impuestos para estimación rápida…","delay":1000},
-           {"t":"ok","msg":"Proyección generada. Monto estimado listo.","delay":600},
-         
-           {"t":"info","msg":"Aplicando reglas EVORIX Anti-Errores Nivel I, II y III…","delay":1000},
-           {"t":"ok","msg":"Sistema limpio. Sin riesgos contables aparentes.","delay":700},
-         
-           {"t":"info","msg":"Compilando reporte final para dashboard…","delay":900},
-           {"t":"ok","msg":"Dashboard actualizado: fiscal, ingresos, egresos, proveedores.","delay":800},
-         
-           {"t":"done","msg":"Proceso EVORIX completado sin intervención humana.","delay":600}
-         ]'>
-        <!-- línea de ejemplo inicial; el JS irá agregando más -->
-        <pre class="term-line term-muted">validarXML(lote) → agrupar → calcular → exportar COI() → publicar dashboard()</pre>
-      </div>
-
-      <!-- barra de estado / progreso simple -->
-      <div class="term-status" aria-hidden="true">
-        <div class="term-bar"><b style="width:0%"></b></div>
-        <span class="term-txt">Esperando…</span>
-      </div>
-
-    </div>
-  </div>
-</article>
-
-      </div>
-    </section>
-
-  </div>
-</section>
-
-
-<section id="segmentos" class="section">
-  <div class="container">
-    <h2 class="reveal">Sectores con los que colaboro</h2>
-    <div class="grid-3">
-      <div class="card reveal delay-1">
-        <h3>Personas físicas y RESICO</h3>
-        <p>Cumplimiento mensual y proyección anual eficiente.</p>
-      </div>
-      <div class="card reveal delay-2">
-        <h3>Conductores y plataformas digitales</h3>
-        <p>Administración fiscal completa: CFDI, IVA/ISR y comisiones.</p>
-      </div>
-      <div class="card reveal delay-3">
-        <h3>Pequeñas y medianas empresas</h3>
-        <p>Integración contable, análisis de flujo y control fiscal centralizado.</p>
+        <div class="chat-bubble reveal delay-2">
+          <p>"La automatización que implementó nos ahorró horas de trabajo manual cada semana. Impresionante."</p>
+          <div class="chat-meta">
+            <span class="chat-name">Profesional Independiente</span>
+            <span class="chat-role">Automatización</span>
+          </div>
+        </div>
+        <div class="chat-bubble reveal delay-3">
+          <p>"Más que un contador, es un estratega. Sus proyecciones me ayudaron a tomar decisiones clave."</p>
+          <div class="chat-meta">
+            <span class="chat-name">Emprendedor Digital</span>
+            <span class="chat-role">Asesoría Fiscal</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-
-<section id="casos" class="section alt">
-  <div class="container">
-    <h2 class="reveal">Casos y resultados</h2>
-    <div class="grid-3">
-      <div class="card reveal delay-1">
-        <div class="kpi">-40% <small style="font-size:12px;color:var(--muted)">carga fiscal anual</small></div>
-        <p> Reestructura fiscal y optimización de deducciones. Reducción de la carga impositiva anual mediante proyección y control mensual.</p>
-      </div>
-      <div class="card reveal delay-2">
-        <div class="kpi">-20% <small style="font-size:12px;color:var(--muted)">tiempo operativo</small></div>
-        <p> Automatización de conciliaciones y flujos contables. Ahorro del 20% del tiempo operativo gracias a macros y validadores personalizados.</p>
-      </div>
-      <div class="card reveal delay-3">
-        <div class="kpi">+70% <small style="font-size:12px;color:var(--muted)">velocidad en decisiones</small></div>
-        <p> Dashboards de ventas e impuestos en tiempo real. Incremento del 70% en la velocidad de análisis y decisiones clave.</p>
+  <!-- RECONOCIMIENTOS -->
+  <section id="reconocimientos" class="section alt">
+    <div class="container">
+      <h2 class="reveal">Formación y Reconocimientos</h2>
+      <div class="skills-grid reveal delay-1">
+        <span class="skill-tag">Contabilidad y fiscalidad mexicana</span>
+        <span class="skill-tag">Automatización con Python</span>
+        <span class="skill-tag">Excel Avanzado & Power Query</span>
+        <span class="skill-tag">Business Intelligence</span>
+        <span class="skill-tag">Ciberseguridad básica</span>
+        <span class="skill-tag">Análisis de Datos</span>
       </div>
     </div>
-    
-  </div>
-</section>
+  </section>
 
-
-
-
-
-
-
-
-
-
-
-<section id="proceso" class="section">
-  <div class="container">
-    <h2 class="reveal">Cómo trabajo</h2>
-    <div class="steps">
-      <div class="step reveal delay-1">
-        <h3>Diagnóstico profundo</h3>
-        <p> Aquí no solo te pregunto “qué necesitas”; aprendo cómo entiendes tu negocio, tu ritmo, tus miedos y tus prioridades.
-           Traduzco tus dudas en un mapa claro: qué está pasando, qué falta y qué se puede mejorar.</p>
+  <!-- SOBRE MÍ -->
+  <section id="sobre-mi" class="section">
+    <div class="container about-layout">
+      <div class="about-text reveal">
+        <h2>Sobre mí</h2>
+        <p class="lead">Soy Erick Domínguez. Contador por profesión, estratega tecnológico por vocación.</p>
+        <p>Fundo EVORIX con una visión clara: la contabilidad no debe ser solo cumplir obligaciones, sino una herramienta de inteligencia para diseñar el futuro. Combino la disciplina fiscal con el poder de los datos y la automatización para liberar el potencial de personas y empresas.</p>
       </div>
-      <div class="step reveal delay-2">
-        <h3>Diseño del sistema</h3>
-        <p> Con tu forma de trabajar, creo procesos, modelos, calendarios y automatizaciones que se adapten a ti, no al revés.
-          Todo queda en un plan con tiempos, costos y entregables sin ruido ni sorpresas.</p>
-      </div>
-      <div class="step reveal delay-3">
-        <h3>Ejecución y adaptación continua</h3>
-        <p> Implemento lo que diseñamos, pero no como robot: ajusto contigo.
-          Con el uso real aprendo qué te funciona mejor, qué te estresa menos y qué te da más claridad.</p>
+      <div class="about-visual reveal delay-2">
+        <div class="avatar-placeholder">
+          <span>ED</span>
+        </div>
       </div>
     </div>
+  </section>
 
-    <p class="reveal delay-3 clarity-line">
-      <span id="clarityText" class="highlight"></span>
-    </p>
-    
-
-  </div>
-</section>
-
-
-
-
-
-
-
-
-
-<section id="pruebas" class="section alt">
-  <div class="container">
-
-    <div class="cert-banner reveal">
-      <div class="cert-text">
-        <p class="cert-chip">Portafolio</p>
-        <h2>Formación y resultados</h2>
-        <p class="cert-sub">Casos documentados, y proyectos aplicados.</p>
+  <!-- CONTACTO -->
+  <section id="contacto" class="section alt contact-section">
+    <div class="container contact-wrapper">
+      <div class="contact-header reveal">
+        <h2>Hablemos de tu futuro inteligente.</h2>
+        <p>¿Listo para optimizar tu situación fiscal o automatizar tus procesos?</p>
       </div>
+      
+      <form id="contact-form" class="contact-form reveal delay-1">
+        <div class="form-group">
+          <input type="text" name="name" placeholder="Tu Nombre" required class="input-field">
+        </div>
+        <div class="form-group">
+          <input type="email" name="email" placeholder="Tu Email" required class="input-field">
+        </div>
+        <div class="form-group">
+          <select name="service" class="input-field">
+            <option value="" disabled selected>¿Qué servicio te interesa?</option>
+            <option value="asesoria">Asesoría Fiscal</option>
+            <option value="contabilidad">Contabilidad Mensual</option>
+            <option value="automatizacion">Automatización y Herramientas</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <textarea name="message" placeholder="Cuéntame brevemente tu caso..." class="input-field textarea-field"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Enviar Mensaje</button>
+      </form>
 
-      <div class="cert-cta">
-        <p class="cert-kpi"></p>
-        <a
-          class="btn cta-more cert-btn"
-          href="https://nsl-reconocimientos.blogspot.com/"
-          target="_blank" rel="noopener noreferrer"
-        >
-          <span class="cert-pulse"></span>
-          Ver certificados y proyectos
+      <div class="contact-methods reveal delay-2">
+        <a href="#" data-whatsapp class="method-link">
+          <span class="icon-wa"></span> Contactar por WhatsApp
+        </a>
+        <a href="mailto:cperickd@gmail.com" class="method-link">
+          <span class="icon-mail"></span> cperickd@gmail.com
         </a>
       </div>
     </div>
+  </section>
 
-  </div>
-</section>
-
-
-
-
-
-
-
-
-<section id="contacto" class="section alt">
-
-  <video class="contact-video" autoplay muted loop playsinline>
-    <source src="assets/videos/contact-bg.mp4" type="video/mp4">
-  </video>
-
-  <div class="contact-overlay"></div>
-
-  <div class="container contact-content">
-    <h2 class="reveal">Contacto</h2>
-    <p class="contact-sub reveal delay-1">
-      Hablemos y vemos qué podemos construir a partir de tu caso.
-    </p>
-
-    <form id="contact-form" class="form contact-form reveal delay-2">
-      <input class="input" type="text" name="name" placeholder="Nombre" required aria-label="Nombre">
-      <input class="input" type="email" name="email" placeholder="Email" required aria-label="Email">
-      
-      <select class="select" name="need" aria-label="¿Qué necesitas?">
-        <option value="asesoria">Asesoría y trámites con el SAT</option>
-        <option value="contabilidad">Contabilidad y gestión fiscal</option>
-        <option value="herramientas">Herramientas y automatización</option>
-        <option value="herramientas">Otro</option>
-      </select>
-
-      <textarea class="textarea" name="message" placeholder="Cuéntame brevemente qué necesitas..."></textarea>
-
-      <button class="btn btn-primary contact-btn" type="submit">Enviar</button>
-
-      <p class="contact-privacy">
-        Tu información fiscal se maneja con confidencialidad.
-      </p>
-    </form>
-  </div>
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</main>
 
 <footer>
-  <div class="container">©EVORIX 2025 — Todos los derechos reservados · <a href="privacy.html">Política de privacidad</a></div>
+  <div class="container">
+    <p>© EVORIX 2025 — Erick Domínguez. Todos los derechos reservados.</p>
+    <div class="footer-links">
+      <a href="privacy.html">Política de Privacidad</a>
+    </div>
+  </div>
 </footer>
+
 <script src="js/main.js"></script>
 </body>
 </html>
