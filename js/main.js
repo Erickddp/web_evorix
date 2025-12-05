@@ -21,6 +21,9 @@
 
       root.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
+
+      // Dispatch event for canvas update
+      window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: newTheme } }));
     });
   }
 
@@ -123,6 +126,15 @@
     const GRID_SIZE = 40;
     const FORMATION_TEXT = "EVORIX";
     const BASE_PARTICLE_COUNT = window.innerWidth < 768 ? 80 : 250; // Dynamic count
+
+    let gridColor = '255, 255, 255';
+
+    function updateCanvasColors() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      gridColor = theme === 'light' ? '15, 23, 42' : '255, 255, 255';
+    }
+    updateCanvasColors();
+    window.addEventListener('theme-changed', updateCanvasColors);
 
     // Resize Handler
     function resize() {
@@ -303,7 +315,7 @@
       const time = Date.now() * 0.001;
       const breathe = Math.sin(time * 0.5) * 0.05 + 0.08;
 
-      ctx.strokeStyle = `rgba(255, 255, 255, ${breathe})`;
+      ctx.strokeStyle = `rgba(${gridColor}, ${breathe})`;
       ctx.lineWidth = 1;
 
       const moveY = (time * 10) % GRID_SIZE;
@@ -634,6 +646,238 @@
       }
     }
     type();
+  }
+
+  // =========================================
+  // 10. MOBILE NAVIGATION
+  // =========================================
+  const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileLinks = document.querySelectorAll('.mobile-link');
+
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+      toggleMobileMenu(!isExpanded);
+    });
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        toggleMobileMenu(false);
+      });
+    });
+
+    function toggleMobileMenu(show) {
+      mobileMenu.setAttribute('aria-hidden', !show);
+      mobileMenuBtn.setAttribute('aria-expanded', show);
+
+      // Update icon (hamburger <-> close)
+      if (show) {
+        mobileMenuBtn.innerHTML = `
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        `;
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      } else {
+        mobileMenuBtn.innerHTML = `
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        `;
+        document.body.style.overflow = '';
+      }
+    }
+  }
+
+  // =========================================
+  // 11. RECOGNITIONS ACCORDION (Mobile)
+  // =========================================
+  const accordionCards = document.querySelectorAll('.accordion-card');
+
+  accordionCards.forEach(card => {
+    const header = card.querySelector('.accordion-header');
+    if (header) {
+      header.addEventListener('click', (e) => {
+        // Prevent default if it's a link (though it's a div/header here)
+        e.preventDefault();
+
+        const isOpen = card.classList.contains('open');
+
+        // Close others (Accordion behavior)
+        accordionCards.forEach(c => {
+          if (c !== card) c.classList.remove('open');
+        });
+
+        // Toggle current
+        if (isOpen) {
+          card.classList.remove('open');
+        } else {
+          card.classList.add('open');
+        }
+      });
+    }
+  });
+
+  // =========================================
+  // 12. EVORIX GUIDED TOUR
+  // =========================================
+  const tourBtn = document.getElementById('btn-tour');
+
+  if (tourBtn) {
+    tourBtn.addEventListener('click', runEvorixTour);
+  }
+
+  let isTourRunning = false;
+  let tourAbortController = null;
+
+  async function runEvorixTour() {
+    if (isTourRunning) return;
+
+    // Check for reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      const target = document.getElementById('servicios');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    isTourRunning = true;
+    tourAbortController = new AbortController();
+    const { signal } = tourAbortController;
+
+    document.body.classList.add('tour-active');
+
+    // Allow manual interruption
+    const stopTour = () => {
+      if (isTourRunning) {
+        isTourRunning = false;
+        if (tourAbortController) tourAbortController.abort();
+        document.body.classList.remove('tour-active');
+        window.removeEventListener('wheel', stopTour);
+        window.removeEventListener('touchstart', stopTour);
+        window.removeEventListener('keydown', stopTour);
+      }
+    };
+
+    // Add listeners with a small delay to avoid immediate trigger by the click itself if needed,
+    // but usually click doesn't trigger these.
+    setTimeout(() => {
+      window.addEventListener('wheel', stopTour, { passive: true });
+      window.addEventListener('touchstart', stopTour, { passive: true });
+      window.addEventListener('keydown', stopTour, { passive: true });
+    }, 100);
+
+    try {
+      // Sequence
+      const steps = [
+        { id: 'servicios', delay: 800 },
+        { id: 'ecosistema', delay: 800 },
+        { id: 'reconocimientos', delay: 800 },
+        { id: 'sobre-mi', delay: 800 },
+        { id: 'contacto', delay: 1000 }
+      ];
+
+      for (const step of steps) {
+        if (signal.aborted) break;
+
+        const element = document.getElementById(step.id);
+        if (element) {
+          await autoScrollTo(element, signal);
+          if (signal.aborted) break;
+
+          highlightSection(element);
+          spawnParticles(element);
+
+          await new Promise(r => setTimeout(r, step.delay));
+        }
+      }
+
+      // Return to start
+      if (!signal.aborted) {
+        await autoScrollTo(document.body, signal); // Scroll to top
+      }
+
+    } catch (e) {
+      // Tour aborted
+    } finally {
+      stopTour();
+    }
+  }
+
+  function autoScrollTo(element, signal) {
+    return new Promise((resolve, reject) => {
+      if (signal.aborted) {
+        reject(new Error('Aborted'));
+        return;
+      }
+
+      // If element is body, scroll to 0
+      const targetY = element === document.body ? 0 : (element.getBoundingClientRect().top + window.scrollY - 80);
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      const duration = 1000; // 1s scroll
+      let startTime = null;
+
+      function step(timestamp) {
+        if (signal.aborted) {
+          reject(new Error('Aborted'));
+          return;
+        }
+        if (!startTime) startTime = timestamp;
+        const progress = timestamp - startTime;
+        const percent = Math.min(progress / duration, 1);
+
+        // EaseInOutQuad
+        const ease = percent < 0.5 ? 2 * percent * percent : -1 + (4 - 2 * percent) * percent;
+
+        window.scrollTo(0, startY + distance * ease);
+
+        if (progress < duration) {
+          requestAnimationFrame(step);
+        } else {
+          resolve();
+        }
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  function highlightSection(section) {
+    const title = section.querySelector('h2') || section.querySelector('h3');
+    if (title) {
+      title.classList.add('tour-highlight');
+      setTimeout(() => title.classList.remove('tour-highlight'), 1000);
+    }
+  }
+
+  function spawnParticles(element) {
+    const rect = element.getBoundingClientRect();
+    // Use fixed position relative to viewport
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 3; // Adjust for scroll if using fixed, but rect.top is viewport relative
+
+    // Actually rect.top is relative to viewport, so for fixed elements it's fine.
+    // But wait, rect.top changes as we scroll.
+    // We are stopped when we spawn particles, so rect.top is correct.
+
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement('div');
+      p.className = 'tour-particle';
+      // Random spread around center
+      const x = centerX + (Math.random() - 0.5) * 300;
+      const y = rect.top + 50 + (Math.random() - 0.5) * 100; // Near top of section
+
+      p.style.left = `${x}px`;
+      p.style.top = `${y}px`;
+      p.style.animationDelay = `${Math.random() * 0.3}s`;
+
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1200);
+    }
   }
 
 })();

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Conectando con EVOAPP | EVORIX</title>
+    <meta name="theme-color" content="#004CFF" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png?v=2">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png?v=2">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .loader-container {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease-out;
+            position: relative;
+        }
+
+        .loader-logo {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 2rem;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .loader-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .loader-subtitle {
+            font-family: var(--font-body);
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        /* Modern Spinner */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            border-right-color: var(--accent);
+            margin: 0 auto 2rem;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .loader-footer {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="loader-container">
+        <div class="loader-logo">EVORIX</div>
+
+        <div class="spinner"></div>
+
+        <h1 class="loader-title">Conectando con EVOAPP…</h1>
+        <p class="loader-subtitle">Preparando tu entorno de trabajo financiero EVORIX.</p>
+
+        <div class="loader-footer">
+            Este proceso es automático, no necesitas hacer nada.<br>
+            EVOAPP · EVORIX Cloud
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const REDIRECT_DELAY = 1700; // milliseconds
+        const EVOAPP_URL = "https://app.evorix.com.mx";
+
+        // Redirect logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.location.href = EVOAPP_URL;
+            }, REDIRECT_DELAY);
+        });
+    </script>
+</body>
+
+</html>

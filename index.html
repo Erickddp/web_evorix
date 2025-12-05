@@ -1,395 +1,452 @@
 <!doctype html>
 <html lang="es" data-theme="dark">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EVORIX | Erick Domínguez</title>
-  <meta name="description" content="Erick Domínguez — Estratega Tecnológico, Contador Moderno y Fundador de EVORIX. Donde la inteligencia se diseña, y el futuro aprende de ti." />
+  <meta name="description"
+    content="Erick Domínguez — Estratega Tecnológico, Contador Moderno y Fundador de EVORIX. Donde la inteligencia se diseña, y el futuro aprende de ti." />
   <meta name="theme-color" content="#004CFF" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" >
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png?v=2">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png?v=2">
   <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png?v=2">
 </head>
+
 <body>
 
-<header class="site">
-  <div class="container row">
-    <a href="#" class="logo" aria-label="Inicio">EVORIX</a>
-    <nav class="desktop-menu">
-      <a href="#servicios">Servicios</a>
-      <a href="#ecosistema">Ecosistema</a>
-      <a href="#referencias">Referencias</a>
-      <a href="#reconocimientos">Reconocimientos</a>
-      <a href="#sobre-mi">Sobre mí</a>
-      <a href="#contacto" class="btn btn-sm btn-primary">Contacto</a>
-    </nav>
-    <button class="theme-btn" data-theme-toggle aria-label="Alternar tema">
-      <span class="icon-theme"></span>
-    </button>
-  </div>
-</header>
+  <header class="site">
+    <div class="container row">
+      <a href="#" class="logo" aria-label="Inicio">EVORIX</a>
 
-<main>
+      <!-- Desktop Menu -->
+      <nav class="desktop-menu">
+        <a href="#servicios">Servicios</a>
+        <a href="#ecosistema">Ecosistema</a>
+        <a href="#referencias">Referencias</a>
+        <a href="#reconocimientos">Reconocimientos</a>
+        <a href="#sobre-mi">Sobre mí</a>
+        <a href="#contacto" class="btn btn-sm btn-primary">Contacto</a>
+      </nav>
 
-  <!-- HERO SECTION -->
-  <section class="hero" id="inicio">
-    <canvas id="hero-canvas"></canvas>
-    <div class="container content">
-      <h1 class="hero-title reveal delay-0">Donde la inteligencia se diseña, y el futuro aprende de ti.</h1>
-      <p class="sub hero-sub reveal delay-1">Erick Domínguez — Estratega Tecnológico, Contador Moderno y Fundador de EVORIX.</p>
-      <div class="ctas reveal delay-2">
-        <a href="#ecosistema" class="btn btn-primary btn-glow">Explorar EVORIX</a>
-        <a href="#contacto" class="link-minimal">Solicitar servicios contables</a>
+      <div class="header-actions">
+        <button class="theme-btn" data-theme-toggle aria-label="Alternar tema">
+          <span class="icon-theme"></span>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Abrir menú" aria-controls="mobile-menu"
+          aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
       </div>
     </div>
-  </section>
 
-  <!-- SOBRE MÍ -->
-  <section id="sobre-mi" class="section">
-    <div class="container about-layout">
-      <div class="about-text reveal">
-        <h2>Sobre mí</h2>
-        <p class="lead">Soy Erick Domínguez. Contador por profesión, estratega tecnológico por vocación.</p>
-        <p>Fundo EVORIX con una visión clara: la contabilidad no debe ser solo cumplir obligaciones, sino una herramienta de inteligencia para diseñar el futuro. Combino la disciplina fiscal con el poder de los datos y la automatización para liberar el potencial de personas y empresas.</p>
-      </div>
-      <div class="about-visual reveal delay-2">
-        <div class="avatar-placeholder">
-          <img
-            src="./assets/img/v7.png"
-            alt="Erick Domínguez - EVORIX"
-            class="avatar-photo"
-            loading="lazy"
-          />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SCROLL TRIGGER FOR FORMATION -->
-  <section id="formation-trigger" style="height: 50vh; pointer-events: none;"></section>
-
-  <!-- SERVICIOS PROFESIONALES -->
-  <section id="servicios" class="section">
-    <div class="container">
-      <div class="section-header reveal">
-        <h2>Servicios Profesionales</h2>
-        <p>Soluciones fiscales y contables potenciadas por tecnología.</p>
-      </div>
-      
-      <div class="services-layout">
-        <!-- Left: Service Selector -->
-        <div class="services-selector">
-          <div class="services-list" role="tablist">
-            <button class="service-pill active" data-service="asesoria" role="tab" aria-selected="true">
-              <span class="pill-icon"></span>
-              <span class="pill-text">Asesoría Fiscal</span>
-            </button>
-            <button class="service-pill" data-service="contabilidad" role="tab" aria-selected="false">
-              <span class="pill-icon"></span>
-              <span class="pill-text">Contabilidad Mensual</span>
-            </button>
-            <button class="service-pill" data-service="automatizacion" role="tab" aria-selected="false">
-              <span class="pill-icon"></span>
-              <span class="pill-text">Automatización</span>
-            </button>
-            <button class="service-pill" data-service="proyecciones" role="tab" aria-selected="false">
-              <span class="pill-icon"></span>
-              <span class="pill-text">Proyecciones</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Right: Dynamic Detail Panel -->
-        <div class="service-detail-panel reveal delay-1" id="service-panel">
-          <div class="panel-content" id="panel-content-wrapper">
-            <div class="panel-header">
-              <h3 id="panel-title">Asesoría fiscal inteligente</h3>
-              <p class="panel-intro" id="panel-intro">Diagnóstico profundo de tu situación fiscal y corrección de errores antes de que se vuelvan problemas.</p>
-            </div>
-            
-            <ul class="panel-bullets" id="panel-bullets">
-              <li>Detección de anomalías y riesgos ante el SAT.</li>
-              <li>Estrategias para optimizar tu carga tributaria legalmente.</li>
-              <li>Acompañamiento en trámites y revisiones complejas.</li>
-            </ul>
-
-            <div class="panel-footer">
-              <div class="price-tag">
-                <span class="price-label">Inversión desde:</span>
-                <span class="price-value" id="panel-cost">$X,XXX MXN / proyecto</span>
-              </div>
-              <a href="#contacto" class="btn btn-primary btn-glow" id="panel-cta">Agendar Consulta</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ECOSISTEMA EVORIX / PROYECTOS -->
-  <section id="" class="section alt">
-    <div class="container">
-      <div class="section-header reveal">
-        <h2>EVOAPPs</h2>
-        <p>Innovación y herramientas propias para el control total.</p>
-      </div>
-
-      <div class="grid-dashboard">
-        <!-- EVOAPP Module -->
-        <div class="dash-module evoapp reveal delay-1">
-          <div class="module-header">
-            <h3>EVOAPP</h3>
-            <span class="status-dot active"></span>
-          </div>
-          <p>Mi sistema operativo personal. Asistente financiero y de datos.</p>
-          <div class="module-visual">
-            <!-- Abstract UI representation -->
-            <div class="evoapp-terminal">
-              <div class="terminal-header">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
-                <span class="terminal-title">EVOAPP · TypeScript Automation</span>
-              </div>
-              <div class="terminal-body">
-                <pre class="terminal-code" id="evoapp-terminal-code"></pre>
-              </div>
-            </div>
-          </div>
-          <a href="/evoapp/" class="btn btn-sm btn-outline full-width">Abrir EVOAPP (versión web)</a>
-        </div>
-
-        <!-- EVORIX Tools Module -->
-        <div class="dash-module tools reveal delay-2">
-          <div class="module-header">
-            <h3>EVORIX Tools</h3>
-            <span class="status-dot"></span>
-          </div>
-          <p>Validadores, gestores de ingresos y automatizaciones.</p>
-          <ul class="tech-stack">
-            <li>Python</li>
-            <li>Excel Avanzado</li>
-            <li>Power Query</li>
-          </ul>
-        </div>
-
-        <!-- Laboratorio IA Module -->
-        <div class="dash-module lab reveal delay-3">
-          <div class="module-header">
-            <h3>Laboratorio de IA y Datos</h3>
-            <span class="status-dot warning"></span>
-          </div>
-          <p>Experimentos en Business Intelligence y modelos predictivos.</p>
-          <div class="data-viz-placeholder">
-            <div class="bar" style="height: 40%"></div>
-            <div class="bar" style="height: 70%"></div>
-            <div class="bar" style="height: 50%"></div>
-            <div class="bar" style="height: 85%"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- RECONOCIMIENTOS -->
-  <section id="reconocimientos" class="section alt recognitions-section">
-    <div class="container">
-      <h2 class="reveal">Formación y Reconocimientos</h2>
-      <p class="section-subtitle reveal delay-1">Aprendizaje continuo, especialización técnica y proyectos reales.</p>
-      
-      <!-- Summary moved above -->
-      <div class="recognitions-summary reveal delay-2">
-        <p class="recognitions-intro">
-          He construido mi perfil combinando contabilidad mexicana, automatización y análisis de datos.
-        </p>
-
-        <div class="recognitions-stats">
-          <div class="stat-item">
-            <span class="stat-number">30+</span>
-            <span class="stat-label">cursos y certificaciones</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">10+</span>
-            <span class="stat-label">proyectos de automatización</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">8+</span>
-            <span class="stat-label">años en contabilidad</span>
-          </div>
-        </div>
-
-        <a
-          class="btn btn-primary recognitions-cta"
-          href="https://nsl-reconocimientos.blogspot.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Ver portafolio completo
+    <!-- Mobile Navigation Overlay -->
+    <nav class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <div class="mobile-menu-container">
+        <a href="#servicios" class="mobile-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+            </path>
+          </svg>
+          <span>Servicios</span>
+        </a>
+        <a href="#ecosistema" class="mobile-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span>Ecosistema</span>
+        </a>
+        <a href="#referencias" class="mobile-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+            </path>
+          </svg>
+          <span>Referencias</span>
+        </a>
+        <a href="#reconocimientos" class="mobile-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="7"></circle>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+          </svg>
+          <span>Reconocimientos</span>
+        </a>
+        <a href="#sobre-mi" class="mobile-link">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>Sobre mí</span>
+        </a>
+        <a href="#contacto" class="mobile-link highlight">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>Contacto</span>
         </a>
       </div>
+    </nav>
+  </header>
 
-      <!-- Grid of cards -->
-      <div class="recognitions-grid reveal delay-3">
-        <article class="recognition-card">
-          <h3>Formación clave</h3>
-          <ul>
-            <li>Contabilidad y fiscalidad mexicana.</li>
-            <li>Excel avanzado y Power Query.</li>
-            <li>Introducción a Business Intelligence.</li>
-          </ul>
-        </article>
+  <main>
 
-        <article class="recognition-card">
-          <h3>Especialización técnica</h3>
-          <ul>
-            <li>Automatización con Python y TypeScript.</li>
-            <li>Validadores y gestores de datos fiscales.</li>
-            <li>Modelos de proyección de impuestos.</li>
-          </ul>
-        </article>
-
-        <article class="recognition-card">
-          <h3>Proyectos y laboratorios</h3>
-          <ul>
-            <li>EVOAPP: sistema operativo personal financiero.</li>
-            <li>EVORIX Tools: validadores y scripts contables.</li>
-            <li>Laboratorios de datos y ciberseguridad básica.</li>
-          </ul>
-        </article>
+    <!-- HERO SECTION -->
+    <section class="hero" id="inicio">
+      <canvas id="hero-canvas"></canvas>
+      <div class="container content">
+        <h1 class="hero-title reveal delay-0">Donde la inteligencia se diseña, y el futuro aprende de ti.</h1>
+        <p class="sub hero-sub reveal delay-1">Erick Domínguez — Estratega Tecnológico, Contador Moderno y Fundador de
+          EVORIX.</p>
+        <div class="ctas reveal delay-2">
+          <a href="javascript:void(0)" id="btn-tour" class="btn btn-primary btn-glow">Explorar EVORIX</a>
+          <a href="#contacto" class="link-minimal">Contacto</a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- REFERENCIAS / TESTIMONIOS -->
-  <section id="referencias" class="section">
+    <!-- SOBRE MÍ -->
+    <section id="sobre-mi" class="section">
+      <div class="container about-layout">
+        <div class="about-text reveal">
+          <h2>Sobre mí</h2>
+          <p class="lead">Soy Erick Domínguez. Contador por profesión, estratega tecnológico por vocación.</p>
+          <p>Fundo EVORIX con una visión clara: la contabilidad no debe ser solo cumplir obligaciones, sino una
+            herramienta de inteligencia para diseñar el futuro. Combino la disciplina fiscal con el poder de los datos y
+            la automatización para liberar el potencial de personas y empresas.</p>
+        </div>
+        <div class="about-visual reveal delay-2">
+          <div class="avatar-placeholder">
+            <img src="./assets/img/v7.png" alt="Erick Domínguez - EVORIX" class="avatar-photo" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCROLL TRIGGER FOR FORMATION -->
+    <section id="formation-trigger" style="height: 50vh; pointer-events: none;"></section>
+
+    <!-- SERVICIOS PROFESIONALES -->
+    <section id="servicios" class="section">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>Servicios Profesionales</h2>
+          <p>Soluciones fiscales y contables potenciadas por tecnología.</p>
+        </div>
+
+        <div class="services-layout">
+          <!-- Left: Service Selector -->
+          <div class="services-selector">
+            <div class="services-list" role="tablist">
+              <button class="service-pill active" data-service="asesoria" role="tab" aria-selected="true">
+                <span class="pill-icon"></span>
+                <span class="pill-text">Asesoría Fiscal</span>
+              </button>
+              <button class="service-pill" data-service="contabilidad" role="tab" aria-selected="false">
+                <span class="pill-icon"></span>
+                <span class="pill-text">Contabilidad Mensual</span>
+              </button>
+              <button class="service-pill" data-service="automatizacion" role="tab" aria-selected="false">
+                <span class="pill-icon"></span>
+                <span class="pill-text">Automatización</span>
+              </button>
+              <button class="service-pill" data-service="proyecciones" role="tab" aria-selected="false">
+                <span class="pill-icon"></span>
+                <span class="pill-text">Proyecciones</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Dynamic Detail Panel -->
+          <div class="service-detail-panel reveal delay-1" id="service-panel">
+            <div class="panel-content" id="panel-content-wrapper">
+              <div class="panel-header">
+                <h3 id="panel-title">Asesoría fiscal inteligente</h3>
+                <p class="panel-intro" id="panel-intro">Diagnóstico profundo de tu situación fiscal y corrección de
+                  errores antes de que se vuelvan problemas.</p>
+              </div>
+
+              <ul class="panel-bullets" id="panel-bullets">
+                <li>Detección de anomalías y riesgos ante el SAT.</li>
+                <li>Estrategias para optimizar tu carga tributaria legalmente.</li>
+                <li>Acompañamiento en trámites y revisiones complejas.</li>
+              </ul>
+
+              <div class="panel-footer">
+                <div class="price-tag">
+                  <span class="price-label">Inversión desde:</span>
+                  <span class="price-value" id="panel-cost">$X,XXX MXN / proyecto</span>
+                </div>
+                <a href="#contacto" class="btn btn-primary btn-glow" id="panel-cta">Agendar Consulta</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ECOSISTEMA EVORIX / PROYECTOS -->
+    <section id="ecosistema" class="section alt">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2>EVOAPPs</h2>
+          <p>Innovación y herramientas propias para el control total.</p>
+        </div>
+
+        <div class="grid-dashboard">
+          <!-- EVOAPP Module -->
+          <div class="dash-module evoapp reveal delay-1">
+            <div class="module-header">
+              <h3>EVOAPP</h3>
+              <span class="status-dot active"></span>
+            </div>
+            <p>Mi sistema operativo personal. Asistente financiero y de datos.</p>
+            <div class="module-visual">
+              <!-- Abstract UI representation -->
+              <div class="evoapp-terminal">
+                <div class="terminal-header">
+                  <span class="terminal-dot red"></span>
+                  <span class="terminal-dot yellow"></span>
+                  <span class="terminal-dot green"></span>
+                  <span class="terminal-title">EVOAPP · TypeScript Automation</span>
+                </div>
+                <div class="terminal-body">
+                  <pre class="terminal-code" id="evoapp-terminal-code"></pre>
+                </div>
+              </div>
+            </div>
+            <a href="evoapp-loader.html" class="btn btn-sm btn-outline full-width">Abrir EVOAPP (versión web)</a>
+          </div>
+
+          <!-- EVORIX Tools Module -->
+          <div class="dash-module tools reveal delay-2">
+            <div class="module-header">
+              <h3>EVORIX Tools</h3>
+              <span class="status-dot"></span>
+            </div>
+            <p>Validadores, gestores de ingresos y automatizaciones.</p>
+            <ul class="tech-stack">
+              <li>Python</li>
+              <li>Excel Avanzado</li>
+              <li>Power Query</li>
+            </ul>
+          </div>
+
+          <!-- Laboratorio IA Module -->
+          <div class="dash-module lab reveal delay-3">
+            <div class="module-header">
+              <h3>Laboratorio de IA y Datos</h3>
+              <span class="status-dot warning"></span>
+            </div>
+            <p>Experimentos en Business Intelligence y modelos predictivos.</p>
+            <div class="data-viz-placeholder">
+              <div class="bar" style="height: 40%"></div>
+              <div class="bar" style="height: 70%"></div>
+              <div class="bar" style="height: 50%"></div>
+              <div class="bar" style="height: 85%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECONOCIMIENTOS -->
+    <section id="reconocimientos" class="section alt recognitions-section">
+      <div class="container">
+        <h2 class="reveal">Formación y Reconocimientos</h2>
+        <p class="section-subtitle reveal delay-1">Aprendizaje continuo, especialización técnica y proyectos reales.</p>
+
+        <!-- Summary moved above -->
+        <div class="recognitions-summary reveal delay-2">
+          <p class="recognitions-intro">
+            He construido mi perfil combinando contabilidad mexicana, automatización y análisis de datos.
+          </p>
+
+          <div class="recognitions-stats">
+            <div class="stat-item">
+              <span class="stat-number">30+</span>
+              <span class="stat-label">cursos y certificaciones</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">10+</span>
+              <span class="stat-label">proyectos de automatización</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">8+</span>
+              <span class="stat-label">años en contabilidad</span>
+            </div>
+          </div>
+
+          <a class="btn btn-primary recognitions-cta" href="https://nsl-reconocimientos.blogspot.com/" target="_blank"
+            rel="noopener noreferrer">
+            Ver portafolio completo
+          </a>
+        </div>
+
+        <!-- Grid of cards -->
+        <div class="recognitions-grid reveal delay-3">
+          <article class="recognition-card accordion-card">
+            <div class="accordion-header">
+              <h3>Formación clave</h3>
+              <span class="accordion-icon"></span>
+            </div>
+            <div class="accordion-content">
+              <ul>
+                <li>Contabilidad y fiscalidad mexicana.</li>
+                <li>Excel avanzado y Power Query.</li>
+                <li>Introducción a Business Intelligence.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="recognition-card accordion-card">
+            <div class="accordion-header">
+              <h3>Especialización técnica</h3>
+              <span class="accordion-icon"></span>
+            </div>
+            <div class="accordion-content">
+              <ul>
+                <li>Automatización con Python y TypeScript.</li>
+                <li>Validadores y gestores de datos fiscales.</li>
+                <li>Modelos de proyección de impuestos.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="recognition-card accordion-card">
+            <div class="accordion-header">
+              <h3>Proyectos y laboratorios</h3>
+              <span class="accordion-icon"></span>
+            </div>
+            <div class="accordion-content">
+              <ul>
+                <li>EVOAPP: sistema operativo personal financiero.</li>
+                <li>EVORIX Tools: validadores y scripts contables.</li>
+                <li>Laboratorios de datos y ciberseguridad básica.</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFERENCIAS / TESTIMONIOS -->
+    <section id="referencias" class="section">
+      <div class="container">
+        <h2 class="reveal">Referencias</h2>
+        <div class="testimonials-grid">
+          <div class="chat-bubble reveal delay-1">
+            <p>"Erick transformó completamente mi caos fiscal en un sistema ordenado. Ahora entiendo mis números."</p>
+            <div class="chat-meta">
+              <span class="chat-name">Cliente PyME</span>
+              <span class="chat-role">Servicios Contables</span>
+            </div>
+          </div>
+          <div class="chat-bubble reveal delay-2">
+            <p>"La automatización que implementó nos ahorró horas de trabajo manual cada semana. Impresionante."</p>
+            <div class="chat-meta">
+              <span class="chat-name">Profesional Independiente</span>
+              <span class="chat-role">Automatización</span>
+            </div>
+          </div>
+          <div class="chat-bubble reveal delay-3">
+            <p>"Más que un contador, es un estratega. Sus proyecciones me ayudaron a tomar decisiones clave."</p>
+            <div class="chat-meta">
+              <span class="chat-name">Emprendedor Digital</span>
+              <span class="chat-role">Asesoría Fiscal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="section contact-section">
+      <div class="container contact-container">
+        <header class="section-header contact-header reveal">
+          <h2>Hablemos de tu futuro inteligente.</h2>
+        </header>
+
+        <div class="contact-grid reveal delay-1">
+          <!-- WhatsApp -->
+          <a href="https://wa.me/525534806184?text=Hola%2C%20soy%20Rick%20y%20llego%20desde%20tu%20web%20EVORIX%E2%80%A6"
+            target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="Escribir por WhatsApp">
+            <div class="contact-icon">
+              <!-- WhatsApp SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M16.53 14.96C16.29 14.84 15.11 14.26 14.9 14.18C14.68 14.1 14.52 14.06 14.36 14.3C14.2 14.54 13.75 15.07 13.61 15.23C13.48 15.39 13.34 15.41 13.1 15.29C12.86 15.17 12.08 14.91 11.16 14.09C10.45 13.46 9.97 12.68 9.85 12.46C9.73 12.24 9.84 12.13 9.96 12.01C10.07 11.9 10.2 11.73 10.32 11.59C10.44 11.45 10.49 11.35 10.57 11.19C10.65 11.03 10.61 10.89 10.55 10.77C10.49 10.65 10.03 9.51 9.84 9.05C9.65 8.59 9.46 8.65 9.31 8.65C9.17 8.65 9.01 8.65 8.85 8.65C8.69 8.65 8.43 8.71 8.21 8.95C7.99 9.19 7.37 9.77 7.37 10.95C7.37 12.13 8.23 13.27 8.35 13.43C8.47 13.59 10.07 16.06 12.52 17.12C13.1 17.37 13.56 17.52 13.92 17.63C14.5 17.82 15.04 17.79 15.47 17.73C15.94 17.66 16.92 17.14 17.13 16.55C17.33 15.96 17.33 15.46 17.27 15.36C17.21 15.26 17.05 15.19 16.81 15.07L16.53 14.96Z" />
+              </svg>
+            </div>
+            <h3>WhatsApp</h3>
+            <span class="contact-action">Escribir</span>
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="https://www.linkedin.com/in/erick-dominguez-4296411a9/" target="_blank" rel="noopener noreferrer"
+            class="contact-card" aria-label="Ver perfil en LinkedIn">
+            <div class="contact-icon">
+              <!-- LinkedIn SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19M18.5 18.5V13.2C18.5 11.63 18.16 10.42 15.77 10.42C14.62 10.42 13.85 11.05 13.53 11.66H13.5V10.65H11.24V18.5H13.5V14.49C13.5 13.43 13.7 12.41 15.03 12.41C16.34 12.41 16.34 13.64 16.34 14.57V18.5H18.5M8.85 18.5V10.65H6.59V18.5H8.85M7.72 9.62C8.51 9.62 9.15 8.98 9.15 8.19C9.15 7.4 8.51 6.76 7.72 6.76C6.93 6.76 6.29 7.4 6.29 8.19C6.29 8.98 6.93 9.62 7.72 9.62Z" />
+              </svg>
+            </div>
+            <h3>LinkedIn</h3>
+            <span class="contact-action">Ver perfil</span>
+          </a>
+
+          <!-- GitHub -->
+          <a href="https://github.com/Erickddp" target="_blank" rel="noopener noreferrer" class="contact-card"
+            aria-label="Ver repositorios en GitHub">
+            <div class="contact-icon">
+              <!-- GitHub SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2A10 10 0 0 0 2 12C2 16.42 4.87 20.17 8.84 21.5C9.34 21.58 9.5 21.27 9.5 21C9.5 20.77 9.5 20.14 9.5 19.31C6.73 19.91 6.14 17.97 6.14 17.97C5.68 16.81 5.03 16.5 5.03 16.5C4.12 15.88 5.1 15.9 5.1 15.9C6.1 15.97 6.63 16.93 6.63 16.93C7.5 18.45 8.97 18 9.54 17.76C9.63 17.11 9.89 16.67 10.17 16.42C7.95 16.17 5.62 15.31 5.62 11.5C5.62 10.39 6 9.5 6.65 8.79C6.55 8.54 6.2 7.5 6.75 6.15C6.75 6.15 7.59 5.88 9.5 7.17C10.29 6.95 11.15 6.84 12 6.84C12.85 6.84 13.71 6.95 14.5 7.17C16.41 5.88 17.25 6.15 17.25 6.15C17.8 7.5 17.45 8.54 17.35 8.79C18 9.5 18.38 10.39 18.38 11.5C18.38 15.32 16.04 16.16 13.81 16.41C14.17 16.72 14.5 17.33 14.5 18.26C14.5 19.6 14.5 20.68 14.5 21C14.5 21.27 14.66 21.59 15.17 21.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z" />
+              </svg>
+            </div>
+            <h3>GitHub</h3>
+            <span class="contact-action">Repositorios</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
     <div class="container">
-      <h2 class="reveal">Referencias</h2>
-      <div class="testimonials-grid">
-        <div class="chat-bubble reveal delay-1">
-          <p>"Erick transformó completamente mi caos fiscal en un sistema ordenado. Ahora entiendo mis números."</p>
-          <div class="chat-meta">
-            <span class="chat-name">Cliente PyME</span>
-            <span class="chat-role">Servicios Contables</span>
-          </div>
-        </div>
-        <div class="chat-bubble reveal delay-2">
-          <p>"La automatización que implementó nos ahorró horas de trabajo manual cada semana. Impresionante."</p>
-          <div class="chat-meta">
-            <span class="chat-name">Profesional Independiente</span>
-            <span class="chat-role">Automatización</span>
-          </div>
-        </div>
-        <div class="chat-bubble reveal delay-3">
-          <p>"Más que un contador, es un estratega. Sus proyecciones me ayudaron a tomar decisiones clave."</p>
-          <div class="chat-meta">
-            <span class="chat-name">Emprendedor Digital</span>
-            <span class="chat-role">Asesoría Fiscal</span>
-          </div>
-        </div>
+      <p>© EVORIX 2025 — Erick Domínguez. Todos los derechos reservados.</p>
+      <div class="footer-links">
+        <a href="privacy.html">Política de Privacidad</a>
       </div>
     </div>
-  </section>
+  </footer>
 
-  <!-- CONTACTO -->
-  <section id="contacto" class="section contact-section">
-    <div class="container contact-container">
-      <header class="section-header contact-header reveal">
-        <h2>Hablemos de tu futuro inteligente.</h2>
-        <p class="contact-subtitle">
-          Elige el canal que prefieras para ponerte en contacto conmigo.
-        </p>
-      </header>
-
-      <!-- Bloque principal: WhatsApp -->
-      <div class="contact-main reveal delay-1">
-        <div class="contact-card contact-whatsapp">
-          <h3>WhatsApp</h3>
-          <p>
-            Respuesta directa para dudas rápidas, proyectos y colaboraciones.
-          </p>
-          <a
-            class="btn btn-primary contact-whatsapp-link"
-            href="https://wa.me/525534806184?text=Hola%2C%20soy%20Rick%20y%20llego%20desde%20tu%20web%20EVORIX%E2%80%A6"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Escribir por WhatsApp
-          </a>
-          <p class="contact-helper">
-            Mensaje predeterminado: “Hola, soy Rick y llego desde tu web EVORIX…”
-          </p>
-        </div>
-      </div>
-
-      <!-- Bloque secundario: Redes profesionales -->
-      <div class="contact-grid reveal delay-2">
-        <article class="contact-card">
-          <h3>LinkedIn</h3>
-          <p>Conecta conmigo a nivel profesional y revisa mi trayectoria.</p>
-          <a
-            class="contact-link"
-            href="https://www.linkedin.com/in/erick-dominguez-4296411a9/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ver perfil en LinkedIn
-          </a>
-        </article>
-
-        <article class="contact-card">
-          <h3>GitHub</h3>
-          <p>Explora mis repositorios, proyectos y herramientas EVORIX/EVOAPP.</p>
-          <a
-            class="contact-link"
-            href="https://github.com/Erickddp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ver repos en GitHub
-          </a>
-        </article>
-      </div>
-
-      <!-- Bloque terciario: Redes sociales generales -->
-      <div class="contact-social reveal delay-3">
-        <p class="contact-social-label">También estoy en redes sociales:</p>
-        <div class="contact-social-links">
-          <a
-            class="contact-social-link"
-            href="#FACEBOOK_URL#"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Facebook
-          </a>
-          <a
-            class="contact-social-link"
-            href="#INSTAGRAM_URL#"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Instagram
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <div class="container">
-    <p>© EVORIX 2025 — Erick Domínguez. Todos los derechos reservados.</p>
-    <div class="footer-links">
-      <a href="privacy.html">Política de Privacidad</a>
-    </div>
-  </div>
-</footer>
-
-<script src="js/main.js"></script>
+  <script src="js/main.js"></script>
 </body>
+
 </html>
