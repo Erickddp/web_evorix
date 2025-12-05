@@ -28,25 +28,64 @@
   }
 
   // =========================================
-  // 2. HEADER SCROLL BEHAVIOR
+  // 2. HEADER SCROLL & ACTIVE STATE
   // =========================================
-  const header = document.querySelector('header.site');
+  const header = document.querySelector('.evorix-header');
   let lastScrollY = window.scrollY;
 
   if (header) {
     window.addEventListener('scroll', () => {
       const currentScrollY = window.scrollY;
-      const isMenuOpen = document.getElementById('mobile-menu')?.getAttribute('aria-hidden') === 'false';
-
-      // Hide header on scroll down, show on scroll up (only if menu is closed)
-      if (!isMenuOpen && currentScrollY > lastScrollY && currentScrollY > 100) {
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
         header.classList.add('hide');
       } else {
         header.classList.remove('hide');
       }
-
       lastScrollY = currentScrollY;
     }, { passive: true });
+  }
+
+  // Nav Icons Click Handler
+  document.querySelectorAll('.nav-icon[data-target]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(btn.dataset.target);
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Active Section Observer
+  const sections = document.querySelectorAll('section[id]');
+  const navIcons = document.querySelectorAll('.nav-icon[data-target]');
+
+  if (sections.length > 0 && navIcons.length > 0) {
+    const activeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Clean active state
+          // Note: This simple logic might flicker if multiple sections are visible.
+          // Better to highlight the one most visible or just the entry that triggered.
+          // For simplicity we just add active to intersecting and remove from others? 
+          // IntersectionObserver fires for ALL changes.
+          if (entry.intersectionRatio > 0) {
+            const id = entry.target.getAttribute('id');
+            navIcons.forEach(icon => {
+              if (icon.dataset.target === `#${id}`) {
+                icon.classList.add('nav-icon--active');
+              } else {
+                icon.classList.remove('nav-icon--active');
+              }
+            });
+          }
+        }
+      });
+    }, {
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    });
+
+    sections.forEach(section => activeObserver.observe(section));
   }
 
   // =========================================
@@ -112,264 +151,365 @@
   });
 
   // =========================================
-  // 6. EVORIX PARTICLE ENGINE (ENHANCED)
+  // EVORIX PIXEL ENGINE – CORE FIELD (PROMPT 2)
+  // =========================================
+  // =========================================
+  // EVORIX PIXEL ENGINE – CORE FIELD + LOGO (PROMPT 3)
   // =========================================
   (function () {
     const canvas = document.getElementById('evorix-canvas');
     if (!canvas) {
-      console.error('EVORIX: canvas not found');
+      console.warn('EVORIX: canvas not found for pixel engine.');
       return;
     }
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
 
-    // CONFIG: increased density (~30-40% more)
-    const PARTICLES_DESKTOP = 1800;  // was 1400
-    const PARTICLES_MOBILE = 1000;   // was 800
-    const BASE_SPEED = 0.14;         // slightly faster
-    const EXTRA_SPEED = 0.50;        // slightly faster
+    let vw = window.innerWidth;
+    let vh = window.innerHeight;
+    let dpr = window.devicePixelRatio || 1;
 
-    let width = 0;
-    let height = 0;
+    // State
     let particles = [];
+    let scrollY = window.scrollY || 0;
+    let mode = "free"; // "free" | "logo"
+    let previousMode = "free";
+    let logoPoints = [];
 
-    // State for ghost EVORIX
-    let canvasState = 'free';        // 'free' | 'evorixGhost'
-    let evorixStartTime = null;
-    let evorixPoints = [];
+    // Configuration
+    const isMobile = vw < 768;
+    const PARTICLE_COUNT = isMobile ? 220 : 480;
+    const BASE_SPEED = 0.35;
+    const MAX_EXTRA_SPEED = 0.9;
+    const INTERACTION_RADIUS = isMobile ? 140 : 190;
+    const INTERACTION_FORCE = 0.14;
+    const TRAIL_STICKINESS = 0.15;
+    const FRICTION = 0.96;
 
-    class Particle {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        const angle = Math.random() * Math.PI * 2;
-        const speed = BASE_SPEED + Math.random() * EXTRA_SPEED;
-        this.vx = Math.cos(angle) * speed;
-        this.vy = Math.sin(angle) * speed;
-        this.r = 0.7 + Math.random() * 1.6;
-        this.alpha = 0.35 + Math.random() * 0.55;
-        // Ghost formation props
-        this.inEvorix = false;
-        this.targetX = null;
-        this.targetY = null;
-      }
+    // Colors
+    let root = getComputedStyle(document.documentElement);
+    let primaryColor = (root.getPropertyValue('--primary') || root.getPropertyValue('--color-primary') || '#2563eb').trim();
+    let accentColor = (root.getPropertyValue('--accent') || root.getPropertyValue('--color-accent') || primaryColor).trim();
+
+    function hexToRgb(hex) {
+      const clean = (hex || '#000').replace('#', '');
+      const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
+      const int = parseInt(full, 16);
+      return {
+        r: (int >> 16) & 255,
+        g: (int >> 8) & 255,
+        b: int & 255
+      };
     }
 
-    function targetCount() {
-      return (window.innerWidth >= 1024)
-        ? PARTICLES_DESKTOP
-        : PARTICLES_MOBILE;
+    const rgbPrimary = hexToRgb(primaryColor);
+    const rgbAccent = hexToRgb(accentColor);
+
+    function mixColor(t, alpha) {
+      const r = rgbPrimary.r * (1 - t) + rgbAccent.r * t;
+      const g = rgbPrimary.g * (1 - t) + rgbAccent.g * t;
+      const b = rgbPrimary.b * (1 - t) + rgbAccent.b * t;
+      return `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${alpha})`;
     }
 
-    function rebuildParticles() {
-      const desired = targetCount();
-      particles = [];
-      for (let i = 0; i < desired; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function buildEvorixPoints() {
+    function buildLogoShape() {
       const off = document.createElement('canvas');
-      const textWidth = 420;
-      const textHeight = 110;
-      off.width = textWidth;
-      off.height = textHeight;
+      const ctx2 = off.getContext('2d');
+      const text = "EVORIX";
 
-      const octx = off.getContext('2d');
-      octx.clearRect(0, 0, textWidth, textHeight);
-      octx.fillStyle = '#ffffff';
-      octx.font = 'bold 80px system-ui, -apple-system, BlinkMacSystemFont';
-      octx.textAlign = 'center';
-      octx.textBaseline = 'middle';
-      octx.fillText('EVORIX', textWidth / 2, textHeight / 2);
+      // Responsive font size calculation
+      let fontSize = Math.floor(Math.min(vw, vh) * 0.20);
+      ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
 
-      const data = octx.getImageData(0, 0, textWidth, textHeight).data;
-      const pts = [];
-      for (let y = 0; y < textHeight; y += 5) {
-        for (let x = 0; x < textWidth; x += 5) {
-          const idx = (y * textWidth + x) * 4 + 3;
-          if (data[idx] > 160) {
-            pts.push({ x, y });
+      // Measure and clamp
+      let metrics = ctx2.measureText(text);
+      while ((metrics.width > vw * 0.8 || fontSize > vh * 0.25) && fontSize > 10) {
+        fontSize -= 2;
+        ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+        metrics = ctx2.measureText(text);
+      }
+
+      const w = Math.ceil(metrics.width);
+      const h = Math.ceil(fontSize * 1.2);
+
+      off.width = w;
+      off.height = h;
+
+      ctx2.fillStyle = "#fff";
+      ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+      ctx2.fillText(text, 0, fontSize);
+
+      const data = ctx2.getImageData(0, 0, w, h).data;
+      const step = isMobile ? 4 : 6;
+
+      logoPoints = [];
+
+      // Center in viewport (fixed relative to screen, not document)
+      const logoCenterX = vw * 0.5;
+      const logoCenterY = vh * 0.60;
+
+      for (let y = 0; y < h; y += step) {
+        for (let x = 0; x < w; x += step) {
+          const idx = (y * w + x) * 4;
+          if (data[idx + 3] > 128) {
+            logoPoints.push({
+              x: x + logoCenterX - w / 2,
+              y: y + logoCenterY - h / 2
+            });
           }
         }
       }
-
-      // center horizontally, place around ~1.3 viewport heights (between sections)
-      const baseX = (width - textWidth) / 2;
-      const baseY = window.innerHeight * 1.25;
-      evorixPoints = pts.map(p => ({
-        x: baseX + p.x,
-        y: baseY + p.y
-      }));
     }
 
-    function resizeCanvas() {
-      width = window.innerWidth;
-      height = Math.max(
-        document.documentElement.scrollHeight,
-        window.innerHeight
-      );
-      canvas.width = width;
-      canvas.height = height;
-      rebuildParticles();
-      buildEvorixPoints();
+    function resize() {
+      vw = window.innerWidth;
+      vh = window.innerHeight;
+      dpr = window.devicePixelRatio || 1;
+
+      canvas.width = Math.round(vw * dpr);
+      canvas.height = Math.round(vh * dpr);
+      canvas.style.width = vw + 'px';
+      canvas.style.height = vh + 'px';
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildLogoShape();
+    }
+    window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', resize);
+    resize();
+
+    // Particle Factory
+    function createParticle() {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * Math.max(vw, vh) * 0.6;
+
+      const x = vw / 2 + Math.cos(angle) * radius;
+      const y = vh / 2 + Math.sin(angle) * radius;
+
+      return {
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        baseSpeed: BASE_SPEED * (0.5 + Math.random()),
+        size: isMobile ? 1.4 + Math.random() * 1.6 : 1.6 + Math.random() * 2.2,
+        colorMix: Math.random(),
+        targetX: null,
+        targetY: null
+      };
     }
 
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('orientationchange', resizeCanvas);
-    resizeCanvas();
-
-    // Pointer attraction
-    let pointerX = null;
-    let pointerY = null;
-    function setPointer(e) {
-      const touch = e.touches ? e.touches[0] : e;
-      pointerX = touch.clientX;
-      pointerY = touch.clientY + window.scrollY;
-    }
-    function clearPointer() {
-      pointerX = pointerY = null;
-    }
-    window.addEventListener('mousemove', setPointer);
-    window.addEventListener('touchstart', setPointer, { passive: true });
-    window.addEventListener('touchmove', setPointer, { passive: true });
-    window.addEventListener('touchend', clearPointer);
-    window.addEventListener('touchcancel', clearPointer);
-
-    // Ghost EVORIX state management
-    function setCanvasState(next) {
-      if (canvasState === next) return;
-      canvasState = next;
-      if (next === 'evorixGhost') {
-        evorixStartTime = performance.now();
-        assignEvorixTargets();
-      } else {
-        evorixStartTime = null;
-        releaseEvorixTargets();
+    function buildParticles() {
+      particles = new Array(PARTICLE_COUNT);
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles[i] = createParticle();
       }
     }
+    buildParticles();
 
-    function assignEvorixTargets() {
-      if (!evorixPoints.length) buildEvorixPoints();
-      const max = Math.min(evorixPoints.length, Math.floor(particles.length * 0.5));
-      for (let i = 0; i < max; i++) {
+    function assignLogoTargets() {
+      if (logoPoints.length === 0) return;
+      for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-        const t = evorixPoints[i];
-        p.inEvorix = true;
+        const t = logoPoints[i % logoPoints.length];
         p.targetX = t.x;
         p.targetY = t.y;
       }
     }
 
-    function releaseEvorixTargets() {
-      particles.forEach(p => {
-        if (p.inEvorix) {
-          p.inEvorix = false;
-          p.targetX = null;
-          p.targetY = null;
-        }
-      });
+    // Interaction
+    const pointer = {
+      x: vw / 2,
+      y: vh / 2,
+      targetX: vw / 2,
+      targetY: vh / 2,
+      active: false,
+      down: false
+    };
+
+    function onPointerMove(e) {
+      pointer.targetX = e.clientX;
+      pointer.targetY = e.clientY;
+      pointer.active = true;
+    }
+    function onPointerLeave() {
+      pointer.active = false;
+    }
+    function onPointerDown(e) {
+      pointer.down = true;
+      pointer.targetX = e.clientX;
+      pointer.targetY = e.clientY;
+    }
+    function onPointerUp() {
+      pointer.down = false;
     }
 
-    function updateScrollState() {
-      const about = document.querySelector('#sobre-mi');
-      const services = document.querySelector('#servicios');
-      if (!about || !services) {
-        setCanvasState('free');
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerleave', onPointerLeave, { passive: true });
+    window.addEventListener('pointerdown', onPointerDown, { passive: true });
+    window.addEventListener('pointerup', onPointerUp, { passive: true });
+    window.addEventListener('pointercancel', onPointerUp, { passive: true });
+
+    function updatePointer(dt) {
+      const lerp = 1 - Math.pow(1 - TRAIL_STICKINESS, dt * 60);
+      pointer.x += (pointer.targetX - pointer.x) * lerp;
+      pointer.y += (pointer.targetY - pointer.y) * lerp;
+    }
+
+    window.addEventListener('scroll', () => {
+      scrollY = window.scrollY || 0;
+    }, { passive: true });
+
+    function getSpeedFactor() {
+      const normalized = Math.min(Math.abs(scrollY) / 1200, 1);
+      return 1 + normalized * MAX_EXTRA_SPEED;
+    }
+
+    function updateMode() {
+      const aboutSection = document.getElementById('sobre-mi');
+      const servicesSection = document.getElementById('servicios');
+
+      if (!aboutSection || !servicesSection) {
+        mode = "free";
         return;
       }
 
-      const rectA = about.getBoundingClientRect();
-      const rectS = services.getBoundingClientRect();
-      const vh = window.innerHeight;
+      const aboutRect = aboutSection.getBoundingClientRect();
+      const servicesRect = servicesSection.getBoundingClientRect();
 
-      const zoneCenter = (rectA.bottom + rectS.top) / 2;
+      const center = window.innerHeight / 2;
+      const aboutCenter = aboutRect.top + aboutRect.height / 2;
+      const servicesCenter = servicesRect.top + servicesRect.height / 2;
 
-      // Trigger zone roughly between Sobre mí and Servicios
-      if (zoneCenter > vh * 0.2 && zoneCenter < vh * 0.8) {
-        setCanvasState('evorixGhost');
+      // midpoint between the two sections
+      const midpoint = (aboutCenter + servicesCenter) / 2;
+
+      if (Math.abs(midpoint - center) < 240) {
+        mode = "logo";
       } else {
-        setCanvasState('free');
-      }
-    }
-
-    window.addEventListener('scroll', updateScrollState);
-    updateScrollState();
-
-    function updateParticle(p) {
-      if (canvasState === 'evorixGhost' && p.inEvorix && p.targetX != null) {
-        // smooth attraction to target (ghost formation)
-        p.x += (p.targetX - p.x) * 0.12;
-        p.y += (p.targetY - p.y) * 0.12;
-      } else {
-        // normal free movement
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // pointer attraction (increased visibility)
-        if (pointerX != null && pointerY != null) {
-          const dx = pointerX - p.x;
-          const dy = pointerY - p.y;
-          const dist2 = dx * dx + dy * dy;
-          const maxDist = 260;
-          if (dist2 < maxDist * maxDist) {
-            const force = 0.0016;  // increased from 0.0009 for more visible effect
-            p.vx += dx * force;
-            p.vy += dy * force;
-          }
-        }
-
-        // wrap / respawn
-        if (p.x < -20 || p.x > width + 20 || p.y < -20 || p.y > height + 20) {
-          p.reset();
-        }
+        mode = "free";
       }
     }
 
     function drawParticle(p) {
-      let alpha = p.alpha;
-      if (canvasState === 'evorixGhost' && p.inEvorix) {
-        alpha *= 0.55; // softer, ghosty
-      }
-      ctx.globalAlpha = alpha;
+      const alpha = 0.26 + (p.size / 4) * 0.4;
+      ctx.fillStyle = mixColor(p.colorMix, alpha);
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = '#1d4ed8'; // EVORIX blue
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    function ensureParticles() {
-      const desired = targetCount();
-      if (particles.length !== desired) rebuildParticles();
-    }
+    // Animation Loop
+    let lastTime = performance.now();
+    let rafId = null;
 
-    function animate() {
-      // IMPORTANT: first line to guarantee continuous loop
-      requestAnimationFrame(animate);
+    function step(now) {
+      rafId = requestAnimationFrame(step);
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
 
-      ensureParticles();
+      updateMode();
 
-      ctx.clearRect(0, 0, width, height);
-
-      particles.forEach(p => {
-        updateParticle(p);
-        drawParticle(p);
-      });
-
-      // Auto dissolve ghost after ~2 seconds
-      if (canvasState === 'evorixGhost' && evorixStartTime) {
-        const elapsed = performance.now() - evorixStartTime;
-        if (elapsed > 2000) {
-          setCanvasState('free');
+      // Transition handling
+      if (previousMode !== mode) {
+        if (mode === "logo") {
+          assignLogoTargets();
+        } else if (mode === "free" && previousMode === "logo") {
+          // Burst
+          for (const p of particles) {
+            p.vx += (Math.random() - 0.5) * 2.2;
+            p.vy += (Math.random() - 0.5) * 2.2;
+            p.targetX = null;
+            p.targetY = null;
+          }
         }
+        previousMode = mode;
+      }
+
+      updatePointer(dt);
+      const speedFactor = getSpeedFactor();
+
+      ctx.clearRect(0, 0, vw, vh);
+
+      const px = pointer.x;
+      const py = pointer.y;
+      const hasPointer = pointer.active;
+      const radius2 = INTERACTION_RADIUS * INTERACTION_RADIUS;
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        if (mode === "logo" && p.targetX !== null) {
+          // Logo formation physics
+          const lerp = 0.14;
+          // Move towards target
+          p.x += (p.targetX - p.x) * lerp;
+          p.y += (p.targetY - p.y) * lerp;
+
+          // Dampen velocity but keep it for pointer interaction
+          p.vx *= 0.92;
+          p.vy *= 0.92;
+
+          // Apply velocity (allows pointer to push particles)
+          p.x += p.vx;
+          p.y += p.vy;
+
+        } else {
+          // Free mode physics
+          p.x += p.vx * p.baseSpeed * speedFactor;
+          p.y += p.vy * p.baseSpeed * speedFactor;
+
+          // Friction + Speed Limit
+          p.vx *= FRICTION;
+          p.vy *= FRICTION;
+          const maxVel = 1.8;
+          if (p.vx > maxVel) p.vx = maxVel;
+          if (p.vx < -maxVel) p.vx = -maxVel;
+          if (p.vy > maxVel) p.vy = maxVel;
+          if (p.vy < -maxVel) p.vy = -maxVel;
+
+          // Wrap around edges
+          const margin = 20;
+          if (p.x < -margin) p.x = vw + margin;
+          if (p.x > vw + margin) p.x = -margin;
+          if (p.y < -margin) p.y = vh + margin;
+          if (p.y > vh + margin) p.y = -margin;
+        }
+
+        // Pointer attraction (applies in both modes)
+        if (hasPointer) {
+          const dx = px - p.x;
+          const dy = py - p.y;
+          const dist2 = dx * dx + dy * dy;
+          if (dist2 < radius2 && dist2 > 0.01) {
+            const dist = Math.sqrt(dist2);
+            const force = INTERACTION_FORCE * (pointer.down ? 1.8 : 1.0) * (1 - dist / INTERACTION_RADIUS);
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          }
+        }
+
+        drawParticle(p);
       }
     }
 
-    console.log('EVORIX: enhanced particle engine started (1800/1000 particles, ghost mode enabled)');
-    animate();
+    function start() {
+      if (!rafId) {
+        lastTime = performance.now();
+        rafId = requestAnimationFrame(step);
+      }
+    }
+    function stop() {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    start();
+
+    // Debug API
+    window.__evorixPixelEngine = { start, stop, rebuild: buildParticles };
+    window.addEventListener('beforeunload', stop, { passive: true });
   })();
 
   // =========================================
@@ -441,6 +581,16 @@
           // 2. Add active to clicked
           pill.classList.add('active');
           pill.setAttribute('aria-selected', 'true');
+
+          const isMobile = window.innerWidth <= 768;
+          if (isMobile) {
+            const section = document.querySelector('#servicios');
+            if (section) {
+              const headerOffset = 80;
+              const top = section.getBoundingClientRect().top + window.scrollY - headerOffset;
+              window.scrollTo({ top, behavior: 'smooth' });
+            }
+          }
 
           // 3. Get data
           const serviceKey = pill.getAttribute('data-service');
@@ -622,49 +772,10 @@
   }
 
   // =========================================
-  // 10. MOBILE NAVIGATION
+  // 10. MOBILE NAVIGATION (Removed)
   // =========================================
-  const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const mobileLinks = document.querySelectorAll('.mobile-link');
+  // The new design uses a unified header for desktop and mobile.
 
-  if (mobileMenuBtn && mobileMenu) {
-    mobileMenuBtn.addEventListener('click', () => {
-      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
-      toggleMobileMenu(!isExpanded);
-    });
-
-    mobileLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        toggleMobileMenu(false);
-      });
-    });
-
-    function toggleMobileMenu(show) {
-      mobileMenu.setAttribute('aria-hidden', !show);
-      mobileMenuBtn.setAttribute('aria-expanded', show);
-
-      // Update icon (hamburger <-> close)
-      if (show) {
-        mobileMenuBtn.innerHTML = `
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        `;
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
-      } else {
-        mobileMenuBtn.innerHTML = `
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        `;
-        document.body.style.overflow = '';
-      }
-    }
-  }
 
   // =========================================
   // 11. RECOGNITIONS ACCORDION (Mobile & Desktop)
@@ -838,29 +949,9 @@
   }
 
   function spawnParticles(element) {
-    const rect = element.getBoundingClientRect();
-    // Use fixed position relative to viewport
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 3; // Adjust for scroll if using fixed, but rect.top is viewport relative
-
-    // Actually rect.top is relative to viewport, so for fixed elements it's fine.
-    // But wait, rect.top changes as we scroll.
-    // We are stopped when we spawn particles, so rect.top is correct.
-
-    for (let i = 0; i < 12; i++) {
-      const p = document.createElement('div');
-      p.className = 'tour-particle';
-      // Random spread around center
-      const x = centerX + (Math.random() - 0.5) * 300;
-      const y = rect.top + 50 + (Math.random() - 0.5) * 100; // Near top of section
-
-      p.style.left = `${x}px`;
-      p.style.top = `${y}px`;
-      p.style.animationDelay = `${Math.random() * 0.3}s`;
-
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 1200);
-    }
+    // Disabled for reset
+    // const rect = element.getBoundingClientRect();
+    // ...
   }
 
   // =========================================
@@ -921,4 +1012,51 @@
     testimonialCards.forEach(card => testimonialObserver.observe(card));
   }
 
+})();
+
+// =========================================
+// EVORIX References – Infinite Loop Track
+// =========================================
+(function () {
+  const viewport = document.querySelector('.references-viewport');
+  const track = document.querySelector('.references-track');
+  if (!viewport || !track) return;
+
+  const cards = Array.from(track.children);
+  if (cards.length === 0) return;
+
+  // 1) Duplicate the full set once so we have at least 2× items
+  cards.forEach(card => {
+    const clone = card.cloneNode(true);
+    clone.classList.add('reference-card--clone');
+    track.appendChild(clone);
+  });
+
+  // 2) Measure width of the original set
+  // We need to account for the gap between the last original and first clone
+  // The gap property applies between all flex items.
+  const gap = parseFloat(getComputedStyle(track).gap || 0);
+  let baseWidth = cards.reduce((sum, card) => sum + card.offsetWidth, 0);
+
+  // Correct calculation for seamless loop: Width of items + Width of gaps between them
+  // If we have N items, we have N gaps in a full cycle (including the one after the last item leading to the next cycle)
+  baseWidth += cards.length * gap;
+
+  function onScroll() {
+    const max = baseWidth;
+    const x = viewport.scrollLeft;
+
+    // If we scrolled beyond the duplicated set, wrap back
+    if (x >= max) {
+      viewport.scrollLeft = x - max;
+    } else if (x <= 0) {
+      // optional: jump forward so you can scroll backwards infinitely
+      viewport.scrollLeft = x + max;
+    }
+  }
+
+  viewport.addEventListener('scroll', onScroll, { passive: true });
+
+  // optional: start in the middle so user can scroll both sides
+  viewport.scrollLeft = baseWidth * 0.5;
 })();
