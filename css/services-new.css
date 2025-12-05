@@ -1,0 +1,192 @@
+/* =========================================
+   5. SERVICES LAYOUT (Redesign)
+   ========================================= */
+.services-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+@media (min-width: 900px) {
+    .services-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 48px;
+    }
+}
+
+/* Services List (Vertical) */
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+@media (min-width: 900px) {
+    .services-list {
+        width: 350px;
+        flex-shrink: 0;
+    }
+}
+
+/* Service Pill */
+.service-pill {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    border-radius: 50px;
+    /* Pill shape */
+    padding: 12px 20px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+
+    /* Initial state for animation */
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.service-pill:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    transform: translateX(4px);
+}
+
+.service-pill.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 15px var(--primary-glow);
+    font-weight: 600;
+    transform: translateX(8px);
+    opacity: 1;
+    /* Ensure active is visible */
+}
+
+/* Service Detail Panel */
+.service-detail-panel {
+    flex-grow: 1;
+    background: rgba(15, 23, 42, 0.6);
+    /* Glass dark */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Empty State */
+.service-empty-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    width: 100%;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Panel Content */
+.panel-content {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.panel-content.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.panel-content.fade-in {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.panel-content h3 {
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+    color: var(--text);
+    background: linear-gradient(90deg, #fff, #cbd5e1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.panel-intro {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.panel-bullets {
+    list-style: none;
+    margin-bottom: 32px;
+}
+
+.panel-bullets li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+    color: var(--text-muted);
+}
+
+.panel-bullets li::before {
+    content: '→';
+    color: var(--primary);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.panel-footer {
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+@media (min-width: 600px) {
+    .panel-footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.panel-cost {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.cost-highlight {
+    color: var(--success);
+    /* Or primary if preferred */
+    font-weight: 600;
+    display: block;
+    margin-top: 4px;
+    font-size: 1.1rem;
+}

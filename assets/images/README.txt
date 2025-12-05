@@ -1,1 +1,0 @@
-Coloca aquí imágenes (logo, póster del video como hero-poster.jpg, casos, etc.).
