@@ -36,9 +36,10 @@
   if (header) {
     window.addEventListener('scroll', () => {
       const currentScrollY = window.scrollY;
+      const isMenuOpen = document.getElementById('mobile-menu')?.getAttribute('aria-hidden') === 'false';
 
-      // Hide header on scroll down, show on scroll up
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      // Hide header on scroll down, show on scroll up (only if menu is closed)
+      if (!isMenuOpen && currentScrollY > lastScrollY && currentScrollY > 100) {
         header.classList.add('hide');
       } else {
         header.classList.remove('hide');
@@ -111,286 +112,270 @@
   });
 
   // =========================================
-  // 6. HERO ANIMATION SYSTEM (Canvas)
+  // 6. EVORIX PARTICLE ENGINE (ENHANCED)
   // =========================================
-  const canvas = document.getElementById('hero-canvas');
-  if (canvas) {
+  (function () {
+    const canvas = document.getElementById('evorix-canvas');
+    if (!canvas) {
+      console.error('EVORIX: canvas not found');
+      return;
+    }
     const ctx = canvas.getContext('2d');
-    let width, height;
+
+    // CONFIG: increased density (~30-40% more)
+    const PARTICLES_DESKTOP = 1800;  // was 1400
+    const PARTICLES_MOBILE = 1000;   // was 800
+    const BASE_SPEED = 0.14;         // slightly faster
+    const EXTRA_SPEED = 0.50;        // slightly faster
+
+    let width = 0;
+    let height = 0;
     let particles = [];
-    let mouse = { x: -1000, y: -1000 };
-    let isFormationMode = false;
-    let formationTargets = [];
 
-    // Configuration
-    const GRID_SIZE = 40;
-    const FORMATION_TEXT = "EVORIX";
-    const BASE_PARTICLE_COUNT = window.innerWidth < 768 ? 80 : 250; // Dynamic count
+    // State for ghost EVORIX
+    let canvasState = 'free';        // 'free' | 'evorixGhost'
+    let evorixStartTime = null;
+    let evorixPoints = [];
 
-    let gridColor = '255, 255, 255';
-
-    function updateCanvasColors() {
-      const theme = document.documentElement.getAttribute('data-theme');
-      gridColor = theme === 'light' ? '15, 23, 42' : '255, 255, 255';
-    }
-    updateCanvasColors();
-    window.addEventListener('theme-changed', updateCanvasColors);
-
-    // Resize Handler
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      // Re-calculate targets if in formation mode to ensure text fits
-      if (isFormationMode) {
-        calculateFormationTargets();
-      } else {
-        initParticles(BASE_PARTICLE_COUNT);
-      }
-    }
-    window.addEventListener('resize', resize);
-
-    // Mouse Handler
-    window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
-
-    // Particle Class
     class Particle {
-      constructor(x, y) {
-        this.x = x || Math.random() * width;
-        this.y = y || Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
-        this.size = Math.random() * 1.5 + 1.5; // Slightly uniform size for text
-        this.baseAlpha = Math.random() * 0.3 + 0.1;
-        this.alpha = this.baseAlpha;
-
-        // Target properties
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = BASE_SPEED + Math.random() * EXTRA_SPEED;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.r = 0.7 + Math.random() * 1.6;
+        this.alpha = 0.35 + Math.random() * 0.55;
+        // Ghost formation props
+        this.inEvorix = false;
         this.targetX = null;
         this.targetY = null;
-        this.isDocked = false;
-
-        // Idle motion offsets
-        this.idleOffset = Math.random() * 100;
-        this.idleSpeed = 0.002 + Math.random() * 0.002;
-      }
-
-      update(time) {
-        if (isFormationMode && this.targetX !== null) {
-          // Formation Mode: Seek target with easing
-          const dx = this.targetX - this.x;
-          const dy = this.targetY - this.y;
-
-          // Spring-like easing
-          this.x += dx * 0.08;
-          this.y += dy * 0.08;
-
-          // Idle motion when close to target (breathing effect)
-          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
-            this.isDocked = true;
-          }
-
-          if (this.isDocked) {
-            // Subtle float around the target point
-            this.x = this.targetX + Math.sin(time * this.idleSpeed + this.idleOffset) * 2;
-            this.y = this.targetY + Math.cos(time * this.idleSpeed + this.idleOffset) * 2;
-          }
-
-          this.alpha = 0.9; // High visibility for text
-        } else {
-          // Floating Mode
-          this.isDocked = false;
-          this.x += this.vx;
-          this.y += this.vy;
-
-          // Mouse Attraction
-          const dx = mouse.x - this.x;
-          const dy = mouse.y - this.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 200) {
-            this.x += dx * 0.03;
-            this.y += dy * 0.03;
-            this.alpha = Math.min(this.baseAlpha + 0.5, 1);
-          } else {
-            this.alpha = this.baseAlpha;
-          }
-
-          // Wrap around screen
-          if (this.x < 0) this.x = width;
-          if (this.x > width) this.x = 0;
-          if (this.y < 0) this.y = height;
-          if (this.y > height) this.y = 0;
-        }
-      }
-
-      draw() {
-        ctx.fillStyle = `rgba(0, 102, 255, ${this.alpha})`; // Primary Blue
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
       }
     }
 
-    // Initialize Particles
-    function initParticles(count) {
-      // Only add/remove if count changes significantly to avoid reset
-      if (particles.length < count) {
-        const diff = count - particles.length;
-        for (let i = 0; i < diff; i++) particles.push(new Particle());
-      } else if (particles.length > count) {
-        particles.splice(count);
+    function targetCount() {
+      return (window.innerWidth >= 1024)
+        ? PARTICLES_DESKTOP
+        : PARTICLES_MOBILE;
+    }
+
+    function rebuildParticles() {
+      const desired = targetCount();
+      particles = [];
+      for (let i = 0; i < desired; i++) {
+        particles.push(new Particle());
       }
     }
 
-    // Calculate Text Formation Targets
-    function calculateFormationTargets() {
-      // 1. Setup offscreen canvas
-      const tempCanvas = document.createElement('canvas');
-      const tempCtx = tempCanvas.getContext('2d');
-      tempCanvas.width = width;
-      tempCanvas.height = height;
+    function buildEvorixPoints() {
+      const off = document.createElement('canvas');
+      const textWidth = 420;
+      const textHeight = 110;
+      off.width = textWidth;
+      off.height = textHeight;
 
-      // 2. Font configuration
-      // Responsive font size: 15vw but capped between 60px and 200px
-      const fontSize = Math.max(60, Math.min(width * 0.18, 220));
-      tempCtx.font = `900 ${fontSize}px "Manrope", sans-serif`; // Extra bold
-      tempCtx.fillStyle = 'white';
-      tempCtx.textAlign = 'center';
-      tempCtx.textBaseline = 'middle';
+      const octx = off.getContext('2d');
+      octx.clearRect(0, 0, textWidth, textHeight);
+      octx.fillStyle = '#ffffff';
+      octx.font = 'bold 80px system-ui, -apple-system, BlinkMacSystemFont';
+      octx.textAlign = 'center';
+      octx.textBaseline = 'middle';
+      octx.fillText('EVORIX', textWidth / 2, textHeight / 2);
 
-      // 3. Draw text
-      tempCtx.fillText(FORMATION_TEXT, width / 2, height / 2);
-
-      // 4. Sample points
-      const imageData = tempCtx.getImageData(0, 0, width, height).data;
-      formationTargets = [];
-
-      // Adaptive sampling step based on screen size
-      // Smaller step = more points = sharper text
-      const step = window.innerWidth < 768 ? 5 : 4;
-
-      for (let y = 0; y < height; y += step) {
-        for (let x = 0; x < width; x += step) {
-          const index = (y * width + x) * 4;
-          // Threshold > 128 ensures we only take the core of the letter
-          if (imageData[index + 3] > 128) {
-            formationTargets.push({ x, y });
+      const data = octx.getImageData(0, 0, textWidth, textHeight).data;
+      const pts = [];
+      for (let y = 0; y < textHeight; y += 5) {
+        for (let x = 0; x < textWidth; x += 5) {
+          const idx = (y * textWidth + x) * 4 + 3;
+          if (data[idx] > 160) {
+            pts.push({ x, y });
           }
         }
       }
 
-      // 5. Adjust particle count to match targets
-      // We need exactly enough particles to fill the text
-      const targetCount = formationTargets.length;
+      // center horizontally, place around ~1.3 viewport heights (between sections)
+      const baseX = (width - textWidth) / 2;
+      const baseY = window.innerHeight * 1.25;
+      evorixPoints = pts.map(p => ({
+        x: baseX + p.x,
+        y: baseY + p.y
+      }));
+    }
 
-      // Add particles if we need more
-      if (particles.length < targetCount) {
-        const diff = targetCount - particles.length;
-        for (let i = 0; i < diff; i++) {
-          // Spawn new particles off-screen or random
-          particles.push(new Particle(Math.random() * width, Math.random() * height));
-        }
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = Math.max(
+        document.documentElement.scrollHeight,
+        window.innerHeight
+      );
+      canvas.width = width;
+      canvas.height = height;
+      rebuildParticles();
+      buildEvorixPoints();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', resizeCanvas);
+    resizeCanvas();
+
+    // Pointer attraction
+    let pointerX = null;
+    let pointerY = null;
+    function setPointer(e) {
+      const touch = e.touches ? e.touches[0] : e;
+      pointerX = touch.clientX;
+      pointerY = touch.clientY + window.scrollY;
+    }
+    function clearPointer() {
+      pointerX = pointerY = null;
+    }
+    window.addEventListener('mousemove', setPointer);
+    window.addEventListener('touchstart', setPointer, { passive: true });
+    window.addEventListener('touchmove', setPointer, { passive: true });
+    window.addEventListener('touchend', clearPointer);
+    window.addEventListener('touchcancel', clearPointer);
+
+    // Ghost EVORIX state management
+    function setCanvasState(next) {
+      if (canvasState === next) return;
+      canvasState = next;
+      if (next === 'evorixGhost') {
+        evorixStartTime = performance.now();
+        assignEvorixTargets();
+      } else {
+        evorixStartTime = null;
+        releaseEvorixTargets();
       }
+    }
 
-      // Assign targets
-      // Shuffle targets for random fill effect
-      const shuffledTargets = [...formationTargets].sort(() => Math.random() - 0.5);
+    function assignEvorixTargets() {
+      if (!evorixPoints.length) buildEvorixPoints();
+      const max = Math.min(evorixPoints.length, Math.floor(particles.length * 0.5));
+      for (let i = 0; i < max; i++) {
+        const p = particles[i];
+        const t = evorixPoints[i];
+        p.inEvorix = true;
+        p.targetX = t.x;
+        p.targetY = t.y;
+      }
+    }
 
-      particles.forEach((p, i) => {
-        if (i < shuffledTargets.length) {
-          p.targetX = shuffledTargets[i].x;
-          p.targetY = shuffledTargets[i].y;
-        } else {
-          // Extra particles float away or fade
+    function releaseEvorixTargets() {
+      particles.forEach(p => {
+        if (p.inEvorix) {
+          p.inEvorix = false;
           p.targetX = null;
           p.targetY = null;
-          p.alpha = 0; // Hide extras
         }
       });
     }
 
-    // Draw Breathing Grid
-    function drawGrid() {
-      const time = Date.now() * 0.001;
-      const breathe = Math.sin(time * 0.5) * 0.05 + 0.08;
-
-      ctx.strokeStyle = `rgba(${gridColor}, ${breathe})`;
-      ctx.lineWidth = 1;
-
-      const moveY = (time * 10) % GRID_SIZE;
-
-      for (let x = 0; x < width; x += GRID_SIZE) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.stroke();
+    function updateScrollState() {
+      const about = document.querySelector('#sobre-mi');
+      const services = document.querySelector('#servicios');
+      if (!about || !services) {
+        setCanvasState('free');
+        return;
       }
 
-      for (let y = moveY; y < height; y += GRID_SIZE) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
+      const rectA = about.getBoundingClientRect();
+      const rectS = services.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      const zoneCenter = (rectA.bottom + rectS.top) / 2;
+
+      // Trigger zone roughly between Sobre mí and Servicios
+      if (zoneCenter > vh * 0.2 && zoneCenter < vh * 0.8) {
+        setCanvasState('evorixGhost');
+      } else {
+        setCanvasState('free');
       }
     }
 
-    // Animation Loop
+    window.addEventListener('scroll', updateScrollState);
+    updateScrollState();
+
+    function updateParticle(p) {
+      if (canvasState === 'evorixGhost' && p.inEvorix && p.targetX != null) {
+        // smooth attraction to target (ghost formation)
+        p.x += (p.targetX - p.x) * 0.12;
+        p.y += (p.targetY - p.y) * 0.12;
+      } else {
+        // normal free movement
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // pointer attraction (increased visibility)
+        if (pointerX != null && pointerY != null) {
+          const dx = pointerX - p.x;
+          const dy = pointerY - p.y;
+          const dist2 = dx * dx + dy * dy;
+          const maxDist = 260;
+          if (dist2 < maxDist * maxDist) {
+            const force = 0.0016;  // increased from 0.0009 for more visible effect
+            p.vx += dx * force;
+            p.vy += dy * force;
+          }
+        }
+
+        // wrap / respawn
+        if (p.x < -20 || p.x > width + 20 || p.y < -20 || p.y > height + 20) {
+          p.reset();
+        }
+      }
+    }
+
+    function drawParticle(p) {
+      let alpha = p.alpha;
+      if (canvasState === 'evorixGhost' && p.inEvorix) {
+        alpha *= 0.55; // softer, ghosty
+      }
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = '#1d4ed8'; // EVORIX blue
+      ctx.fill();
+    }
+
+    function ensureParticles() {
+      const desired = targetCount();
+      if (particles.length !== desired) rebuildParticles();
+    }
+
     function animate() {
-      const time = Date.now();
+      // IMPORTANT: first line to guarantee continuous loop
+      requestAnimationFrame(animate);
+
+      ensureParticles();
+
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Draw Grid (Background) - Fade out in formation mode
-      if (!isFormationMode) {
-        drawGrid();
-      }
-
-      // 2. Update & Draw Particles
       particles.forEach(p => {
-        p.update(time);
-        // Only draw if visible
-        if (p.alpha > 0.01) p.draw();
+        updateParticle(p);
+        drawParticle(p);
       });
 
-      requestAnimationFrame(animate);
+      // Auto dissolve ghost after ~2 seconds
+      if (canvasState === 'evorixGhost' && evorixStartTime) {
+        const elapsed = performance.now() - evorixStartTime;
+        if (elapsed > 2000) {
+          setCanvasState('free');
+        }
+      }
     }
 
-    // Scroll Trigger for Formation
-    const formationTrigger = document.getElementById('formation-trigger');
-    if (formationTrigger) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            if (!isFormationMode) {
-              isFormationMode = true;
-              calculateFormationTargets();
-            }
-          } else {
-            if (isFormationMode) {
-              isFormationMode = false;
-              // Reset particles to float
-              // Reduce count back to base if needed, or just let them float
-              // Ideally we trim the array back to BASE_PARTICLE_COUNT slowly, but for now just release them
-              particles.forEach(p => {
-                p.targetX = null;
-                p.targetY = null;
-                p.vx = (Math.random() - 0.5) * 1;
-                p.vy = (Math.random() - 0.5) * 1;
-                p.alpha = p.baseAlpha;
-              });
-            }
-          }
-        });
-      }, { threshold: 0.2 });
+    console.log('EVORIX: enhanced particle engine started (1800/1000 particles, ghost mode enabled)');
+    animate();
+  })();
 
-      observer.observe(formationTrigger);
-    }
-
-    // =========================================
-    // 7. SERVICES SELECTOR SYSTEM
-    // =========================================
-    // =========================================
-    // 7. SERVICES SELECTOR SYSTEM
+  // =========================================
+  // 7. SERVICES & TOOLS (Legacy Wrapper)
+  // =========================================
+  {
     // =========================================
     const servicesData = {
       asesoria: {
@@ -501,14 +486,6 @@
         });
       }, { threshold: 0.2 });
 
-      // Initial state for animation handled in CSS or here
-      // Let's ensure they start hidden via JS or CSS. 
-      // Since we didn't add specific hidden CSS for pills in the previous step (only hover/active),
-      // we might want to add a class or just rely on the reveal class if we added it.
-      // The user asked for "Left aligned...". 
-      // Let's just keep it simple. If we want animation, we should set initial state.
-      // For now, I'll assume the CSS handles the transition and I just trigger it if needed.
-      // Actually, let's just observe it.
       pillsObserver.observe(pillsContainer);
     }
 
@@ -575,10 +552,6 @@
 
       observer.observe(terminalCode);
     }
-
-    // Start
-    resize();
-    animate();
   }
 
   // =========================================
@@ -719,22 +692,17 @@
 
     // Desktop Hover Behavior
     // Only for devices with fine pointer (mouse)
-    card.addEventListener('mouseenter', () => {
-      if (window.matchMedia('(pointer: fine)').matches) {
-        // Close others to keep it clean on desktop too? 
-        // Or just open this one. Let's just open this one.
-        // Actually, if we want "accordion" style, maybe close others on hover too?
-        // The prompt didn't strictly ask for accordion on desktop, but "Opcional... en móvil".
-        // Let's just add is-open.
+    if (window.matchMedia('(hover: hover)').matches) {
+      card.addEventListener('mouseenter', () => {
         card.classList.add('is-open');
-      }
-    });
+      });
 
-    card.addEventListener('mouseleave', () => {
-      if (window.matchMedia('(pointer: fine)').matches) {
-        card.classList.remove('is-open');
-      }
-    });
+      card.addEventListener('mouseleave', () => {
+        if (window.matchMedia('(pointer: fine)').matches) {
+          card.classList.remove('is-open');
+        }
+      });
+    }
   });
 
   // =========================================
@@ -893,6 +861,64 @@
       document.body.appendChild(p);
       setTimeout(() => p.remove(), 1200);
     }
+  }
+
+  // =========================================
+  // 13. REFERENCES CAROUSEL ANIMATION
+  // =========================================
+  const referencesCarousel = document.querySelector('.references-carousel');
+  if (referencesCarousel) {
+    // Duplicate cards for seamless loop
+    const cards = Array.from(referencesCarousel.children);
+    cards.forEach(card => referencesCarousel.appendChild(card.cloneNode(true)));
+
+    let offset = 0;
+    const speed = 0.3; // pixels per frame
+    function animateCarousel() {
+      offset -= speed;
+      referencesCarousel.style.transform = `translateX(${offset}px)`;
+      const firstCard = referencesCarousel.firstElementChild;
+      if (firstCard) {
+        const style = getComputedStyle(firstCard);
+        const cardWidth = firstCard.getBoundingClientRect().width + parseFloat(style.marginRight);
+        if (Math.abs(offset) >= cardWidth) {
+          referencesCarousel.appendChild(firstCard);
+          offset += cardWidth;
+        }
+      }
+      requestAnimationFrame(animateCarousel);
+    }
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      animateCarousel();
+    }
+  }
+
+  // =========================================
+  // 13. TESTIMONIALS ANIMATION
+  // =========================================
+  const testimonialCards = document.querySelectorAll('.testimonial-card');
+
+  if (testimonialCards.length > 0) {
+    const testimonialObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const card = entry.target;
+          card.classList.add('in-view');
+
+          // Add floating effect after reveal animation (0.8s)
+          setTimeout(() => {
+            card.classList.add('floating');
+          }, 1000);
+
+          observer.unobserve(card);
+        }
+      });
+    }, {
+      threshold: 0.2,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    testimonialCards.forEach(card => testimonialObserver.observe(card));
   }
 
 })();

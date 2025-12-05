@@ -140,12 +140,133 @@ video {
 .section {
   padding: 100px 0;
   position: relative;
+  background: transparent;
+  /* allow particles to be visible */
 }
 
+/* Preserve alt section styling */
 .section.alt {
   background: var(--surface);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+}
+
+/* === Referencias (Testimonials Carousel) === */
+.references-section {
+  position: relative;
+  padding: 4rem 0 5rem;
+  overflow: visible !important;
+}
+
+.references-section .section-title {
+  margin-bottom: 2rem;
+}
+
+.references-carousel {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: visible;
+  white-space: nowrap;
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  pointer-events: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reference-card {
+  margin-right: 1.5rem;
+  min-width: 280px;
+  max-width: 340px;
+  height: auto !important;
+  min-height: fit-content;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(6px);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: referenceFloat 8s ease-in-out infinite alternate;
+  scroll-snap-align: start;
+  overflow: visible !important;
+  white-space: normal;
+}
+
+.reference-avatar {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.reference-avatar img {
+  width: 52px;
+  height: 52px;
+  max-width: 52px;
+  max-height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.reference-avatar .avatar-photo {
+  width: 52px;
+  height: 52px;
+  max-width: 52px;
+  max-height: 52px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.reference-avatar .avatar-initial {
+  font-size: 1.5rem;
+}
+
+.reference-content {
+  flex: 1;
+}
+
+.reference-name {
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.reference-role {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0.2rem 0 0.5rem;
+}
+
+.reference-text {
+  margin: 0;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+@keyframes referenceFloat {
+  0% {
+    transform: translateY(0) rotate(-1deg);
+  }
+
+  100% {
+    transform: translateY(-4px) rotate(1deg);
+  }
 }
 
 /* =========================================
@@ -386,6 +507,35 @@ video {
   }
 
   /* Mobile menu simplified for now */
+
+  /* Referencias Section - Mobile Fixes */
+  .references-carousel {
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+  }
+
+  .reference-card {
+    min-width: 260px;
+    max-width: 300px;
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto !important;
+  }
+
+  .reference-avatar {
+    width: 52px;
+    height: 52px;
+    max-width: 52px;
+    max-height: 52px;
+  }
+
+  .reference-avatar img,
+  .reference-avatar .avatar-photo {
+    width: 52px;
+    height: 52px;
+    max-width: 52px;
+    max-height: 52px;
+  }
 }
 
 /* =========================================
@@ -403,21 +553,23 @@ video {
   text-align: center;
   overflow: hidden;
   padding-top: var(--header-height);
-  background: var(--bg);
-  /* Ensure background is solid for canvas */
+  /* Ensure background is solid for canvas - REMOVED for transparency */
 }
 
-#hero-canvas {
+#evorix-canvas {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
   pointer-events: none;
-  /* Allow clicks to pass through if needed, but we want interaction */
-  pointer-events: auto;
-  /* Actually we need pointer events for mouse interaction */
+  z-index: 0;
+  /* canvas ON TOP of backgrounds, but below content */
+}
+
+/* All main content must be above the canvas */
+body>*:not(#evorix-canvas) {
+  position: relative;
+  z-index: 1;
 }
 
 .hero .content {
@@ -888,7 +1040,7 @@ video {
 }
 
 /* =========================================
-   7. TESTIMONIALS (Chat Bubbles)
+   7. TESTIMONIALS (UPGRADE: Referencias – testimonial avatars + motion)
    ========================================= */
 .testimonials-grid {
   display: grid;
@@ -896,51 +1048,131 @@ video {
   gap: 32px;
 }
 
-.chat-bubble {
+.testimonial-card {
   background: var(--surface);
-  padding: 24px;
-  border-radius: 24px 24px 24px 4px;
-  /* Chat bubble shape */
   border: 1px solid var(--border);
-  position: relative;
-}
-
-.chat-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 20px;
-  height: 20px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  border-left: 1px solid var(--border);
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
-  /* Triangle */
-  display: none;
-  /* Simplified shape via border-radius instead */
-}
-
-.chat-bubble p {
-  font-size: 1.1rem;
-  font-style: italic;
-  color: var(--text);
-  margin-bottom: 1.5rem;
-}
-
-.chat-meta {
+  border-radius: 24px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  position: relative;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  /* Initial State for Animation */
+  opacity: 0;
+  transform: translateY(12px);
 }
 
-.chat-name {
+.testimonial-card.in-view {
+  animation: fadeSlideIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Staggered delays handled in JS or via nth-child if static */
+.testimonial-card:nth-child(1).in-view {
+  animation-delay: 0.1s;
+}
+
+.testimonial-card:nth-child(2).in-view {
+  animation-delay: 0.2s;
+}
+
+.testimonial-card:nth-child(3).in-view {
+  animation-delay: 0.3s;
+}
+
+/* Optional Floating Effect after reveal */
+/* Logic handled via JS adding .floating class */
+
+.testimonial-card.floating {
+  animation: float 10s ease-in-out infinite;
+}
+
+.testimonial-card:hover {
+  border-color: var(--primary-glow);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.testimonial-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.testimonial-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--surface-hover), var(--border));
+  flex-shrink: 0;
+  /* Placeholder styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Optional: Add a generic user icon if empty */
+.testimonial-avatar::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394A3B8'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E");
+  background-size: 60%;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+}
+
+.testimonial-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.client-name {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  color: var(--text);
 }
 
-.chat-role {
+.client-role {
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.testimonial-quote {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Animations */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 /* =========================================
@@ -1180,168 +1412,235 @@ footer {
 /* =========================================
    5. SERVICES LAYOUT (Redesign)
    ========================================= */
+/* REBUILT: Servicios Profesionales – mobile-first minimal layout */
+
+/* Container adjustments for mobile */
+#servicios .container {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  /* Ensure container doesn't overflow on small screens */
+  width: 100%;
+  max-width: 1200px;
+  /* Restore max-width but allow full width below */
+}
+
+@media (max-width: 480px) {
+  #servicios .container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    max-width: 100%;
+  }
+}
+
+/* Layout Wrapper */
 .services-layout {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 @media (min-width: 900px) {
   .services-layout {
     flex-direction: row;
     align-items: flex-start;
-    gap: 48px;
+    gap: 3rem;
   }
 }
 
-/* Services List (Vertical) */
+/* Services Selector (Tabs) */
+/* SCROLL: Servicios tabs horizontal scroll + subtle hint */
+.services-tabs-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.services-tabs-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  background: linear-gradient(to left, var(--bg) 20%, transparent 100%);
+  pointer-events: none;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+}
+
+.services-selector {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
 .services-list {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
+  flex-direction: row;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+  /* Space for scrollbar */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* Hide scrollbar */
+  padding-right: 2rem;
+  /* Extra space for hint */
+}
+
+.services-list::-webkit-scrollbar {
+  display: none;
 }
 
 @media (min-width: 900px) {
-  .services-list {
-    width: 350px;
+  .services-tabs-wrapper::after {
+    display: none;
+  }
+
+  .services-selector {
+    width: 300px;
     flex-shrink: 0;
+    margin-bottom: 0;
+  }
+
+  .services-list {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    overflow-x: visible;
+    padding-bottom: 0;
+    padding-right: 0;
   }
 }
 
-/* Service Pill */
+/* Service Pill (Tab Button) */
 .service-pill {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
   border-radius: 50px;
-  /* Pill shape */
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem;
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  text-align: left;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .service-pill:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text);
-  transform: translateX(4px);
+  border-color: var(--border-hover);
 }
 
 .service-pill.active {
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 15px var(--primary-glow);
-  font-weight: 600;
-  transform: translateX(8px);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px var(--primary-glow);
 }
 
-/* Service Detail Panel */
+/* Detail Panel */
 .service-detail-panel {
   flex-grow: 1;
-  background: rgba(15, 23, 42, 0.6);
-  /* Glass dark */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
-  padding: 40px;
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  /* Rounded container */
+  padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  min-height: 300px;
+  /* Ensure height */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* Empty State */
-.service-empty-text {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  width: 100%;
-  animation: fadeIn 0.5s ease;
+@media (min-width: 768px) {
+  .service-detail-panel {
+    padding: 2.5rem;
+  }
 }
 
 /* Panel Content */
 .panel-content {
   opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
-.panel-content.hidden {
-  display: none;
+.panel-content.fade-out {
   opacity: 0;
 }
 
 .panel-content.fade-in {
-  animation: fadeInUp 0.4s ease forwards;
+  opacity: 1;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.panel-content h3 {
-  font-size: 1.8rem;
-  margin-bottom: 16px;
+.panel-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
   color: var(--text);
+  line-height: 1.3;
   background: linear-gradient(90deg, #fff, #cbd5e1);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+@media (min-width: 768px) {
+  .panel-header h3 {
+    font-size: 2rem;
+  }
+}
+
 .panel-intro {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-muted);
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
   line-height: 1.6;
 }
 
+/* Bullets */
 .panel-bullets {
   list-style: none;
-  margin-bottom: 32px;
+  padding: 0;
+  margin: 0 0 2rem 0;
 }
 
 .panel-bullets li {
   position: relative;
-  padding-left: 24px;
-  margin-bottom: 12px;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
   color: var(--text-muted);
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .panel-bullets li::before {
-  content: '\2192';
+  content: '→';
   color: var(--primary);
   position: absolute;
   left: 0;
   font-weight: bold;
+  font-size: 1.2rem;
+  line-height: 1;
+  top: 2px;
 }
 
+/* Footer & Price */
 .panel-footer {
-  margin-top: auto;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
 }
 
 @media (min-width: 600px) {
@@ -1352,18 +1651,34 @@ footer {
   }
 }
 
-.panel-cost {
-  font-size: 0.95rem;
-  color: var(--text-muted);
+.price-tag {
+  display: flex;
+  flex-direction: column;
 }
 
-.cost-highlight {
-  color: var(--success);
-  /* Or primary if preferred */
-  font-weight: 600;
-  display: block;
-  margin-top: 4px;
+.price-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.price-value {
   font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 0.25rem;
+}
+
+/* Button override for panel */
+#panel-cta {
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  #panel-cta {
+    width: auto;
+  }
 }
 
 /* =========================================
@@ -1803,7 +2118,7 @@ footer {
 }
 
 .panel-bullets li::before {
-  content: '\2192';
+  content: "\2192";
   position: absolute;
   left: 0;
   color: var(--primary);
@@ -1976,7 +2291,11 @@ footer {
   border: none;
   color: var(--text);
   cursor: pointer;
-  padding: 8px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   transition: background 0.3s ease;
   z-index: 1001;
@@ -1997,7 +2316,7 @@ footer {
   -webkit-backdrop-filter: blur(20px);
   z-index: 999;
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -2008,10 +2327,10 @@ footer {
 }
 
 .mobile-menu-container {
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   overflow-y: auto;
   height: 100%;
 }
@@ -2020,12 +2339,12 @@ footer {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px;
+  padding: 12px;
   border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
   border: 1px solid var(--border);
   transition: all 0.2s ease;
   text-decoration: none;
@@ -2045,8 +2364,8 @@ footer {
 }
 
 .nav-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   stroke-width: 2px;
   opacity: 0.8;
   transition: color 0.2s ease;
@@ -2467,27 +2786,6 @@ body.tour-active {
    17. BUG FIXES & SAFETY OVERRIDES
    ========================================= */
 
-/* FIX: Mobile floating menu ghost element */
-/* Prevent header actions from detaching or floating independently */
-.header-actions {
-  position: static !important;
-  transform: none !important;
-}
-
-/* Ensure buttons don't have fixed positioning from rogue styles */
-.theme-btn,
-.mobile-menu-btn {
-  position: relative !important;
-  /* Keep relative for internal alignment */
-  top: auto !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  transform: none !important;
-  margin: 0 !important;
-  /* Prevent margin offsets */
-}
-
 /* Ensure the mobile menu button is only visible when intended */
 @media (min-width: 769px) {
   .mobile-menu-btn {
@@ -2495,12 +2793,265 @@ body.tour-active {
   }
 }
 
-/* 
-  BUG FIX REPORT:
-  - The "strange text" (â†’) was found in .panel-bullets li::before and fixed to \2192.
-  - The "floating circle" and "hamburger" were likely the .theme-btn and .mobile-menu-btn 
-    appearing in an unexpected position due to layout shifts or encoding issues.
-  - Added safety overrides to force .header-actions and buttons to stay static/relative 
-    within the header container.
-  - Ensured only one mobile menu trigger exists (checked HTML/JS).
-*/
+/* SCROLL: Servicios Profesionales tabs - CSS-only horizontal scroll */
+@media (max-width: 768px) {
+  .services-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .services-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .service-pill {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+}
+
+/* =========================================
+   18. LABORATORIO IA VISUAL ANIMATION
+   ========================================= */
+.lab-ia-visual {
+  width: 100%;
+  height: 160px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: var(--radius-md);
+  margin-top: 20px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.lab-servers {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  height: 60%;
+  z-index: 2;
+}
+
+.server {
+  width: 14px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 4px 2px;
+  gap: 3px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.server:nth-child(2) {
+  height: 80%;
+}
+
+.server:nth-child(3) {
+  height: 90%;
+}
+
+.server span {
+  width: 100%;
+  height: 2px;
+  background: var(--success);
+  opacity: 0.3;
+  border-radius: 1px;
+  animation: blink-led 2s infinite;
+}
+
+.server span:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.server span:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes blink-led {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 4px var(--success);
+  }
+}
+
+.lab-network {
+  flex-grow: 1;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+  z-index: 2;
+}
+
+.network-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 200px;
+  overflow: visible;
+}
+
+.network-svg line {
+  stroke: var(--primary);
+  stroke-width: 1;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.network-svg circle {
+  fill: var(--bg);
+  stroke: var(--accent);
+  stroke-width: 2;
+  transition: all 0.3s;
+}
+
+.network-svg circle:nth-child(6) {
+  animation: pulse-node 3s infinite;
+}
+
+/* First node */
+.network-svg circle:nth-child(8) {
+  animation: pulse-node 3s infinite 1s;
+}
+
+/* Third node */
+.network-svg circle:nth-child(10) {
+  animation: pulse-node 3s infinite 2s;
+}
+
+/* Last node */
+
+@keyframes pulse-node {
+
+  0%,
+  100% {
+    stroke: var(--accent);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+
+  50% {
+    stroke: #fff;
+    stroke-width: 3;
+    filter: drop-shadow(0 0 8px var(--accent));
+  }
+}
+
+.lab-streams {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.stream {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  width: 60px;
+  opacity: 0;
+  border-radius: 2px;
+}
+
+.stream:nth-child(1) {
+  top: 30%;
+  left: 10%;
+  animation: data-flow 4s linear infinite;
+}
+
+.stream:nth-child(2) {
+  bottom: 30%;
+  left: 20%;
+  animation: data-flow 5s linear infinite 1.5s;
+}
+
+.stream:nth-child(3) {
+  top: 60%;
+  left: 0%;
+  animation: data-flow 6s linear infinite 0.5s;
+}
+
+@keyframes data-flow {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.6;
+  }
+
+  80% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateX(300px);
+    opacity: 0;
+  }
+}
+
+/* Hover Effects */
+.lab-ia-visual:hover {
+  border-color: var(--primary-glow);
+  box-shadow: inset 0 0 30px rgba(0, 102, 255, 0.1);
+}
+
+.lab-ia-visual:hover .server span {
+  animation-duration: 0.5s;
+}
+
+.lab-ia-visual:hover .network-svg circle {
+  animation-duration: 1s;
+  stroke: var(--primary);
+}
+
+.lab-ia-visual:hover .stream {
+  animation-duration: 2s;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+  .server span,
+  .network-svg circle,
+  .stream {
+    animation: none !important;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .lab-ia-visual {
+    height: 140px;
+    padding: 0 12px;
+  }
+
+  .server {
+    width: 12px;
+  }
+
+  .network-svg {
+    max-width: 140px;
+  }
+}
