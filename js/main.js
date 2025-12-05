@@ -164,43 +164,34 @@
     }
     const ctx = canvas.getContext('2d', { alpha: true });
 
+    // -------------------------------------------------------------
+    // SHARED UTILITIES
+    // -------------------------------------------------------------
     let vw = window.innerWidth;
     let vh = window.innerHeight;
     let dpr = window.devicePixelRatio || 1;
-
-    // State
-    let particles = [];
     let scrollY = window.scrollY || 0;
-    let mode = "free"; // "free" | "logo"
-    let previousMode = "free";
-    let logoPoints = [];
 
-    // Configuration
-    const isMobile = vw < 768;
-    const PARTICLE_COUNT = isMobile ? 220 : 480;
-    const BASE_SPEED = 0.35;
-    const MAX_EXTRA_SPEED = 0.9;
-    const INTERACTION_RADIUS = isMobile ? 140 : 190;
-    const INTERACTION_FORCE = 0.14;
-    const TRAIL_STICKINESS = 0.15;
-    const FRICTION = 0.96;
+    let particles = [];
+    let rafId = null;
+
+    // Detect startup state ONCE for engine selection
+    // Note: If user resizes from desktop -> mobile or vice versa, they might need a reload 
+    // or a specialized resize handler to switch engines. 
+    // For this implementation, we check once at startup as per request.
+    const initialIsMobile = window.matchMedia("(max-width: 768px)").matches;
 
     // Colors
     let root = getComputedStyle(document.documentElement);
-    let primaryColor = (root.getPropertyValue('--primary') || root.getPropertyValue('--color-primary') || '#2563eb').trim();
-    let accentColor = (root.getPropertyValue('--accent') || root.getPropertyValue('--color-accent') || primaryColor).trim();
+    let primaryColor = (root.getPropertyValue('--primary') || '#2563eb').trim();
+    let accentColor = (root.getPropertyValue('--accent') || primaryColor).trim();
 
     function hexToRgb(hex) {
       const clean = (hex || '#000').replace('#', '');
       const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
       const int = parseInt(full, 16);
-      return {
-        r: (int >> 16) & 255,
-        g: (int >> 8) & 255,
-        b: int & 255
-      };
+      return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
     }
-
     const rgbPrimary = hexToRgb(primaryColor);
     const rgbAccent = hexToRgb(accentColor);
 
@@ -211,305 +202,354 @@
       return `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${alpha})`;
     }
 
-    function buildLogoShape() {
-      const off = document.createElement('canvas');
-      const ctx2 = off.getContext('2d');
-      const text = "EVORIX";
-
-      // Responsive font size calculation
-      let fontSize = Math.floor(Math.min(vw, vh) * 0.20);
-      ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
-
-      // Measure and clamp
-      let metrics = ctx2.measureText(text);
-      while ((metrics.width > vw * 0.8 || fontSize > vh * 0.25) && fontSize > 10) {
-        fontSize -= 2;
-        ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
-        metrics = ctx2.measureText(text);
-      }
-
-      const w = Math.ceil(metrics.width);
-      const h = Math.ceil(fontSize * 1.2);
-
-      off.width = w;
-      off.height = h;
-
-      ctx2.fillStyle = "#fff";
-      ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
-      ctx2.fillText(text, 0, fontSize);
-
-      const data = ctx2.getImageData(0, 0, w, h).data;
-      const step = isMobile ? 4 : 6;
-
-      logoPoints = [];
-
-      // Center in viewport (fixed relative to screen, not document)
-      const logoCenterX = vw * 0.5;
-      const logoCenterY = vh * 0.60;
-
-      for (let y = 0; y < h; y += step) {
-        for (let x = 0; x < w; x += step) {
-          const idx = (y * w + x) * 4;
-          if (data[idx + 3] > 128) {
-            logoPoints.push({
-              x: x + logoCenterX - w / 2,
-              y: y + logoCenterY - h / 2
-            });
-          }
-        }
-      }
-    }
-
-    function resize() {
+    // Canvas Resize
+    function resizeCanvas() {
       vw = window.innerWidth;
       vh = window.innerHeight;
       dpr = window.devicePixelRatio || 1;
-
       canvas.width = Math.round(vw * dpr);
       canvas.height = Math.round(vh * dpr);
       canvas.style.width = vw + 'px';
       canvas.style.height = vh + 'px';
-
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      buildLogoShape();
     }
-    window.addEventListener('resize', resize);
-    window.addEventListener('orientationchange', resize);
-    resize();
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', resizeCanvas);
+    resizeCanvas(); // init
 
-    // Particle Factory
-    function createParticle() {
-      const angle = Math.random() * Math.PI * 2;
-      const radius = Math.random() * Math.max(vw, vh) * 0.6;
-
-      const x = vw / 2 + Math.cos(angle) * radius;
-      const y = vh / 2 + Math.sin(angle) * radius;
-
-      return {
-        x,
-        y,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        baseSpeed: BASE_SPEED * (0.5 + Math.random()),
-        size: isMobile ? 1.4 + Math.random() * 1.6 : 1.6 + Math.random() * 2.2,
-        colorMix: Math.random(),
-        targetX: null,
-        targetY: null
-      };
-    }
-
-    function buildParticles() {
-      particles = new Array(PARTICLE_COUNT);
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        particles[i] = createParticle();
-      }
-    }
-    buildParticles();
-
-    function assignLogoTargets() {
-      if (logoPoints.length === 0) return;
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        const t = logoPoints[i % logoPoints.length];
-        p.targetX = t.x;
-        p.targetY = t.y;
-      }
-    }
-
-    // Interaction
-    const pointer = {
-      x: vw / 2,
-      y: vh / 2,
-      targetX: vw / 2,
-      targetY: vh / 2,
-      active: false,
-      down: false
-    };
-
-    function onPointerMove(e) {
-      pointer.targetX = e.clientX;
-      pointer.targetY = e.clientY;
-      pointer.active = true;
-    }
-    function onPointerLeave() {
-      pointer.active = false;
-    }
-    function onPointerDown(e) {
-      pointer.down = true;
-      pointer.targetX = e.clientX;
-      pointer.targetY = e.clientY;
-    }
-    function onPointerUp() {
-      pointer.down = false;
-    }
-
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('pointerleave', onPointerLeave, { passive: true });
-    window.addEventListener('pointerdown', onPointerDown, { passive: true });
-    window.addEventListener('pointerup', onPointerUp, { passive: true });
-    window.addEventListener('pointercancel', onPointerUp, { passive: true });
-
-    function updatePointer(dt) {
-      const lerp = 1 - Math.pow(1 - TRAIL_STICKINESS, dt * 60);
-      pointer.x += (pointer.targetX - pointer.x) * lerp;
-      pointer.y += (pointer.targetY - pointer.y) * lerp;
-    }
-
+    // Scroll Tracker
     window.addEventListener('scroll', () => {
       scrollY = window.scrollY || 0;
     }, { passive: true });
 
-    function getSpeedFactor() {
-      const normalized = Math.min(Math.abs(scrollY) / 1200, 1);
-      return 1 + normalized * MAX_EXTRA_SPEED;
-    }
+    // -------------------------------------------------------------
+    // DESKTOP ENGINE (Original Logic)
+    // -------------------------------------------------------------
+    function startDesktopEngine() {
+      let mode = "free";
+      let previousMode = "free";
+      let logoPoints = [];
 
-    function updateMode() {
-      const aboutSection = document.getElementById('sobre-mi');
-      const servicesSection = document.getElementById('servicios');
+      // Config
+      const PARTICLE_COUNT = 480;
+      const BASE_SPEED = 0.35;
+      const MAX_EXTRA_SPEED = 0.9;
+      const INTERACTION_RADIUS = 190;
+      const INTERACTION_FORCE = 0.14;
+      const TRAIL_STICKINESS = 0.15;
+      const FRICTION = 0.96;
 
-      if (!aboutSection || !servicesSection) {
-        mode = "free";
-        return;
-      }
+      // Pointer state
+      const pointer = { x: vw / 2, y: vh / 2, targetX: vw / 2, targetY: vh / 2, active: false, down: false };
 
-      const aboutRect = aboutSection.getBoundingClientRect();
-      const servicesRect = servicesSection.getBoundingClientRect();
+      function buildLogoShape() {
+        // Desktop-only logo generation
+        const off = document.createElement('canvas');
+        const ctx2 = off.getContext('2d');
+        const text = "EVORIX";
+        let fontSize = Math.floor(Math.min(vw, vh) * 0.20);
+        ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+        let metrics = ctx2.measureText(text);
+        while ((metrics.width > vw * 0.8 || fontSize > vh * 0.25) && fontSize > 10) {
+          fontSize -= 2;
+          ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+          metrics = ctx2.measureText(text);
+        }
+        const w = Math.ceil(metrics.width);
+        const h = Math.ceil(fontSize * 1.2);
+        off.width = w; off.height = h;
+        ctx2.fillStyle = "#fff";
+        ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+        ctx2.fillText(text, 0, fontSize);
+        const data = ctx2.getImageData(0, 0, w, h).data;
+        const step = 6;
 
-      const center = window.innerHeight / 2;
-      const aboutCenter = aboutRect.top + aboutRect.height / 2;
-      const servicesCenter = servicesRect.top + servicesRect.height / 2;
-
-      // midpoint between the two sections
-      const midpoint = (aboutCenter + servicesCenter) / 2;
-
-      if (Math.abs(midpoint - center) < 240) {
-        mode = "logo";
-      } else {
-        mode = "free";
-      }
-    }
-
-    function drawParticle(p) {
-      const alpha = 0.26 + (p.size / 4) * 0.4;
-      ctx.fillStyle = mixColor(p.colorMix, alpha);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Animation Loop
-    let lastTime = performance.now();
-    let rafId = null;
-
-    function step(now) {
-      rafId = requestAnimationFrame(step);
-      const dt = Math.min(0.05, (now - lastTime) / 1000);
-      lastTime = now;
-
-      updateMode();
-
-      // Transition handling
-      if (previousMode !== mode) {
-        if (mode === "logo") {
-          assignLogoTargets();
-        } else if (mode === "free" && previousMode === "logo") {
-          // Burst
-          for (const p of particles) {
-            p.vx += (Math.random() - 0.5) * 2.2;
-            p.vy += (Math.random() - 0.5) * 2.2;
-            p.targetX = null;
-            p.targetY = null;
+        logoPoints = [];
+        const logoCenterX = vw * 0.5;
+        const logoCenterY = vh * 0.60;
+        for (let y = 0; y < h; y += step) {
+          for (let x = 0; x < w; x += step) {
+            const idx = (y * w + x) * 4;
+            if (data[idx + 3] > 128) {
+              logoPoints.push({ x: x + logoCenterX - w / 2, y: y + logoCenterY - h / 2 });
+            }
           }
         }
-        previousMode = mode;
       }
 
-      updatePointer(dt);
-      const speedFactor = getSpeedFactor();
+      // Initial logo build + resize hook
+      buildLogoShape();
+      window.addEventListener('resize', buildLogoShape);
 
-      ctx.clearRect(0, 0, vw, vh);
+      function createParticle() {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.random() * Math.max(vw, vh) * 0.6;
+        return {
+          x: vw / 2 + Math.cos(angle) * radius,
+          y: vh / 2 + Math.sin(angle) * radius,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          baseSpeed: BASE_SPEED * (0.5 + Math.random()),
+          size: 1.6 + Math.random() * 2.2,
+          colorMix: Math.random(),
+          targetX: null, targetY: null
+        };
+      }
 
-      const px = pointer.x;
-      const py = pointer.y;
-      const hasPointer = pointer.active;
-      const radius2 = INTERACTION_RADIUS * INTERACTION_RADIUS;
+      function buildParticles() {
+        particles = new Array(PARTICLE_COUNT);
+        for (let i = 0; i < PARTICLE_COUNT; i++) particles[i] = createParticle();
+      }
+      buildParticles(); // init
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
+      function assignLogoTargets() {
+        if (logoPoints.length === 0) return;
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const t = logoPoints[i % logoPoints.length];
+          p.targetX = t.x;
+          p.targetY = t.y;
+        }
+      }
 
-        if (mode === "logo" && p.targetX !== null) {
-          // Logo formation physics
-          const lerp = 0.14;
-          // Move towards target
-          p.x += (p.targetX - p.x) * lerp;
-          p.y += (p.targetY - p.y) * lerp;
+      function getSpeedFactor() {
+        const normalized = Math.min(Math.abs(scrollY) / 1200, 1);
+        return 1 + normalized * MAX_EXTRA_SPEED;
+      }
 
-          // Dampen velocity but keep it for pointer interaction
-          p.vx *= 0.92;
-          p.vy *= 0.92;
+      function updateMode() {
+        const aboutSection = document.getElementById('sobre-mi');
+        const servicesSection = document.getElementById('servicios');
+        if (!aboutSection || !servicesSection) { mode = "free"; return; }
+        const aboutRect = aboutSection.getBoundingClientRect();
+        const servicesRect = servicesSection.getBoundingClientRect();
+        const center = window.innerHeight / 2;
+        const midpoint = ((aboutRect.top + aboutRect.height / 2) + (servicesRect.top + servicesRect.height / 2)) / 2;
 
-          // Apply velocity (allows pointer to push particles)
+        if (Math.abs(midpoint - center) < 240) mode = "logo";
+        else mode = "free";
+      }
+
+      // Pointer Events (Desktop)
+      window.addEventListener('pointermove', e => {
+        pointer.targetX = e.clientX; pointer.targetY = e.clientY; pointer.active = true;
+      }, { passive: true });
+      window.addEventListener('pointerleave', () => pointer.active = false, { passive: true });
+      window.addEventListener('pointerdown', e => {
+        pointer.down = true; pointer.targetX = e.clientX; pointer.targetY = e.clientY;
+      }, { passive: true });
+      window.addEventListener('pointerup', () => pointer.down = false, { passive: true });
+
+      let lastTime = performance.now();
+
+      function step(now) {
+        rafId = requestAnimationFrame(step);
+        const dt = Math.min(0.05, (now - lastTime) / 1000);
+        lastTime = now;
+
+        updateMode();
+
+        // Mode switch handling
+        if (previousMode !== mode) {
+          if (mode === "logo") assignLogoTargets();
+          else if (mode === "free" && previousMode === "logo") {
+            // Burst
+            for (const p of particles) {
+              p.vx += (Math.random() - 0.5) * 2.2;
+              p.vy += (Math.random() - 0.5) * 2.2;
+              p.targetX = null; p.targetY = null;
+            }
+          }
+          previousMode = mode;
+        }
+
+        // Pointer trail
+        const lerp = 1 - Math.pow(1 - TRAIL_STICKINESS, dt * 60);
+        pointer.x += (pointer.targetX - pointer.x) * lerp;
+        pointer.y += (pointer.targetY - pointer.y) * lerp;
+
+        const speedFactor = getSpeedFactor();
+        ctx.clearRect(0, 0, vw, vh);
+
+        const px = pointer.x;
+        const py = pointer.y;
+        const radius2 = INTERACTION_RADIUS * INTERACTION_RADIUS;
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+
+          if (mode === "logo" && p.targetX !== null) {
+            // Logo physics
+            p.x += (p.targetX - p.x) * 0.14;
+            p.y += (p.targetY - p.y) * 0.14;
+            p.vx *= 0.92; p.vy *= 0.92;
+            p.x += p.vx; p.y += p.vy;
+
+          } else {
+            // Free physics
+            p.x += p.vx * p.baseSpeed * speedFactor;
+            p.y += p.vy * p.baseSpeed * speedFactor;
+            p.vx *= FRICTION; p.vy *= FRICTION;
+
+            // Cap
+            if (p.vx > 1.8) p.vx = 1.8; else if (p.vx < -1.8) p.vx = -1.8;
+            if (p.vy > 1.8) p.vy = 1.8; else if (p.vy < -1.8) p.vy = -1.8;
+
+            // Wrap
+            if (p.x < -20) p.x = vw + 20; if (p.x > vw + 20) p.x = -20;
+            if (p.y < -20) p.y = vh + 20; if (p.y > vh + 20) p.y = -20;
+          }
+
+          // Interact
+          if (pointer.active) {
+            const dx = px - p.x; const dy = py - p.y;
+            const dist2 = dx * dx + dy * dy;
+            if (dist2 < radius2 && dist2 > 0.01) {
+              const dist = Math.sqrt(dist2);
+              const force = INTERACTION_FORCE * (pointer.down ? 1.8 : 1.0) * (1 - dist / INTERACTION_RADIUS);
+              p.vx += (dx / dist) * force;
+              p.vy += (dy / dist) * force;
+            }
+          }
+
+          // Draw
+          const alpha = 0.26 + (p.size / 4) * 0.4;
+          ctx.fillStyle = mixColor(p.colorMix, alpha);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      rafId = requestAnimationFrame(step);
+    } // end startDesktopEngine
+
+
+    // -------------------------------------------------------------
+    // MOBILE ENGINE (New Optimized Logic)
+    // -------------------------------------------------------------
+    function startMobileEngine() {
+      // Mobile Config
+      const MOBILE_PARTICLE_COUNT = 55;
+      const MOBILE_TOUCH_FORCE = 0.20;
+      const MOBILE_SCROLL_FORCE = 0.05;
+      const MOBILE_FRICTION = 0.94;
+
+      let lastScrollY = window.scrollY;
+      let touchX = null, touchY = null, touchActive = false;
+
+      // Create mobile particles
+      function createMobileParticle() {
+        return {
+          x: Math.random() * vw,
+          y: Math.random() * vh,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: 1.4 + Math.random() * 1.6, // 1.4 - 3.0
+          hueShift: Math.random()
+        };
+      }
+
+      function buildMobileParticles() {
+        particles = new Array(MOBILE_PARTICLE_COUNT);
+        for (let i = 0; i < MOBILE_PARTICLE_COUNT; i++) {
+          particles[i] = createMobileParticle();
+        }
+      }
+      buildMobileParticles();
+
+      // Mobile Events
+      function onPointerMove(e) {
+        touchX = e.clientX;
+        touchY = e.clientY;
+        touchActive = true;
+      }
+      function onPointerEnd() {
+        touchActive = false;
+      }
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerdown', onPointerMove, { passive: true });
+      window.addEventListener('pointerup', onPointerEnd, { passive: true });
+      window.addEventListener('pointercancel', onPointerEnd, { passive: true });
+
+      let lastTime = performance.now();
+
+      function step(now) {
+        rafId = requestAnimationFrame(step);
+
+        // Time & Scroll delta
+        const dt = Math.min(0.06, (now - lastTime) / 1000);
+        lastTime = now;
+
+        const currentScroll = window.scrollY || 0;
+        const scrollDelta = currentScroll - lastScrollY;
+        lastScrollY = currentScroll;
+
+        ctx.clearRect(0, 0, vw, vh);
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+
+          // 1. Idle Drift (very subtle noise)
+          p.vx += (Math.random() - 0.5) * 0.01;
+          p.vy += (Math.random() - 0.5) * 0.01;
+
+          // 2. Touch Attraction
+          if (touchActive && touchX !== null) {
+            const dx = touchX - p.x;
+            const dy = touchY - p.y;
+            // Simple linear pull
+            p.vx += dx * MOBILE_TOUCH_FORCE * dt * 0.05;
+            p.vy += dy * MOBILE_TOUCH_FORCE * dt * 0.05;
+          }
+
+          // 3. Scroll Influence (vertical drift)
+          if (Math.abs(scrollDelta) > 0.1) {
+            p.vy += scrollDelta * MOBILE_SCROLL_FORCE * 0.1;
+          }
+
+          // 4. Apply Velocity & Friction
+          p.vx *= MOBILE_FRICTION;
+          p.vy *= MOBILE_FRICTION;
+
           p.x += p.vx;
           p.y += p.vy;
 
-        } else {
-          // Free mode physics
-          p.x += p.vx * p.baseSpeed * speedFactor;
-          p.y += p.vy * p.baseSpeed * speedFactor;
+          // 5. Wrap
+          if (p.x < -10) p.x = vw + 10;
+          if (p.x > vw + 10) p.x = -10;
+          if (p.y < -10) p.y = vh + 10;
+          if (p.y > vh + 10) p.y = -10;
 
-          // Friction + Speed Limit
-          p.vx *= FRICTION;
-          p.vy *= FRICTION;
-          const maxVel = 1.8;
-          if (p.vx > maxVel) p.vx = maxVel;
-          if (p.vx < -maxVel) p.vx = -maxVel;
-          if (p.vy > maxVel) p.vy = maxVel;
-          if (p.vy < -maxVel) p.vy = -maxVel;
-
-          // Wrap around edges
-          const margin = 20;
-          if (p.x < -margin) p.x = vw + margin;
-          if (p.x > vw + margin) p.x = -margin;
-          if (p.y < -margin) p.y = vh + margin;
-          if (p.y > vh + margin) p.y = -margin;
+          // 6. Draw
+          const alpha = 0.3 + (p.size / 3.0) * 0.3;
+          ctx.fillStyle = mixColor(p.hueShift, alpha);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
         }
-
-        // Pointer attraction (applies in both modes)
-        if (hasPointer) {
-          const dx = px - p.x;
-          const dy = py - p.y;
-          const dist2 = dx * dx + dy * dy;
-          if (dist2 < radius2 && dist2 > 0.01) {
-            const dist = Math.sqrt(dist2);
-            const force = INTERACTION_FORCE * (pointer.down ? 1.8 : 1.0) * (1 - dist / INTERACTION_RADIUS);
-            p.vx += (dx / dist) * force;
-            p.vy += (dy / dist) * force;
-          }
-        }
-
-        drawParticle(p);
       }
+
+      rafId = requestAnimationFrame(step);
+    } // end startMobileEngine
+
+
+    // -------------------------------------------------------------
+    // INIT SWITCH
+    // -------------------------------------------------------------
+    if (initialIsMobile) {
+      startMobileEngine();
+    } else {
+      startDesktopEngine();
     }
 
-    function start() {
-      if (!rafId) {
-        lastTime = performance.now();
-        rafId = requestAnimationFrame(step);
-      }
-    }
-    function stop() {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-    }
+    // Expose control
+    window.__evorixPixelEngine = {
+      stop: () => { if (rafId) cancelAnimationFrame(rafId); },
+      rebuild: () => { /* No-op or reload logic could go here */ }
+    };
 
-    start();
-
-    // Debug API
-    window.__evorixPixelEngine = { start, stop, rebuild: buildParticles };
-    window.addEventListener('beforeunload', stop, { passive: true });
   })();
 
   // =========================================
