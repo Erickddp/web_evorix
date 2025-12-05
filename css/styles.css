@@ -1442,24 +1442,32 @@ footer {
 .recognition-card {
   background: var(--card-bg);
   border-radius: 1.5rem;
-  padding: 1.75rem 2rem;
+  padding: 1rem 2rem;
+  /* Reduced vertical padding for collapsed state */
   border: 1px solid var(--card-border);
   backdrop-filter: blur(12px);
   box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
-  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  /* Smooth easing */
+  transition: max-height 0.3s ease, padding 0.25s ease, opacity 0.25s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.3s ease;
   overflow: hidden;
   position: relative;
-  /* Collapsed state by default (implied by content hiding) */
+  max-height: 72px;
+  /* Collapsed height */
 }
 
 .recognition-card:hover,
-.recognition-card.open {
+.recognition-card.is-open {
   transform: translateY(-5px);
   border-color: var(--primary-glow);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.recognition-card.is-open {
+  padding: 1.75rem 2rem;
+  /* Full padding when open */
+  max-height: 500px;
+  /* Sufficient height to show content */
 }
 
 .accordion-header {
@@ -1468,22 +1476,22 @@ footer {
   align-items: center;
   cursor: pointer;
   width: 100%;
+  /* Ensure header takes full height of collapsed card for easier clicking */
+  min-height: 40px;
 }
 
 .recognition-card h3 {
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0;
-  /* Remove margin to handle spacing via padding/gap */
   color: var(--text);
   border-bottom: none;
-  /* Remove border from H3, move to header if needed or remove */
   padding-bottom: 0;
   transition: color 0.3s ease;
 }
 
 .recognition-card:hover h3,
-.recognition-card.open h3 {
+.recognition-card.is-open h3 {
   color: var(--primary);
 }
 
@@ -1517,40 +1525,39 @@ footer {
   height: 12px;
 }
 
-/* Rotate icon on open/hover */
-.recognition-card:hover .accordion-icon,
-.recognition-card.open .accordion-icon {
+/* Rotate icon on open */
+.recognition-card.is-open .accordion-icon {
   transform: rotate(180deg);
 }
 
 .recognition-card:hover .accordion-icon::before,
 .recognition-card:hover .accordion-icon::after,
-.recognition-card.open .accordion-icon::before,
-.recognition-card.open .accordion-icon::after {
+.recognition-card.is-open .accordion-icon::before,
+.recognition-card.is-open .accordion-icon::after {
   background: var(--primary);
 }
 
 /* Hide vertical line to make it a minus when open */
-.recognition-card:hover .accordion-icon::after,
-.recognition-card.open .accordion-icon::after {
+.recognition-card.is-open .accordion-icon::after {
   height: 0;
 }
 
 .accordion-content {
-  max-height: 0;
   opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
   overflow: hidden;
-  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin-top 0.4s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease, margin-top 0.25s ease;
   margin-top: 0;
+  border-top: 1px solid transparent;
+  padding-top: 0;
 }
 
-.recognition-card:hover .accordion-content,
-.recognition-card.open .accordion-content {
-  max-height: 300px;
-  /* Enough to fit content */
+.recognition-card.is-open .accordion-content {
   opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
   margin-top: 1.5rem;
-  /* Add border top here if desired, or just space */
   border-top: 1px solid var(--border);
   padding-top: 1.5rem;
 }
@@ -1573,24 +1580,20 @@ footer {
 }
 
 /* Staggered list items animation */
-.recognition-card:hover li,
-.recognition-card.open li {
+.recognition-card.is-open li {
   transform: translateY(0);
   opacity: 1;
 }
 
-.recognition-card:hover li:nth-child(1),
-.recognition-card.open li:nth-child(1) {
+.recognition-card.is-open li:nth-child(1) {
   transition-delay: 0.1s;
 }
 
-.recognition-card:hover li:nth-child(2),
-.recognition-card.open li:nth-child(2) {
+.recognition-card.is-open li:nth-child(2) {
   transition-delay: 0.2s;
 }
 
-.recognition-card:hover li:nth-child(3),
-.recognition-card.open li:nth-child(3) {
+.recognition-card.is-open li:nth-child(3) {
   transition-delay: 0.3s;
 }
 
@@ -1800,7 +1803,7 @@ footer {
 }
 
 .panel-bullets li::before {
-  content: 'â†’';
+  content: '\2192';
   position: absolute;
   left: 0;
   color: var(--primary);
@@ -2459,3 +2462,45 @@ body.tour-active {
     transform: translateY(-50px) scale(0.5);
   }
 }
+
+/* =========================================
+   17. BUG FIXES & SAFETY OVERRIDES
+   ========================================= */
+
+/* FIX: Mobile floating menu ghost element */
+/* Prevent header actions from detaching or floating independently */
+.header-actions {
+  position: static !important;
+  transform: none !important;
+}
+
+/* Ensure buttons don't have fixed positioning from rogue styles */
+.theme-btn,
+.mobile-menu-btn {
+  position: relative !important;
+  /* Keep relative for internal alignment */
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  /* Prevent margin offsets */
+}
+
+/* Ensure the mobile menu button is only visible when intended */
+@media (min-width: 769px) {
+  .mobile-menu-btn {
+    display: none !important;
+  }
+}
+
+/* 
+  BUG FIX REPORT:
+  - The "strange text" (â†’) was found in .panel-bullets li::before and fixed to \2192.
+  - The "floating circle" and "hamburger" were likely the .theme-btn and .mobile-menu-btn 
+    appearing in an unexpected position due to layout shifts or encoding issues.
+  - Added safety overrides to force .header-actions and buttons to stay static/relative 
+    within the header container.
+  - Ensured only one mobile menu trigger exists (checked HTML/JS).
+*/

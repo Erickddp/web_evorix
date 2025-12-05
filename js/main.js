@@ -694,32 +694,47 @@
   }
 
   // =========================================
-  // 11. RECOGNITIONS ACCORDION (Mobile)
+  // 11. RECOGNITIONS ACCORDION (Mobile & Desktop)
   // =========================================
   const accordionCards = document.querySelectorAll('.accordion-card');
 
   accordionCards.forEach(card => {
     const header = card.querySelector('.accordion-header');
+
+    // Click behavior (Toggle)
     if (header) {
       header.addEventListener('click', (e) => {
-        // Prevent default if it's a link (though it's a div/header here)
         e.preventDefault();
 
-        const isOpen = card.classList.contains('open');
-
-        // Close others (Accordion behavior)
+        // Optional: Close others (Accordion behavior)
+        // This ensures only one is open at a time, which is cleaner on mobile
         accordionCards.forEach(c => {
-          if (c !== card) c.classList.remove('open');
+          if (c !== card) c.classList.remove('is-open');
         });
 
         // Toggle current
-        if (isOpen) {
-          card.classList.remove('open');
-        } else {
-          card.classList.add('open');
-        }
+        card.classList.toggle('is-open');
       });
     }
+
+    // Desktop Hover Behavior
+    // Only for devices with fine pointer (mouse)
+    card.addEventListener('mouseenter', () => {
+      if (window.matchMedia('(pointer: fine)').matches) {
+        // Close others to keep it clean on desktop too? 
+        // Or just open this one. Let's just open this one.
+        // Actually, if we want "accordion" style, maybe close others on hover too?
+        // The prompt didn't strictly ask for accordion on desktop, but "Opcional... en móvil".
+        // Let's just add is-open.
+        card.classList.add('is-open');
+      }
+    });
+
+    card.addEventListener('mouseleave', () => {
+      if (window.matchMedia('(pointer: fine)').matches) {
+        card.classList.remove('is-open');
+      }
+    });
   });
 
   // =========================================
