@@ -13,9 +13,9 @@
     root.setAttribute('data-theme', savedTheme);
   }
 
-  const themeBtn = document.querySelector('[data-theme-toggle]');
-  if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
+  const themeBtns = document.querySelectorAll('[data-theme-toggle]');
+  themeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
       const currentTheme = root.getAttribute('data-theme');
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
@@ -25,7 +25,7 @@
       // Dispatch event for canvas update
       window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: newTheme } }));
     });
-  }
+  });
 
   // =========================================
   // 2. HEADER SCROLL & ACTIVE STATE
@@ -58,31 +58,34 @@
   // Active Section Observer
   const sections = document.querySelectorAll('section[id]');
   const navIcons = document.querySelectorAll('.nav-icon[data-target]');
+  const mobileNavLinks = document.querySelectorAll('.mobile-nav-item');
 
-  if (sections.length > 0 && navIcons.length > 0) {
+  if (sections.length > 0) {
     const activeObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Clean active state
-          // Note: This simple logic might flicker if multiple sections are visible.
-          // Better to highlight the one most visible or just the entry that triggered.
-          // For simplicity we just add active to intersecting and remove from others? 
-          // IntersectionObserver fires for ALL changes.
-          if (entry.intersectionRatio > 0) {
-            const id = entry.target.getAttribute('id');
-            navIcons.forEach(icon => {
-              if (icon.dataset.target === `#${id}`) {
-                icon.classList.add('nav-icon--active');
-              } else {
-                icon.classList.remove('nav-icon--active');
-              }
-            });
-          }
+        if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+          const id = entry.target.getAttribute('id');
+          // Desktop Icons
+          navIcons.forEach(icon => {
+            if (icon.dataset.target === `#${id}`) {
+              icon.classList.add('nav-icon--active');
+            } else {
+              icon.classList.remove('nav-icon--active');
+            }
+          });
+          // Mobile Links
+          mobileNavLinks.forEach(link => {
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
         }
       });
     }, {
       rootMargin: '-20% 0px -60% 0px',
-      threshold: 0
+      threshold: 0.1
     });
 
     sections.forEach(section => activeObserver.observe(section));
@@ -865,41 +868,57 @@
   // =========================================
   // 11. RECOGNITIONS ACCORDION (Mobile & Desktop)
   // =========================================
-  const accordionCards = document.querySelectorAll('.accordion-card');
+  // =========================================
+  // 11. RECOGNITIONS ACCORDION (Mobile & Desktop)
+  // =========================================
+  function initRecognitionsAccordion() {
+    const accordionCards = document.querySelectorAll('.recognition-card.accordion-card');
 
-  accordionCards.forEach(card => {
-    const header = card.querySelector('.accordion-header');
+    if (accordionCards.length === 0) {
+      console.warn('EVORIX: No accordion cards found.');
+      return;
+    }
 
-    // Click behavior (Toggle)
-    if (header) {
+    accordionCards.forEach((card, index) => {
+      const header = card.querySelector('.accordion-header');
+
+      if (!header) return;
+
+      // Force pointer cursor for visual feedback
+      header.style.cursor = 'pointer';
+
       header.addEventListener('click', (e) => {
-        e.preventDefault();
+        // Debug log for mobile verification
+        console.log("accordion click", index);
 
-        // Optional: Close others (Accordion behavior)
-        // This ensures only one is open at a time, which is cleaner on mobile
+        // Don't preventDefault() unless necessary
+        // e.preventDefault(); 
+
+        const wasOpen = card.classList.contains('is-open');
+
+        // Accordion behavior: Close others
         accordionCards.forEach(c => {
-          if (c !== card) c.classList.remove('is-open');
+          if (c !== card) {
+            c.classList.remove('is-open');
+          }
         });
 
-        // Toggle current
-        card.classList.toggle('is-open');
-      });
-    }
-
-    // Desktop Hover Behavior
-    // Only for devices with fine pointer (mouse)
-    if (window.matchMedia('(hover: hover)').matches) {
-      card.addEventListener('mouseenter', () => {
-        card.classList.add('is-open');
-      });
-
-      card.addEventListener('mouseleave', () => {
-        if (window.matchMedia('(pointer: fine)').matches) {
+        // Toggle handling
+        if (wasOpen) {
           card.classList.remove('is-open');
+        } else {
+          card.classList.add('is-open');
         }
       });
-    }
-  });
+    });
+  }
+
+  // Initialize immediately
+  initRecognitionsAccordion();
+
+  // EVORIX accordion mobile fix:
+  // - Click handlers bound explicitly to .accordion-header with debug logs.
+  // - is-open toggle logic simplified and robust for touch.
 
   // =========================================
   // 12. EVORIX GUIDED TOUR
@@ -1135,6 +1154,62 @@
 
   // optional: start in the middle so user can scroll both sides
   viewport.scrollLeft = baseWidth * 0.5;
+  // =========================================
+  // 10. MOBILE MENU LOGIC
+  // =========================================
+  function initMobileMenu() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+    const mobileMenuClose = document.querySelector('.mobile-menu-close');
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    const mobileCta = document.querySelector('.mobile-cta');
+
+    if (!mobileMenuBtn || !mobileMenuOverlay) {
+      console.log('EVORIX: Mobile menu elements missing.', { btn: !!mobileMenuBtn, overlay: !!mobileMenuOverlay });
+      return;
+    }
+
+    function toggleMobileMenu(show) {
+      if (show) {
+        mobileMenuOverlay.classList.add('is-open');
+        document.body.classList.add('mobile-menu-open');
+        mobileMenuBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      } else {
+        mobileMenuOverlay.classList.remove('is-open');
+        document.body.classList.remove('mobile-menu-open');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    }
+
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMobileMenu(true);
+    });
+
+    if (mobileMenuClose) {
+      mobileMenuClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileMenu(false);
+      });
+    }
+
+    // Close menu when clicking a link
+    const allLinks = [...mobileNavItems];
+    if (mobileCta) allLinks.push(mobileCta);
+
+    allLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        toggleMobileMenu(false);
+      });
+    });
+  }
+
+  // Initialize immediately
+  initMobileMenu();
 })();
 
 /*

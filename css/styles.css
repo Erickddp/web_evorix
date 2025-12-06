@@ -2028,7 +2028,10 @@ footer {
   cursor: pointer;
   width: 100%;
   /* Ensure header takes full height of collapsed card for easier clicking */
-  min-height: 40px;
+  min-height: 44px;
+  pointer-events: auto;
+  z-index: 10;
+  position: relative;
 }
 
 .recognition-card h3 {
@@ -2094,20 +2097,24 @@ footer {
 }
 
 .accordion-content {
+  display: none;
+  /* Changed from just opacity/overflow hidden to strictly none based on user request */
   opacity: 0;
   transform: translateY(-4px);
-  pointer-events: none;
   overflow: hidden;
-  transition: opacity 0.25s ease, transform 0.25s ease, margin-top 0.25s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   margin-top: 0;
   border-top: 1px solid transparent;
   padding-top: 0;
+  color: var(--text);
+  /* Ensure text color is explicit */
 }
 
 .recognition-card.is-open .accordion-content {
+  display: block;
+  /* Ensure it is part of layout */
   opacity: 1;
   transform: translateY(0);
-  pointer-events: auto;
   margin-top: 1.5rem;
   border-top: 1px solid var(--border);
   padding-top: 1.5rem;
@@ -2125,29 +2132,12 @@ footer {
   margin-bottom: 0.75rem;
   position: relative;
   padding-left: 1.5rem;
-  transform: translateY(10px);
-  opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-/* Staggered list items animation */
-.recognition-card.is-open li {
-  transform: translateY(0);
+  /* Removed complex transform/opacity on LI to reduce points of failure for visibility */
   opacity: 1;
+  transform: none;
 }
 
-.recognition-card.is-open li:nth-child(1) {
-  transition-delay: 0.1s;
-}
-
-.recognition-card.is-open li:nth-child(2) {
-  transition-delay: 0.2s;
-}
-
-.recognition-card.is-open li:nth-child(3) {
-  transition-delay: 0.3s;
-}
-
+/* Re-add simplified li animations if needed, but prioritizing visibility first */
 .recognition-card li::before {
   content: '•';
   position: absolute;
@@ -2158,6 +2148,9 @@ footer {
   line-height: 1;
   top: -2px;
 }
+
+/* EVORIX recognitions accordion visibility fix:
+   - Ensures .accordion-content text is visible when .is-open is applied. */
 
 /* Tablet: 2 columns */
 @media (min-width: 720px) {
@@ -3086,4 +3079,268 @@ body.tour-active {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* =========================================
+   MOBILE HEADER & MENU RE-DESIGN
+   ========================================= */
+
+/* Default: Hidden on Desktop */
+.mobile-menu-btn {
+  display: none;
+}
+
+.mobile-menu-overlay {
+  display: none;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+
+  /* 1. Hide Desktop Elements */
+  .evorix-nav,
+  .evorix-header-actions {
+    display: none !important;
+  }
+
+  /* 2. Show Mobile Elements */
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: auto;
+    /* Push to right if needed */
+  }
+
+  .mobile-menu-btn:active {
+    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .mobile-menu-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* 3. New Overlay Menu */
+  .mobile-menu-overlay {
+    /* Layout & Position */
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    /* Top level */
+    padding: 24px 24px 32px;
+
+    /* Visuals */
+    background: var(--bg);
+    /* Fallback */
+    background: rgba(5, 10, 20, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    /* Animation State (Hidden) */
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.98) translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .mobile-menu-overlay.is-open {
+    /* Animation State (Visible) */
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1) translateY(0);
+  }
+
+  /* Internal Layout */
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-menu-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .mobile-menu-close {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .mobile-menu-close:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .mobile-menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .mobile-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    color: inherit;
+    transition: background 0.2s ease;
+  }
+
+  /* Active / Hover States */
+  .mobile-nav-item:active,
+  .mobile-nav-item.active {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary);
+    border-color: rgba(37, 99, 235, 0.2);
+    transform: scale(0.98);
+  }
+
+  .mobile-nav-item:active .mobile-nav-icon,
+  .mobile-nav-item.active .mobile-nav-icon {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .mobile-menu-footer {
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .mobile-cta {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+}
+
+/* ==== EVORIX: FIX VISIBILIDAD ACORDEÓN RECONOCIMIENTOS ==== */
+
+/* Estado base: tarjeta cerrada */
+.recognition-card .accordion-content {
+  display: none;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.25s ease,
+    opacity 0.25s ease;
+}
+
+/* Estado abierto: mostrar texto SIEMPRE */
+.recognition-card.is-open .accordion-content {
+  display: block;
+  max-height: 999px;
+  /* suficiente para todo el texto */
+  opacity: 1;
+}
+
+/* Aseguramos color legible del texto */
+.recognition-card .accordion-content,
+.recognition-card .accordion-content p,
+.recognition-card .accordion-content li {
+  color: var(--text-primary, #e5f0ff);
+}
+
+/* ===== EVORIX FIX: Terminal estable (no empuja el layout) ===== */
+
+.evoapp-terminal {
+  height: 260px;
+  /* Ajusta según lo que te guste visualmente */
+  overflow: hidden;
+  position: relative;
+}
+
+.terminal-body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.terminal-code {
+  height: 100%;
+  overflow-y: auto;
+  /* Scroll interno */
+  overscroll-behavior: contain;
+}
+
+/* ===== EVORIX FIX: Centrar encabezado Sobre mí en móvil ===== */
+
+@media (max-width: 768px) {
+  #sobre-mi .about-text {
+    text-align: center !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #sobre-mi .about-text h2 {
+    width: 100%;
+    text-align: center !important;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #sobre-mi .about-text p {
+    text-align: center !important;
+  }
+}
+
+/* EVORIX – Centrado de cabecera en Formación y Reconocimientos */
+#reconocimientos .container {
+  text-align: center;
+}
+
+#reconocimientos h2,
+#reconocimientos .section-subtitle {
+  width: 100%;
+  text-align: center;
+  margin-left: 0;
+  margin-right: 0;
 }
