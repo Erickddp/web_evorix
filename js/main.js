@@ -7,23 +7,28 @@
   // 1. THEME TOGGLE
   // =========================================
   const root = document.documentElement;
-  const savedTheme = localStorage.getItem('theme');
-
-  if (savedTheme) {
-    root.setAttribute('data-theme', savedTheme);
+  // Load saved theme on startup
+  const savedTheme = localStorage.getItem("evorix-theme");
+  if (savedTheme === "light" || savedTheme === "dark") {
+    root.setAttribute("data-theme", savedTheme);
   }
 
-  const themeBtns = document.querySelectorAll('[data-theme-toggle]');
-  themeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const currentTheme = root.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  // Add click handler for .theme-toggle-btn and existing toggles
+  const themeBtns = document.querySelectorAll(".theme-toggle-btn, [data-theme-toggle]");
+  themeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const current = root.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
 
-      root.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
+      root.setAttribute("data-theme", next);
+      localStorage.setItem("evorix-theme", next);
 
       // Dispatch event for canvas update
-      window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: newTheme } }));
+      window.dispatchEvent(new CustomEvent('theme-changed', {
+        detail: {
+          theme: next
+        }
+      }));
     });
   });
 
@@ -1314,3 +1319,68 @@ MOBILE EXPERIENCE & ANIMATION SUMMARY (STEP 3)
    - Debounced scroll/resize listeners in JS.
    - Mobile particle count capped at 75 for 60fps stability.
 */
+
+// =========================================
+// 14. GLOBAL MOBILE MENU HANDLER (FIX)
+// =========================================
+(function () {
+  const mobileBtn = document.querySelector(".mobile-menu-btn");
+  // Target both the requested nav and the actual overlay for compatibility
+  const nav = document.querySelector(".evorix-nav");
+  const overlay = document.querySelector(".mobile-menu-overlay");
+  const closeBtn = document.querySelector(".mobile-menu-close");
+
+  if (mobileBtn) {
+    mobileBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // Prevent conflicts
+
+      // 1. User requested logic: Toggle .open on .evorix-nav
+      if (nav) {
+        nav.classList.toggle("open");
+      }
+
+      // 2. Reality fix: Toggle .is-open on .mobile-menu-overlay
+      if (overlay) {
+        // Check current state from overlay to ensure sync
+        const isOpen = overlay.classList.contains("is-open");
+        if (isOpen) {
+          overlay.classList.remove("is-open");
+          document.body.style.overflow = '';
+        } else {
+          overlay.classList.add("is-open");
+          document.body.style.overflow = 'hidden';
+        }
+      }
+
+      // 3. Update ARIA
+      const expanded = mobileBtn.getAttribute("aria-expanded") === "true";
+      mobileBtn.setAttribute("aria-expanded", (!expanded).toString());
+    });
+  }
+
+  // Ensure close button works for the overlay
+  if (closeBtn && overlay) {
+    closeBtn.addEventListener("click", () => {
+      overlay.classList.remove("is-open");
+      document.body.style.overflow = '';
+      if (mobileBtn) mobileBtn.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  // Close on link click
+  if (overlay) {
+    const links = overlay.querySelectorAll('a, .mobile-nav-item');
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        overlay.classList.remove("is-open");
+        document.body.style.overflow = '';
+        if (mobileBtn) mobileBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+})();
+
+
+
+
+
