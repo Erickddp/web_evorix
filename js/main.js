@@ -1237,62 +1237,7 @@
       if (isMobile) setupMobile();
     }
   }
-  // =========================================
-  // 10. MOBILE MENU LOGIC
-  // =========================================
-  function initMobileMenu() {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
-    const mobileMenuClose = document.querySelector('.mobile-menu-close');
-    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
-    const mobileCta = document.querySelector('.mobile-cta');
-
-    if (!mobileMenuBtn || !mobileMenuOverlay) {
-      console.log('EVORIX: Mobile menu elements missing.', { btn: !!mobileMenuBtn, overlay: !!mobileMenuOverlay });
-      return;
-    }
-
-    function toggleMobileMenu(show) {
-      if (show) {
-        mobileMenuOverlay.classList.add('is-open');
-        document.body.classList.add('mobile-menu-open');
-        mobileMenuBtn.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
-      } else {
-        mobileMenuOverlay.classList.remove('is-open');
-        document.body.classList.remove('mobile-menu-open');
-        mobileMenuBtn.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      }
-    }
-
-    mobileMenuBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleMobileMenu(true);
-    });
-
-    if (mobileMenuClose) {
-      mobileMenuClose.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMobileMenu(false);
-      });
-    }
-
-    // Close menu when clicking a link
-    const allLinks = [...mobileNavItems];
-    if (mobileCta) allLinks.push(mobileCta);
-
-    allLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        toggleMobileMenu(false);
-      });
-    });
-  }
-
-  // Initialize immediately
-  initMobileMenu();
+  // (Old mobile menu logic removed to prevent conflicts)
 })();
 
 /*
@@ -1321,63 +1266,38 @@ MOBILE EXPERIENCE & ANIMATION SUMMARY (STEP 3)
 */
 
 // =========================================
-// 14. GLOBAL MOBILE MENU HANDLER (FIX)
+// 15. MOBILE MENU (SIMPLE TOGGLE)
 // =========================================
-(function () {
-  const mobileBtn = document.querySelector(".mobile-menu-btn");
-  // Target both the requested nav and the actual overlay for compatibility
-  const nav = document.querySelector(".evorix-nav");
-  const overlay = document.querySelector(".mobile-menu-overlay");
-  const closeBtn = document.querySelector(".mobile-menu-close");
+(function setupMobileMenu() {
+  const mobileBtn = document.querySelector('.mobile-menu-btn');
+  const nav = document.querySelector('.evorix-nav');
 
-  if (mobileBtn) {
-    mobileBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent conflicts
+  if (!mobileBtn || !nav) return;
 
-      // 1. User requested logic: Toggle .open on .evorix-nav
-      if (nav) {
-        nav.classList.toggle("open");
-      }
+  // 1. Toggle Menu
+  mobileBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // prevent bubbling if needed
+    const isOpen = nav.classList.toggle('open');
+    mobileBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
 
-      // 2. Reality fix: Toggle .is-open on .mobile-menu-overlay
-      if (overlay) {
-        // Check current state from overlay to ensure sync
-        const isOpen = overlay.classList.contains("is-open");
-        if (isOpen) {
-          overlay.classList.remove("is-open");
-          document.body.style.overflow = '';
-        } else {
-          overlay.classList.add("is-open");
-          document.body.style.overflow = 'hidden';
-        }
-      }
+  // 2. Close menu when a nav link is clicked
+  nav.addEventListener('click', (event) => {
+    // Check if clicked element is a link or inside a link
+    const link = event.target.closest('a');
+    if (link && nav.classList.contains('open')) {
+      nav.classList.remove('open');
+      mobileBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
 
-      // 3. Update ARIA
-      const expanded = mobileBtn.getAttribute("aria-expanded") === "true";
-      mobileBtn.setAttribute("aria-expanded", (!expanded).toString());
-    });
-  }
-
-  // Ensure close button works for the overlay
-  if (closeBtn && overlay) {
-    closeBtn.addEventListener("click", () => {
-      overlay.classList.remove("is-open");
-      document.body.style.overflow = '';
-      if (mobileBtn) mobileBtn.setAttribute("aria-expanded", "false");
-    });
-  }
-
-  // Close on link click
-  if (overlay) {
-    const links = overlay.querySelectorAll('a, .mobile-nav-item');
-    links.forEach(link => {
-      link.addEventListener('click', () => {
-        overlay.classList.remove("is-open");
-        document.body.style.overflow = '';
-        if (mobileBtn) mobileBtn.setAttribute("aria-expanded", "false");
-      });
-    });
-  }
+  // 3. Reset state on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && nav.classList.contains('open')) {
+      nav.classList.remove('open');
+      mobileBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
 })();
 
 

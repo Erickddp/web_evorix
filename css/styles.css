@@ -3059,71 +3059,63 @@ body.tour-active {
 }
 
 /* Mobile Styles */
+/* Mobile Styles */
 @media (max-width: 768px) {
 
-  /* 1. Hide Desktop Elements by default */
-  .evorix-nav {
-    display: none;
+  /* 1. Remove Mobile Menu & Nav completely */
+  .mobile-menu-btn {
+    display: none !important;
   }
 
+  .evorix-nav {
+    display: none !important;
+  }
+
+  .evorix-nav.open {
+    display: none !important;
+  }
+
+  .mobile-menu-overlay {
+    display: none !important;
+  }
+
+  /* 2. Hide Contact Button (Keep only Theme Toggle) */
   .evorix-header-actions .btn-contact-cta {
     display: none;
   }
 
-  /* 2. Show Mobile Elements */
-  .mobile-menu-btn {
-    display: flex;
-    /* Styles are handled by global .evorix-header-actions button rule, 
-       but we ensure visibility here */
-  }
-
-  /* 3. EVORIX-NAV MOBILE OPEN STATE */
-  .evorix-nav.open {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    position: fixed;
-    top: 70px;
-    /* header height */
-    left: 0;
-    right: 0;
-    padding: 1.5rem;
-    background: var(--surface);
-    /* Default dark surface */
-    backdrop-filter: blur(12px);
-    z-index: 9998;
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  }
-
-  /* Light mode override for nav background if needed, 
-     but user asked for "--body-bg" or equivalent. 
-     Using --surface ensures it matches the theme. */
-
-  .evorix-nav.open a,
-  .evorix-nav.open button {
-    color: var(--text);
-    font-size: 1rem;
-    text-align: left;
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    border: none;
+  /* 3. Adjust Header Actions Container */
+  .evorix-header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-radius: 8px;
-    transition: background 0.2s;
+    gap: 0.75rem;
   }
 
-  .evorix-nav.open a:hover,
-  .evorix-nav.open button:hover {
-    background: rgba(255, 255, 255, 0.05);
+  /* 4. Theme Toggle Compact Style (Mobile Specific) */
+  .theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: inherit;
+    padding: 0;
   }
 
-  /* Disable the separate overlay if not used */
-  .mobile-menu-overlay {
-    display: none !important;
+  .theme-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+  }
+
+  /* 5. Ensure header stays above canvas */
+  .evorix-header {
+    position: relative;
+    z-index: 9999;
   }
 }
 
@@ -3311,4 +3303,46 @@ html[data-theme="light"] .service-pill.active {
 /* Ensure sticky header keeps its context */
 .evorix-header {
   position: sticky;
+}
+
+
+/* =========================== */
+/* FIX: Light Mode - Panel Titles */
+/* =========================== */
+
+html[data-theme="light"] .service-detail-panel .panel-header h3,
+html[data-theme="light"] #panel-title {
+  color: #0f172a !important;
+  /* Negro suave profesional */
+}
+
+/* Intro text */
+html[data-theme="light"] .service-detail-panel .panel-header .panel-intro {
+  color: #334155 !important;
+}
+
+/* Bullets */
+html[data-theme="light"] .service-detail-panel .panel-bullets li {
+  color: #334155 !important;
+}
+
+/* Prices */
+html[data-theme="light"] .service-detail-panel .price-tag .price-label,
+html[data-theme="light"] .service-detail-panel .price-tag .price-value {
+  color: #0f172a !important;
+}
+
+
+/* FIX DEFINITIVO: Panel Services – Light Mode */
+html[data-theme="light"] h3#panel-title {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .service-detail-panel .panel-header .panel-intro,
+html[data-theme="light"] .service-detail-panel .panel-bullets li {
+  color: #334155 !important;
+  -webkit-text-fill-color: #334155 !important;
+  text-shadow: none !important;
 }
