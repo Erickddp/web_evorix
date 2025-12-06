@@ -247,34 +247,76 @@
       const pointer = { x: vw / 2, y: vh / 2, targetX: vw / 2, targetY: vh / 2, active: false, down: false };
 
       function buildLogoShape() {
-        // Desktop-only logo generation
+        const text = "EVORIX";
+        // Desktop check as requested
+        const isDesktop = vw >= 900;
+
         const off = document.createElement('canvas');
         const ctx2 = off.getContext('2d');
-        const text = "EVORIX";
-        let fontSize = Math.floor(Math.min(vw, vh) * 0.20);
-        ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
-        let metrics = ctx2.measureText(text);
-        while ((metrics.width > vw * 0.8 || fontSize > vh * 0.25) && fontSize > 10) {
-          fontSize -= 2;
+
+        let w, h, logoCenterX, logoCenterY;
+
+        if (isDesktop) {
+          // --- NEW SAFE SIZING FOR DESKTOP ---
+          // 1. Base font size
+          let fontSize = Math.floor(Math.min(vw, vh) * 0.18);
           ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
-          metrics = ctx2.measureText(text);
+
+          // 2. Adjust size to fit safe area (75% width, 60% height)
+          let metrics = ctx2.measureText(text);
+          while ((metrics.width > vw * 0.75 || fontSize > vh * 0.6) && fontSize > 20) {
+            fontSize -= 4;
+            ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+            metrics = ctx2.measureText(text);
+          }
+
+          // 3. Setup offscreen canvas with centered text
+          w = Math.ceil(metrics.width + 60); // margin
+          h = Math.ceil(fontSize * 1.5);
+          off.width = w;
+          off.height = h;
+
+          ctx2.fillStyle = "#fff";
+          ctx2.textAlign = "center";
+          ctx2.textBaseline = "middle";
+          ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+          ctx2.fillText(text, w / 2, h / 2);
+
+          // 4. Center position on screen
+          logoCenterX = vw * 0.5;
+          logoCenterY = vh * 0.5; // True center
+
+        } else {
+          // --- ORIGINAL LOGIC (< 900px) ---
+          let fontSize = Math.floor(Math.min(vw, vh) * 0.20);
+          ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+          let metrics = ctx2.measureText(text);
+          while ((metrics.width > vw * 0.8 || fontSize > vh * 0.25) && fontSize > 10) {
+            fontSize -= 2;
+            ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+            metrics = ctx2.measureText(text);
+          }
+          w = Math.ceil(metrics.width);
+          h = Math.ceil(fontSize * 1.2);
+          off.width = w; off.height = h;
+
+          ctx2.fillStyle = "#fff";
+          ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+          ctx2.fillText(text, 0, fontSize);
+
+          logoCenterX = vw * 0.5;
+          logoCenterY = vh * 0.60;
         }
-        const w = Math.ceil(metrics.width);
-        const h = Math.ceil(fontSize * 1.2);
-        off.width = w; off.height = h;
-        ctx2.fillStyle = "#fff";
-        ctx2.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
-        ctx2.fillText(text, 0, fontSize);
+
         const data = ctx2.getImageData(0, 0, w, h).data;
         const step = 6;
 
         logoPoints = [];
-        const logoCenterX = vw * 0.5;
-        const logoCenterY = vh * 0.60;
         for (let y = 0; y < h; y += step) {
           for (let x = 0; x < w; x += step) {
             const idx = (y * w + x) * 4;
             if (data[idx + 3] > 128) {
+              // Map offscreen center to screen center
               logoPoints.push({ x: x + logoCenterX - w / 2, y: y + logoCenterY - h / 2 });
             }
           }
@@ -608,45 +650,53 @@
     const servicesData = {
       asesoria: {
         title: "Asesoría fiscal inteligente",
-        intro: "Diagnóstico profundo de tu situación fiscal y corrección de errores antes de que se vuelvan problemas.",
+        intro:
+          "Sesiones uno a uno para resolver dudas fiscales y contables, ajustar tu RFC y tomar decisiones con claridad.",
         bullets: [
-          "Detección de anomalías y riesgos ante el SAT.",
-          "Estrategias para optimizar tu carga tributaria legalmente.",
-          "Acompañamiento en trámites y revisiones complejas."
+          "Atención directa para altas, bajas y cambios en RFC, así como dudas de impuestos y obligaciones.",
+          "Revisión rápida para detectar errores, riesgos o anomalías ante el SAT.",
+          "Guía paso a paso en trámites y revisiones para que no los enfrentes solo."
         ],
-        cost: "$X,XXX MXN / proyecto"
+        cost: "$350 MXN / sesión"
       },
+
       contabilidad: {
         title: "Contabilidad para personas y empresas",
-        intro: "Gestión mensual clara y ordenada para que tengas tus impuestos y reportes siempre al día.",
+        intro:
+          "Gestión mensual clara y ordenada para que tengas tus impuestos y reportes siempre al día.",
         bullets: [
-          "Registros contables mensuales sin errores.",
-          "Cumplimiento de obligaciones fiscales (PF y PM).",
-          "Reportes financieros listos para tomar decisiones."
+          "Registros contables mensuales limpios y conciliados.",
+          "Cumplimiento puntual de declaraciones y obligaciones (PF y PM).",
+          "Reportes simples con lo que realmente necesitas saber: ingresos, gastos e impuestos."
         ],
-        cost: "$X,XXX MXN mensuales"
+        cost: "$800 MXN mensuales"
       },
+
       automatizacion: {
         title: "Automatización contable",
-        intro: "Scripts y herramientas a la medida para reducir tareas repetitivas y errores humanos.",
+        intro:
+          "Scripts y herramientas a la medida para reducir tareas repetitivas y errores humanos.",
         bullets: [
-          "Integración de XML, Excel y sistemas contables.",
-          "Bots para conciliaciones, validaciones y proyecciones.",
-          "Reducción de carga operativa hasta un 80%."
+          "Integración de XML, Excel y sistemas contables en un solo flujo.",
+          "Bots y scripts para conciliaciones, validaciones y reportes automáticos.",
+          "Reducción real de tiempo operativo para enfocarte en decisiones, no en capturas."
         ],
-        cost: "$X,XXX MXN / proyecto"
+        cost: "$1,500 MXN / proyecto"
       },
+
       proyecciones: {
         title: "Proyecciones e impuestos",
-        intro: "Escenarios y simulaciones para que sepas cuánto pagar, cuándo y cómo prepararte.",
+        intro:
+          "Escenarios y simulaciones para que sepas cuánto pagar, cuándo y cómo prepararte.",
         bullets: [
-          "Análisis histórico de ingresos e impuestos pagados.",
-          "Proyección del siguiente año fiscal con escenarios.",
-          "Alertas de fechas clave y obligaciones importantes."
+          "Análisis histórico de ingresos, gastos e impuestos pagados.",
+          "Proyección del siguiente año fiscal con diferentes escenarios.",
+          "Alertas de fechas clave y montos estimados para evitar sorpresas."
         ],
-        cost: "$X,XXX MXN / análisis"
+        cost: "a convenir por análisis"
       }
     };
+
 
     const pills = document.querySelectorAll('.service-pill');
     const panelContentWrapper = document.getElementById('panel-content-wrapper');
@@ -872,45 +922,54 @@
   // 11. RECOGNITIONS ACCORDION (Mobile & Desktop)
   // =========================================
   function initRecognitionsAccordion() {
-    const accordionCards = document.querySelectorAll('.recognition-card.accordion-card');
+    const cards = document.querySelectorAll('.recognitions-section .recognition-card');
+    if (!cards.length) return;
 
-    if (accordionCards.length === 0) {
-      console.warn('EVORIX: No accordion cards found.');
-      return;
-    }
+    const mm = window.matchMedia('(max-width: 768px)');
 
-    accordionCards.forEach((card, index) => {
-      const header = card.querySelector('.accordion-header');
+    function applyMobileBehavior(isMobile) {
+      cards.forEach(card => {
+        const header = card.querySelector('.accordion-header');
+        if (!header) return;
 
-      if (!header) return;
+        // Clone to wipe existing listeners cleanly and avoid duplication
+        const newHeader = header.cloneNode(true);
+        header.parentNode.replaceChild(newHeader, header);
 
-      // Force pointer cursor for visual feedback
-      header.style.cursor = 'pointer';
+        if (isMobile) {
+          // Mobile: Add click listener
+          newHeader.style.cursor = 'pointer';
+          newHeader.addEventListener('click', (e) => {
+            // Prevent potential bubbling issues
+            e.stopPropagation();
 
-      header.addEventListener('click', (e) => {
-        // Debug log for mobile verification
-        console.log("accordion click", index);
+            // Toggle current card
+            card.classList.toggle('is-open');
 
-        // Don't preventDefault() unless necessary
-        // e.preventDefault(); 
-
-        const wasOpen = card.classList.contains('is-open');
-
-        // Accordion behavior: Close others
-        accordionCards.forEach(c => {
-          if (c !== card) {
-            c.classList.remove('is-open');
-          }
-        });
-
-        // Toggle handling
-        if (wasOpen) {
-          card.classList.remove('is-open');
+            // Optional: Close others? 
+            // Stick to independent toggling for robustness unless requested otherwise.
+            // If strictly "accordion", uncomment below:
+            /*
+            if (card.classList.contains('is-open')) {
+              cards.forEach(c => {
+                if (c !== card) c.classList.remove('is-open');
+              });
+            }
+            */
+          });
         } else {
-          card.classList.add('is-open');
+          // Desktop: Reset state
+          newHeader.style.cursor = 'default';
+          card.classList.remove('is-open');
         }
       });
-    });
+    }
+
+    // Initial run
+    applyMobileBehavior(mm.matches);
+
+    // Listen for resize
+    mm.addEventListener('change', (e) => applyMobileBehavior(e.matches));
   }
 
   // Initialize immediately
@@ -1096,64 +1155,83 @@
 (function () {
   const viewport = document.querySelector('.references-viewport');
   const track = document.querySelector('.references-track');
-  if (!viewport || !track) return;
 
-  const cards = Array.from(track.children);
-  if (cards.length === 0) return;
+  if (viewport && track) {
+    const originalCards = Array.from(track.children);
+    if (originalCards.length > 0) {
+      let isMobile = window.matchMedia("(max-width: 768px)").matches;
+      let clonesCreated = false;
+      let baseWidth = 0;
+      let resizeTimer;
 
-  // 1) Duplicate the full set once so we have at least 2× items
-  cards.forEach(card => {
-    const clone = card.cloneNode(true);
-    clone.classList.add('reference-card--clone');
-    track.appendChild(clone);
-  });
+      const updateMetrics = () => {
+        if (!isMobile) return;
+        const gap = parseFloat(getComputedStyle(track).gap || 0);
+        let w = 0;
+        originalCards.forEach(c => w += c.offsetWidth);
+        w += originalCards.length * gap;
+        baseWidth = w;
+      };
 
-  // 2) Measure width of the original set
-  // We need to account for the gap between the last original and first clone
-  // The gap property applies between all flex items.
-  const gap = parseFloat(getComputedStyle(track).gap || 0);
-  let baseWidth = cards.reduce((sum, card) => sum + card.offsetWidth, 0);
+      const setupMobile = () => {
+        if (clonesCreated) return;
+        // Clone for infinite loop
+        originalCards.forEach(card => {
+          const clone = card.cloneNode(true);
+          clone.classList.add('reference-card--clone');
+          track.appendChild(clone);
+        });
+        clonesCreated = true;
+        // Delay to ensure render
+        setTimeout(() => {
+          updateMetrics();
+          if (baseWidth > 0) viewport.scrollLeft = baseWidth * 0.5;
+        }, 50);
+      };
 
-  // Correct calculation for seamless loop: Width of items + Width of gaps between them
-  // If we have N items, we have N gaps in a full cycle (including the one after the last item leading to the next cycle)
-  baseWidth += cards.length * gap;
+      const cleanupDesktop = () => {
+        if (!clonesCreated) return;
+        const all = Array.from(track.children);
+        all.forEach(c => {
+          if (c.classList.contains('reference-card--clone')) c.remove();
+        });
+        clonesCreated = false;
+        viewport.scrollLeft = 0;
+      };
 
-  function onScroll() {
-    const max = baseWidth;
-    const x = viewport.scrollLeft;
+      const onScroll = () => {
+        if (!isMobile) return;
+        const max = baseWidth;
+        if (max <= 0) return;
+        const x = viewport.scrollLeft;
 
-    if (x >= max) {
-      viewport.scrollLeft = x - max;
-    } else if (x <= 0) {
-      viewport.scrollLeft = x + max;
+        if (x >= max) {
+          viewport.scrollLeft = x - max;
+        } else if (x <= 0) {
+          viewport.scrollLeft = x + max;
+        }
+      };
+
+      viewport.addEventListener('scroll', onScroll, { passive: true });
+
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          const checkMobile = window.matchMedia("(max-width: 768px)").matches;
+          if (checkMobile !== isMobile) {
+            isMobile = checkMobile;
+            if (isMobile) setupMobile();
+            else cleanupDesktop();
+          } else if (isMobile) {
+            updateMetrics();
+          }
+        }, 150);
+      });
+
+      // Initial check
+      if (isMobile) setupMobile();
     }
   }
-
-  viewport.addEventListener('scroll', onScroll, { passive: true });
-
-  // Handle Resize: Recalculate baseWidth so loop fits new screen width
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      const gap = parseFloat(getComputedStyle(track).gap || 0);
-      // Recalculate width of original items (first half)
-      let newBaseWidth = 0;
-      const allCards = Array.from(track.children);
-      const originalCount = allCards.length / 2; // approximation since we doubled it once
-
-      // Safer: we know cards.length is original count from closure
-      for (let i = 0; i < cards.length; i++) {
-        // Use the live DOM elements corresponding to original cards
-        if (allCards[i]) newBaseWidth += allCards[i].offsetWidth;
-      }
-      newBaseWidth += cards.length * gap;
-      baseWidth = newBaseWidth;
-    }, 150);
-  });
-
-  // optional: start in the middle so user can scroll both sides
-  viewport.scrollLeft = baseWidth * 0.5;
   // =========================================
   // 10. MOBILE MENU LOGIC
   // =========================================

@@ -69,6 +69,8 @@
 
   --text: #0F172A;
   --text-muted: #64748B;
+  --text-soft: #4b5563;
+  --text-strong: #0b1020;
 
   /* Light Mode Specifics */
   --card-bg: rgba(255, 255, 255, 0.9);
@@ -1983,83 +1985,66 @@ footer {
   margin-top: 10px;
 }
 
-/* Grid for the three cards */
-.recognitions-grid {
-  display: grid;
-  gap: 1.75rem;
-}
+/* =========================================
+   CLEANED RECOGNITIONS SECTION (Desktop/Mobile Split)
+   ========================================= */
 
-/* Mobile: 1 column (default) */
-.recognition-card {
+/* Base styles – common for both */
+.recognitions-section .recognition-card {
   background: var(--card-bg);
   border-radius: 1.5rem;
-  padding: 1rem 2rem;
-  /* Reduced vertical padding for collapsed state */
+  padding: 1.5rem 2rem;
+  /* Comfortable padding */
   border: 1px solid var(--card-border);
   backdrop-filter: blur(12px);
   box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
-  transition: max-height 0.3s ease, padding 0.25s ease, opacity 0.25s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.3s ease;
-  overflow: hidden;
   position: relative;
-  max-height: 72px;
-  /* Collapsed height */
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+  overflow: visible;
+  /* Default to visible */
 }
 
-.recognition-card:hover,
-.recognition-card.is-open {
+.recognitions-section .recognition-card:hover {
   transform: translateY(-5px);
   border-color: var(--primary-glow);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-.recognition-card.is-open {
-  padding: 1.75rem 2rem;
-  /* Full padding when open */
-  max-height: 500px;
-  /* Sufficient height to show content */
-}
-
-.accordion-header {
+.recognitions-section .accordion-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   cursor: pointer;
-  width: 100%;
-  /* Ensure header takes full height of collapsed card for easier clicking */
   min-height: 44px;
-  pointer-events: auto;
-  z-index: 10;
-  position: relative;
+  width: 100%;
 }
 
-.recognition-card h3 {
+.recognitions-section .accordion-header h3 {
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0;
   color: var(--text);
-  border-bottom: none;
-  padding-bottom: 0;
   transition: color 0.3s ease;
 }
 
-.recognition-card:hover h3,
-.recognition-card.is-open h3 {
+.recognitions-section .recognition-card:hover h3,
+.recognitions-section .recognition-card.is-open h3 {
   color: var(--primary);
 }
 
-.accordion-icon {
+.recognitions-section .accordion-icon {
   width: 24px;
   height: 24px;
   position: relative;
-  transition: transform 0.4s ease;
   flex-shrink: 0;
   margin-left: 16px;
+  transition: transform 0.4s ease;
 }
 
-.accordion-icon::before,
-.accordion-icon::after {
+.recognitions-section .accordion-icon::before,
+.recognitions-section .accordion-icon::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -2069,76 +2054,41 @@ footer {
   transition: background 0.3s ease;
 }
 
-.accordion-icon::before {
+.recognitions-section .accordion-icon::before {
   width: 12px;
   height: 2px;
 }
 
-.accordion-icon::after {
+.recognitions-section .accordion-icon::after {
   width: 2px;
   height: 12px;
 }
 
-/* Rotate icon on open */
-.recognition-card.is-open .accordion-icon {
+.recognitions-section .recognition-card.is-open .accordion-icon {
   transform: rotate(180deg);
 }
 
-.recognition-card:hover .accordion-icon::before,
-.recognition-card:hover .accordion-icon::after,
-.recognition-card.is-open .accordion-icon::before,
-.recognition-card.is-open .accordion-icon::after {
-  background: var(--primary);
-}
-
-/* Hide vertical line to make it a minus when open */
-.recognition-card.is-open .accordion-icon::after {
+.recognitions-section .recognition-card.is-open .accordion-icon::after {
   height: 0;
+  /* Turn into minus */
 }
 
-.accordion-content {
-  display: none;
-  /* Changed from just opacity/overflow hidden to strictly none based on user request */
-  opacity: 0;
-  transform: translateY(-4px);
-  overflow: hidden;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  margin-top: 0;
-  border-top: 1px solid transparent;
-  padding-top: 0;
-  color: var(--text);
-  /* Ensure text color is explicit */
-}
-
-.recognition-card.is-open .accordion-content {
-  display: block;
-  /* Ensure it is part of layout */
-  opacity: 1;
-  transform: translateY(0);
-  margin-top: 1.5rem;
-  border-top: 1px solid var(--border);
-  padding-top: 1.5rem;
-}
-
-.recognition-card ul {
+/* Base content styles - list styling */
+.recognitions-section .accordion-content ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.recognition-card li {
+.recognitions-section .accordion-content li {
   font-size: 1rem;
   color: var(--text-muted);
   margin-bottom: 0.75rem;
   position: relative;
   padding-left: 1.5rem;
-  /* Removed complex transform/opacity on LI to reduce points of failure for visibility */
-  opacity: 1;
-  transform: none;
 }
 
-/* Re-add simplified li animations if needed, but prioritizing visibility first */
-.recognition-card li::before {
+.recognitions-section .accordion-content li::before {
   content: '•';
   position: absolute;
   left: 0;
@@ -2149,20 +2099,66 @@ footer {
   top: -2px;
 }
 
-/* EVORIX recognitions accordion visibility fix:
-   - Ensures .accordion-content text is visible when .is-open is applied. */
+/* Mobile – true accordion */
+@media (max-width: 768px) {
+  .recognitions-section .recognitions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-/* Tablet: 2 columns */
-@media (min-width: 720px) {
-  .recognitions-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .recognitions-section .recognition-card {
+    padding: 1rem 1.5rem;
+    /* Slightly compact on mobile */
+  }
+
+  .recognitions-section .accordion-content {
+    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 1px solid transparent;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease, padding-top 0.3s ease;
+  }
+
+  .recognitions-section .recognition-card.is-open .accordion-content {
+    display: block;
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
   }
 }
 
-/* Desktop: 3 columns */
-@media (min-width: 1040px) {
-  .recognitions-grid {
+/* Desktop – all content visible, no collapse */
+@media (min-width: 769px) {
+  .recognitions-section .recognitions-grid {
+    display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .recognitions-section .accordion-content {
+    display: block;
+    max-height: none;
+    opacity: 1;
+    overflow: visible;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+
+  .recognitions-section .accordion-icon {
+    display: none;
+    /* Hide toggle icon on desktop */
+  }
+
+  .recognitions-section .accordion-header {
+    cursor: default;
+    /* No pointer cursor on desktop */
   }
 }
 
@@ -2408,111 +2404,7 @@ canvas {
   max-width: 100vw;
 }
 
-/* =========================================
-   13. ACCORDION (Mobile Only)
-   ========================================= */
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  cursor: pointer;
-  padding-bottom: 0;
-  /* Adjusted dynamically */
-  transition: padding-bottom 0.3s ease;
-}
 
-.accordion-icon {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  transition: transform 0.3s ease;
-  flex-shrink: 0;
-  margin-left: 16px;
-}
-
-.accordion-icon::before,
-.accordion-icon::after {
-  content: '';
-  position: absolute;
-  background: var(--primary);
-  border-radius: 2px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-}
-
-.accordion-icon::before {
-  width: 14px;
-  height: 2px;
-}
-
-.accordion-icon::after {
-  width: 2px;
-  height: 14px;
-}
-
-/* Open State Icon */
-.accordion-card.open .accordion-icon {
-  transform: rotate(45deg);
-}
-
-/* Content Animation */
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin-top 0.4s ease;
-  opacity: 0;
-}
-
-.accordion-card.open .accordion-content {
-  max-height: 500px;
-  opacity: 1;
-  margin-top: 1rem;
-}
-
-/* Adjust H3 inside accordion */
-.accordion-header h3 {
-  margin-bottom: 0;
-  border-bottom: none;
-  padding-bottom: 0;
-  flex-grow: 1;
-}
-
-/* Add border to header container instead of h3 for better animation control */
-.accordion-header {
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 1rem;
-  margin-bottom: 0;
-}
-
-/* Desktop Overrides */
-@media (min-width: 768px) {
-  .accordion-header {
-    cursor: default;
-    pointer-events: none;
-    padding-bottom: 1rem;
-    /* Restore padding */
-    border-bottom: 1px solid var(--border);
-  }
-
-  .accordion-icon {
-    display: none;
-  }
-
-  .accordion-content {
-    max-height: none;
-    opacity: 1;
-    overflow: visible;
-    display: block;
-    margin-top: 1rem;
-  }
-
-  .accordion-card.open .accordion-content {
-    margin-top: 1rem;
-  }
-}
 
 /* =========================================
    15. MOBILE CONTACT OPTIMIZATIONS
@@ -3343,4 +3235,93 @@ body.tour-active {
   text-align: center;
   margin-left: 0;
   margin-right: 0;
+}
+
+
+/* ===== EVORIX: Reconocimientos – Desktop vs Mobile ===== */
+
+/* Mobile: acordeón */
+@media (max-width: 768px) {
+  .recognitions-section .recognition-card .accordion-content {
+    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.25s ease,
+      opacity 0.25s ease;
+  }
+
+  .recognitions-section .recognition-card.is-open .accordion-content {
+    display: block;
+    max-height: 999px;
+    opacity: 1;
+  }
+}
+
+/* Desktop: contenido siempre visible, sin acordeón real */
+@media (min-width: 769px) {
+  .recognitions-section .recognition-card .accordion-content {
+    display: block;
+    max-height: none;
+    opacity: 1;
+    overflow: visible;
+  }
+}
+
+/* ===== EVORIX: References / Testimonials Desktop Layout ===== */
+@media (min-width: 900px) {
+  .references-viewport {
+    width: 100%;
+    margin: 0 auto;
+    overflow-x: visible;
+    /* No scroll */
+    text-align: center;
+    /* helps but grid does real work */
+    scroll-snap-type: none;
+    /* disable snap */
+    display: block;
+    /* Ensure it's not flex if it was */
+  }
+
+  .references-track {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+    width: 100%;
+    padding: 2rem 0;
+  }
+
+  .reference-card {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    scroll-snap-align: none;
+  }
+}
+
+/* =========================================
+   LIGHT MODE CONTRAST FIXES
+   ========================================= */
+
+html[data-theme="light"] .service-detail-panel .panel-header h3#panel-title,
+html[data-theme="light"] .service-detail-panel .panel-intro,
+html[data-theme="light"] .service-detail-panel .panel-bullets li,
+html[data-theme="light"] .service-detail-panel .price-tag .price-label,
+html[data-theme="light"] .service-detail-panel .price-tag .price-value,
+html[data-theme="light"] #servicios .section-header h2,
+html[data-theme="light"] #servicios .section-header p,
+html[data-theme="light"] #reconocimientos .recognition-card .accordion-header,
+html[data-theme="light"] #reconocimientos .recognition-card .accordion-content li {
+  color: var(--text-strong);
+  opacity: 1;
+}
+
+html[data-theme="light"] .service-pill {
+  color: var(--text-soft);
+}
+
+html[data-theme="light"] .service-pill.active {
+  color: #ffffff;
 }
