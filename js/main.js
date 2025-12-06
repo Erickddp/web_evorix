@@ -179,7 +179,8 @@
     // Note: If user resizes from desktop -> mobile or vice versa, they might need a reload 
     // or a specialized resize handler to switch engines. 
     // For this implementation, we check once at startup as per request.
-    const initialIsMobile = window.matchMedia("(max-width: 768px)").matches;
+    // Reactive engine selection handled by initResponsiveEngine
+    // const initialIsMobile = ... removed
 
     // Colors
     let root = getComputedStyle(document.documentElement);
@@ -331,14 +332,16 @@
       }
 
       // Pointer Events (Desktop)
-      window.addEventListener('pointermove', e => {
-        pointer.targetX = e.clientX; pointer.targetY = e.clientY; pointer.active = true;
-      }, { passive: true });
-      window.addEventListener('pointerleave', () => pointer.active = false, { passive: true });
-      window.addEventListener('pointerdown', e => {
-        pointer.down = true; pointer.targetX = e.clientX; pointer.targetY = e.clientY;
-      }, { passive: true });
-      window.addEventListener('pointerup', () => pointer.down = false, { passive: true });
+      // Pointer Events (Desktop)
+      function onPointerMove(e) { pointer.targetX = e.clientX; pointer.targetY = e.clientY; pointer.active = true; }
+      function onPointerLeave() { pointer.active = false; }
+      function onPointerDown(e) { pointer.down = true; pointer.targetX = e.clientX; pointer.targetY = e.clientY; }
+      function onPointerUp() { pointer.down = false; }
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerleave', onPointerLeave, { passive: true });
+      window.addEventListener('pointerdown', onPointerDown, { passive: true });
+      window.addEventListener('pointerup', onPointerUp, { passive: true });
 
       let lastTime = performance.now();
 
@@ -422,18 +425,31 @@
       }
 
       rafId = requestAnimationFrame(step);
+
+      // Return cleanup function
+      return function cleanup() {
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerleave', onPointerLeave);
+        window.removeEventListener('pointerdown', onPointerDown);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('resize', buildLogoShape);
+        ctx.clearRect(0, 0, vw, vh);
+      };
     } // end startDesktopEngine
+
+
 
 
     // -------------------------------------------------------------
     // MOBILE ENGINE (New Optimized Logic)
     // -------------------------------------------------------------
     function startMobileEngine() {
-      // Mobile Config
-      const MOBILE_PARTICLE_COUNT = 55;
-      const MOBILE_TOUCH_FORCE = 0.20;
-      const MOBILE_SCROLL_FORCE = 0.05;
-      const MOBILE_FRICTION = 0.94;
+      // Mobile Config - Better Interactivity
+      const MOBILE_PARTICLE_COUNT = 75; // Increased from 55
+      const MOBILE_TOUCH_FORCE = 0.35; // Increased
+      const MOBILE_SCROLL_FORCE = 0.08;
+      const MOBILE_FRICTION = 0.95;
 
       let lastScrollY = window.scrollY;
       let touchX = null, touchY = null, touchActive = false;
@@ -443,9 +459,9 @@
         return {
           x: Math.random() * vw,
           y: Math.random() * vh,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          size: 1.4 + Math.random() * 1.6, // 1.4 - 3.0
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: 1.5 + Math.random() * 2.5,
           hueShift: Math.random()
         };
       }
@@ -492,16 +508,16 @@
           const p = particles[i];
 
           // 1. Idle Drift (very subtle noise)
-          p.vx += (Math.random() - 0.5) * 0.01;
-          p.vy += (Math.random() - 0.5) * 0.01;
+          p.vx += (Math.random() - 0.5) * 0.02;
+          p.vy += (Math.random() - 0.5) * 0.02;
 
           // 2. Touch Attraction
           if (touchActive && touchX !== null) {
             const dx = touchX - p.x;
             const dy = touchY - p.y;
             // Simple linear pull
-            p.vx += dx * MOBILE_TOUCH_FORCE * dt * 0.05;
-            p.vy += dy * MOBILE_TOUCH_FORCE * dt * 0.05;
+            p.vx += dx * MOBILE_TOUCH_FORCE * dt * 0.1;
+            p.vy += dy * MOBILE_TOUCH_FORCE * dt * 0.1;
           }
 
           // 3. Scroll Influence (vertical drift)
@@ -523,7 +539,7 @@
           if (p.y > vh + 10) p.y = -10;
 
           // 6. Draw
-          const alpha = 0.3 + (p.size / 3.0) * 0.3;
+          const alpha = 0.35 + (p.size / 3.0) * 0.3;
           ctx.fillStyle = mixColor(p.hueShift, alpha);
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -532,17 +548,46 @@
       }
 
       rafId = requestAnimationFrame(step);
+
+      // Return cleanup function
+      return function cleanup() {
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerdown', onPointerMove);
+        window.removeEventListener('pointerup', onPointerEnd);
+        window.removeEventListener('pointercancel', onPointerEnd);
+        ctx.clearRect(0, 0, vw, vh);
+      };
     } // end startMobileEngine
 
+    // Duplicate block removed
+
 
     // -------------------------------------------------------------
-    // INIT SWITCH
+    // INIT SWITCH (REACTIVE)
     // -------------------------------------------------------------
-    if (initialIsMobile) {
-      startMobileEngine();
-    } else {
-      startDesktopEngine();
+    let currentCleanup = null;
+
+    function initResponsiveEngine() {
+      const mobileQuery = window.matchMedia("(max-width: 768px)");
+
+      function handleEngineChange(e) {
+        if (currentCleanup) currentCleanup();
+
+        if (e.matches) {
+          console.log("EVORIX: Switching to Mobile Engine");
+          currentCleanup = startMobileEngine();
+        } else {
+          console.log("EVORIX: Switching to Desktop Engine");
+          currentCleanup = startDesktopEngine();
+        }
+      }
+
+      mobileQuery.addEventListener('change', handleEngineChange);
+      handleEngineChange(mobileQuery); // Initial call
     }
+
+    initResponsiveEngine();
 
     // Expose control
     window.__evorixPixelEngine = {
@@ -994,35 +1039,7 @@
     // ...
   }
 
-  // =========================================
-  // 13. REFERENCES CAROUSEL ANIMATION
-  // =========================================
-  const referencesCarousel = document.querySelector('.references-carousel');
-  if (referencesCarousel) {
-    // Duplicate cards for seamless loop
-    const cards = Array.from(referencesCarousel.children);
-    cards.forEach(card => referencesCarousel.appendChild(card.cloneNode(true)));
-
-    let offset = 0;
-    const speed = 0.3; // pixels per frame
-    function animateCarousel() {
-      offset -= speed;
-      referencesCarousel.style.transform = `translateX(${offset}px)`;
-      const firstCard = referencesCarousel.firstElementChild;
-      if (firstCard) {
-        const style = getComputedStyle(firstCard);
-        const cardWidth = firstCard.getBoundingClientRect().width + parseFloat(style.marginRight);
-        if (Math.abs(offset) >= cardWidth) {
-          referencesCarousel.appendChild(firstCard);
-          offset += cardWidth;
-        }
-      }
-      requestAnimationFrame(animateCarousel);
-    }
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      animateCarousel();
-    }
-  }
+  // (Legacy carousel code removed)
 
   // =========================================
   // 13. TESTIMONIALS ANIMATION
@@ -1086,17 +1103,61 @@
     const max = baseWidth;
     const x = viewport.scrollLeft;
 
-    // If we scrolled beyond the duplicated set, wrap back
     if (x >= max) {
       viewport.scrollLeft = x - max;
     } else if (x <= 0) {
-      // optional: jump forward so you can scroll backwards infinitely
       viewport.scrollLeft = x + max;
     }
   }
 
   viewport.addEventListener('scroll', onScroll, { passive: true });
 
+  // Handle Resize: Recalculate baseWidth so loop fits new screen width
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const gap = parseFloat(getComputedStyle(track).gap || 0);
+      // Recalculate width of original items (first half)
+      let newBaseWidth = 0;
+      const allCards = Array.from(track.children);
+      const originalCount = allCards.length / 2; // approximation since we doubled it once
+
+      // Safer: we know cards.length is original count from closure
+      for (let i = 0; i < cards.length; i++) {
+        // Use the live DOM elements corresponding to original cards
+        if (allCards[i]) newBaseWidth += allCards[i].offsetWidth;
+      }
+      newBaseWidth += cards.length * gap;
+      baseWidth = newBaseWidth;
+    }, 150);
+  });
+
   // optional: start in the middle so user can scroll both sides
   viewport.scrollLeft = baseWidth * 0.5;
 })();
+
+/*
+=============================================================================
+MOBILE EXPERIENCE & ANIMATION SUMMARY (STEP 3)
+=============================================================================
+
+1. NEW ANIMATIONS & MICRO-INTERACTIONS
+   - Hero: Faster, staggered entry + floating particle effect.
+   - Services: Active tab underline animation + Mobile slide-in for detail panel.
+   - Cards/Buttons: Tactile feedback (scale down) on press/active.
+   - Reveal System: Applied to References, Contact, and Recognitions.
+
+2. CSS ANIMATION CLASSES
+   - .reveal / .reveal-section: Base class for scroll entry.
+   - .is-visible: Trigger class active state.
+   - .floating-element: Continuous float loop (disabled on reduced motion).
+   - .cursor-blink: Terminal cursor effect.
+   - .scale-on-press: Micro-interaction utility.
+
+3. PERFORMANCE TRADE-OFFS
+   - Used 'will-change' sparingly on reveal elements.
+   - Disabled heavier animations (float) on 'prefers-reduced-motion'.
+   - Debounced scroll/resize listeners in JS.
+   - Mobile particle count capped at 75 for 60fps stability.
+*/
