@@ -648,6 +648,25 @@
   })();
 
   // =========================================
+  // 10. HERO TITLE PULSE ANIMATION
+  // =========================================
+  (function setupHeroTitlePulse() {
+    const heroTitle = document.querySelector('.hero-title');
+    if (!heroTitle) return;
+
+    // Evitar animación excesiva: pequeño pulso cada ~8 segundos
+    const PULSE_INTERVAL = 8000;
+    const PULSE_DURATION = 1100;
+
+    setInterval(() => {
+      heroTitle.classList.add('hero-pulse');
+      setTimeout(() => {
+        heroTitle.classList.remove('hero-pulse');
+      }, PULSE_DURATION);
+    }, PULSE_INTERVAL);
+  })();
+
+  // =========================================
   // 7. SERVICES & TOOLS (Legacy Wrapper)
   // =========================================
   {
@@ -1040,8 +1059,9 @@
       const TOUR_STEP_DELAY = 1200;  // Pause
 
       // Sequence
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
       const steps = [
-        { id: 'servicios', delay: TOUR_STEP_DELAY },
+        { id: 'servicios', delay: isMobile ? 3000 : TOUR_STEP_DELAY },
         { id: 'ecosistema', delay: TOUR_STEP_DELAY },
         { id: 'reconocimientos', delay: TOUR_STEP_DELAY },
         { id: 'sobre-mi', delay: TOUR_STEP_DELAY },
@@ -1067,8 +1087,20 @@
 
           // Mobile-specific behavior for Servicios -> Demo horizontal scroll
           if (step.id === 'servicios' && window.matchMedia('(max-width: 768px)').matches) {
-            demoServicesHorizontalScroll();
-            demoServicesTabSelection();
+            // Run sequence asynchronously (fire & forget relative to main loop wait)
+            (async () => {
+              // 1. Wait small entry timeout
+              await new Promise(r => setTimeout(r, 150));
+
+              // 2. Trigger Tab Selection (Concurrent)
+              demoServicesTabSelection();
+
+              // 3. Trigger Scroll Cycles
+              for (let k = 0; k < 3; k++) {
+                await demoServicesHorizontalScroll();
+                if (k < 2) await new Promise(r => setTimeout(r, 300));
+              }
+            })();
           }
 
           await new Promise(r => setTimeout(r, step.delay));
@@ -1140,41 +1172,54 @@
   }
 
   function demoServicesHorizontalScroll() {
-    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
-
-    const servicesList = document.querySelector('.services-list[role="tablist"]');
-    if (!servicesList) return;
-
-    const maxScroll = servicesList.scrollWidth - servicesList.clientWidth;
-    if (maxScroll <= 0) return;
-
-    const targetScroll = Math.min(maxScroll, servicesList.clientWidth * 0.8);
-    const duration = 700;
-    const start = servicesList.scrollLeft;
-    const startTime = performance.now();
-
-    function animate(now) {
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
-
-      // EaseInOut
-      const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-
-      servicesList.scrollLeft = start + (targetScroll - start) * ease;
-
-      if (t < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setTimeout(() => {
-          servicesList.scrollTo({
-            left: servicesList.scrollLeft * 0.6,
-            behavior: 'smooth'
-          });
-        }, 200);
+    return new Promise((resolve) => {
+      if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) {
+        resolve();
+        return;
       }
-    }
 
-    requestAnimationFrame(animate);
+      const servicesList = document.querySelector('.services-list[role="tablist"]');
+      if (!servicesList) {
+        resolve();
+        return;
+      }
+
+      const maxScroll = servicesList.scrollWidth - servicesList.clientWidth;
+      if (maxScroll <= 0) {
+        resolve();
+        return;
+      }
+
+      const targetScroll = Math.min(maxScroll, servicesList.clientWidth * 0.8);
+      const duration = 700;
+      const start = servicesList.scrollLeft;
+      const startTime = performance.now();
+
+      function animate(now) {
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
+
+        // EaseInOut
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+        servicesList.scrollLeft = start + (targetScroll - start) * ease;
+
+        if (t < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          // Scroll back slightly
+          setTimeout(() => {
+            servicesList.scrollTo({
+              left: servicesList.scrollLeft * 0.6,
+              behavior: 'smooth'
+            });
+            resolve(); // Resolve here, allowing next cycle to wait 300ms after this finishes
+          }, 100);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    });
   }
 
   function demoServicesTabSelection() {
@@ -1187,20 +1232,27 @@
     const tabs = servicesList.querySelectorAll('[role="tab"]');
     if (!tabs || tabs.length === 0) return;
 
-    const firstTab = tabs[0];
-    const secondTab = tabs.length > 1 ? tabs[1] : null;
+    // Sequence: tabs[1] -> tabs[2] (if exists) -> tabs[0]
+    // Interval: 400ms
+    (async () => {
+      // 1. Select Tab 2
+      if (tabs.length > 1) {
+        await new Promise(r => setTimeout(r, 400));
+        tabs[1].click();
+      }
 
-    if (!secondTab) return;
+      // 2. Select Tab 3
+      if (tabs.length > 2) {
+        await new Promise(r => setTimeout(r, 400));
+        tabs[2].click();
+      }
 
-    // Simulate selecting another service
-    setTimeout(() => {
-      secondTab.click();
-    }, 250); // after horizontal scroll starts
-
-    // Return to first
-    setTimeout(() => {
-      firstTab.click();
-    }, 850); // still within tour step delay
+      // 3. Return to Tab 1
+      if (tabs.length > 0) {
+        await new Promise(r => setTimeout(r, 400));
+        tabs[0].click();
+      }
+    })();
   }
 
 
