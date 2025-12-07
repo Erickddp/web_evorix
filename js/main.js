@@ -232,6 +232,112 @@
     }, { passive: true });
 
     // -------------------------------------------------------------
+    // SECTION AWARENESS (ORCHESTRATOR)
+    // -------------------------------------------------------------
+    let currentSectionMode = "hero";
+
+    // Configuration Placeholder
+    // Configuration: tuned physics per section
+    const sectionModes = {
+      hero: {
+        speed: 1.0,
+        attraction: 0.15,
+        confusion: 0.0,
+        flow: false,
+        orbit: false
+      },
+      about: {
+        speed: 0.4,
+        attraction: 0.05,
+        confusion: 0.1,
+        flow: false,
+        orbit: true
+      },
+      services: {
+        speed: 0.25,
+        attraction: 0.0,
+        confusion: 0.0,
+        flow: true, // horizontal scanning effect
+        orbit: false
+      },
+      ecosystem: {
+        speed: 0.5,
+        attraction: 0.01,
+        confusion: 0.6, // clustering
+        flow: false,
+        orbit: false
+      },
+      references: {
+        speed: 0.3,
+        attraction: 0.02,
+        confusion: 0.2,
+        flow: false,
+        orbit: false,
+        sparkle: true
+      },
+      contact: {
+        speed: 0.8,
+        attraction: 0.12,
+        confusion: 0.0,
+        flow: false,
+        orbit: false,
+        funnel: true
+      }
+    };
+
+    const sectionsMap = {
+      "inicio": "hero",
+      "sobre-mi": "about",
+      "servicios": "services",
+      "ecosistema": "ecosystem",
+      "reconocimientos": "recognitions",
+      "referencias": "references",
+      "contacto": "contact"
+    };
+
+    function updateSectionAwareness() {
+      const viewportMid = window.innerHeight / 2;
+      let closestDist = Infinity;
+      let activeId = "inicio";
+
+      for (const id in sectionsMap) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const mid = rect.top + rect.height / 2;
+          const dist = Math.abs(mid - viewportMid);
+
+          // Check if section is effectively in view (heuristics can be tuned)
+          if (dist < closestDist) {
+            closestDist = dist;
+            activeId = id;
+          }
+        }
+      }
+
+      const newMode = sectionsMap[activeId] || "hero";
+      if (currentSectionMode !== newMode) {
+        currentSectionMode = newMode;
+        // console.log("EVORIX Section Mode:", currentSectionMode);
+      }
+    }
+
+    // Throttled listener for performance
+    let sectionCheckTimeout;
+    function onScrollOrResizeSections() {
+      if (!sectionCheckTimeout) {
+        sectionCheckTimeout = setTimeout(() => {
+          updateSectionAwareness();
+          sectionCheckTimeout = null;
+        }, 100);
+      }
+    }
+
+    window.addEventListener('scroll', onScrollOrResizeSections, { passive: true });
+    window.addEventListener('resize', onScrollOrResizeSections, { passive: true });
+    updateSectionAwareness(); // Initial check
+
+    // -------------------------------------------------------------
     // DESKTOP ENGINE (Original Logic)
     // -------------------------------------------------------------
     function startDesktopEngine() {
@@ -401,6 +507,8 @@
         lastTime = now;
 
         updateMode();
+        // Access section mode for future logic
+        const sectionMode = currentSectionMode;
 
         // Mode switch handling
         if (previousMode !== mode) {
@@ -516,6 +624,8 @@
       let burstParticles = [];
       let ctaTarget = null; // { x, y }
       let ctaButton = document.querySelector('.hero-cta');
+      let contactForm = document.querySelector('.contact-section'); // For funnel
+      let contactTarget = null;
 
       let isMobile = window.matchMedia('(max-width: 768px)').matches;
       const mediaListener = (e) => { isMobile = e.matches; };
@@ -527,27 +637,29 @@
       let lastTime = performance.now();
 
       // -----------------------------------------------------------
-      // UTILS: CTA TARGET TRACKING (Logical Pixels)
+      // UTILS: TARGET TRACKING (Logical Pixels)
       // -----------------------------------------------------------
-      function updateCtaTarget() {
-        if (!ctaButton) {
-          ctaButton = document.querySelector('.hero-cta');
-        }
+      function updateTargets() {
+        if (!ctaButton) ctaButton = document.querySelector('.hero-cta');
         if (ctaButton && canvas) {
           const rect = ctaButton.getBoundingClientRect();
           const cr = canvas.getBoundingClientRect();
-
-          // Calculate center relative to viewport/canvas
-          // Since ctx is scaled by dpr, we work in logical pixels (CSS pixels).
           const cx = rect.left + rect.width / 2;
           const cy = rect.top + rect.height / 2;
-
-          const targetX = cx - cr.left;
-          const targetY = cy - cr.top;
-
-          ctaTarget = { x: targetX, y: targetY };
+          ctaTarget = { x: cx - cr.left, y: cy - cr.top };
         } else {
           ctaTarget = null;
+        }
+
+        if (!contactForm) contactForm = document.querySelector('.contact-section');
+        if (contactForm && canvas) {
+          const rect = contactForm.getBoundingClientRect();
+          const cr = canvas.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          contactTarget = { x: cx - cr.left, y: cy - cr.top };
+        } else {
+          contactTarget = null;
         }
       }
 
@@ -563,7 +675,8 @@
           size: isBurst ? (1.2 + Math.random() * 2.0) : (1.5 + Math.random() * 2.5),
           hueShift: Math.random(),
           life: isBurst ? 1.0 : 1.0,
-          isBurst: isBurst
+          isBurst: isBurst,
+          sparklePhase: Math.random() * Math.PI * 2
         };
 
         if (isBurst) {
@@ -614,7 +727,9 @@
         const scrollDelta = currentScroll - lastScrollY;
         lastScrollY = currentScroll;
 
-        updateCtaTarget();
+        updateTargets();
+        const modeId = currentSectionMode;
+        const modeParams = sectionModes[modeId] || sectionModes.hero;
 
         // Clear using logical dimensions (vw, vh)
         ctx.clearRect(0, 0, vw, vh);
@@ -623,17 +738,15 @@
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
 
-          // Magnetic Attraction
-          if (isMobile && ctaTarget) {
+          // A) Hero Attraction
+          if (modeId === 'hero' && ctaTarget) {
             const dx = ctaTarget.x - p.x;
             const dy = ctaTarget.y - p.y;
             const d2 = dx * dx + dy * dy;
-            const magRad = 180; // value in logical pixels
-            const magRad2 = magRad * magRad;
-
-            if (d2 < magRad2) {
+            const magRad = 200;
+            if (d2 < magRad * magRad) {
               const d = Math.sqrt(d2);
-              const force = config.attractionStrength * (1 - d / magRad);
+              const force = modeParams.attraction * (1 - d / magRad);
               if (d > 1) {
                 p.vx += (dx / d) * force;
                 p.vy += (dy / d) * force;
@@ -641,8 +754,52 @@
             }
           }
 
-          p.vx += (Math.random() - 0.5) * 0.02;
-          p.vy += (Math.random() - 0.5) * 0.02;
+          // B) Services Flow
+          if (modeParams.flow) {
+            p.vy *= 0.9;
+            p.vx += (Math.random() > 0.5 ? 0.005 : -0.005);
+            const bandY = Math.round(p.y / 100) * 100 + 50;
+            p.vy += (bandY - p.y) * 0.002;
+          }
+
+          // C) About Orbit
+          if (modeParams.orbit) {
+            const cx = vw / 2;
+            const cy = vh / 2;
+            const dx = p.x - cx;
+            const dy = p.y - cy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 300) {
+              const angle = Math.atan2(dy, dx);
+              p.vx -= Math.sin(angle) * 0.05 * modeParams.speed;
+              p.vy += Math.cos(angle) * 0.05 * modeParams.speed;
+            }
+          }
+
+          // D) Contact Funnel
+          if (modeParams.funnel && contactTarget) {
+            const dx = contactTarget.x - p.x;
+            const dy = contactTarget.y - p.y;
+            p.vx += dx * 0.0001 * modeParams.speed;
+            p.vy += dy * 0.0001 * modeParams.speed;
+          }
+
+          // E) Ecosystem Clustering
+          if (modeId === 'ecosystem') {
+            if (i > 0) {
+              const prev = particles[i - 1];
+              const pdx = prev.x - p.x;
+              const pdy = prev.y - p.y;
+              const pd2 = pdx * pdx + pdy * pdy;
+              if (pd2 < 5000) {
+                p.vx += pdx * 0.001;
+                p.vy += pdy * 0.001;
+              }
+            }
+          }
+
+          p.vx += (Math.random() - 0.5) * 0.02 * modeParams.speed;
+          p.vy += (Math.random() - 0.5) * 0.02 * modeParams.speed;
 
           if (Math.abs(scrollDelta) > 0.1) {
             p.vy += scrollDelta * 0.01;
@@ -658,7 +815,12 @@
           if (p.y < -20) p.y = vh + 20;
           if (p.y > vh + 20) p.y = -20;
 
-          const alpha = 0.35 + (p.size / 3.0) * 0.3;
+          let alpha = 0.35 + (p.size / 3.0) * 0.3;
+          if (modeParams.sparkle) {
+            p.sparklePhase += 0.1;
+            alpha *= (0.5 + 0.5 * Math.sin(p.sparklePhase));
+          }
+
           ctx.fillStyle = mixColor(p.hueShift, alpha);
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -688,7 +850,7 @@
         }
       }
 
-      updateCtaTarget();
+      updateTargets();
       initParticles();
       rafId = requestAnimationFrame(step);
 
