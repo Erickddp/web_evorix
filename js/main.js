@@ -39,15 +39,38 @@
   let lastScrollY = window.scrollY;
 
   if (header) {
-    window.addEventListener('scroll', () => {
+    // Inicializar estado base
+    header.classList.add('header--hero');
+
+    const updateHeaderState = () => {
       const currentScrollY = window.scrollY;
+
+      // Lógica de Estado: Hero vs Nav
+      // Toggle class for animation
+      const themeBtn = document.querySelector('.theme-toggle');
+
+      if (currentScrollY > 100) {
+        header.classList.remove('header--hero');
+        header.classList.add('header--nav');
+        if (themeBtn) themeBtn.classList.remove('theme-toggle--hero');
+      } else {
+        header.classList.add('header--hero');
+        header.classList.remove('header--nav');
+        if (themeBtn) themeBtn.classList.add('theme-toggle--hero');
+      }
+
+      // Lógica existente de ocultamiento (Hide/Show)
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         header.classList.add('hide');
       } else {
         header.classList.remove('hide');
       }
       lastScrollY = currentScrollY;
-    }, { passive: true });
+    };
+
+    window.addEventListener('scroll', updateHeaderState, { passive: true });
+    // Invocación inicial
+    updateHeaderState();
   }
 
   // Nav Icons Click Handler
@@ -1649,20 +1672,20 @@
 =============================================================================
 MOBILE EXPERIENCE & ANIMATION SUMMARY (STEP 3)
 =============================================================================
- 
+
 1. NEW ANIMATIONS & MICRO-INTERACTIONS
    - Hero: Faster, staggered entry + floating particle effect.
    - Services: Active tab underline animation + Mobile slide-in for detail panel.
    - Cards/Buttons: Tactile feedback (scale down) on press/active.
    - Reveal System: Applied to References, Contact, and Recognitions.
- 
+
 2. CSS ANIMATION CLASSES
    - .reveal / .reveal-section: Base class for scroll entry.
    - .is-visible: Trigger class active state.
    - .floating-element: Continuous float loop (disabled on reduced motion).
    - .cursor-blink: Terminal cursor effect.
    - .scale-on-press: Micro-interaction utility.
- 
+
 3. PERFORMANCE TRADE-OFFS
    - Used 'will-change' sparingly on reveal elements.
    - Disabled heavier animations (float) on 'prefers-reduced-motion'.
@@ -1673,37 +1696,7 @@ MOBILE EXPERIENCE & ANIMATION SUMMARY (STEP 3)
 // =========================================
 // 15. MOBILE MENU (SIMPLE TOGGLE)
 // =========================================
-(function setupMobileMenu() {
-  const mobileBtn = document.querySelector('.mobile-menu-btn');
-  const nav = document.querySelector('.evorix-nav');
 
-  if (!mobileBtn || !nav) return;
-
-  // 1. Toggle Menu
-  mobileBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // prevent bubbling if needed
-    const isOpen = nav.classList.toggle('open');
-    mobileBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  });
-
-  // 2. Close menu when a nav link is clicked
-  nav.addEventListener('click', (event) => {
-    // Check if clicked element is a link or inside a link
-    const link = event.target.closest('a');
-    if (link && nav.classList.contains('open')) {
-      nav.classList.remove('open');
-      mobileBtn.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  // 3. Reset state on resize to desktop
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768 && nav.classList.contains('open')) {
-      nav.classList.remove('open');
-      mobileBtn.setAttribute('aria-expanded', 'false');
-    }
-  });
-})();
 
 
 

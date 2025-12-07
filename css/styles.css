@@ -560,125 +560,308 @@ video {
 .evorix-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 2.5rem;
-  background: rgba(3, 8, 20, 0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  transition: transform 0.3s ease;
+  width: 100%;
+  padding: 0.75rem 2rem;
+  transition:
+    background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 0.5s ease,
+    padding 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.4s ease;
+  border-bottom: 1px solid transparent;
 }
 
-.evorix-header.hide {
-  transform: translateY(-100%);
+/* Header States */
+
+/* HEADER--HERO (Minimalist) */
+.evorix-header.header--hero {
+  background: rgba(5, 10, 20, 0.02);
+  backdrop-filter: blur(2px);
+  border-bottom-color: transparent;
+  box-shadow: none;
+  padding: 1.25rem 2rem;
+  /* Larger padding for hero feel */
 }
 
+/* HEADER--NAV (Functional Bar) */
+.evorix-header.header--nav {
+  background: rgba(5, 10, 20, 0.85);
+  /* Glass opaque */
+  backdrop-filter: blur(16px);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  padding: 0.6rem 2rem;
+  /* Compact padding */
+}
+
+/* Light mode adjustments */
+html[data-theme="light"] .evorix-header.header--hero {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+html[data-theme="light"] .evorix-header.header--nav {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Layout Wrapper */
+.header-primary-actions {
+  display: contents;
+  /* Allows children to participate in parent flex layout */
+}
+
+/* LOGO */
+/* LOGO */
 .evorix-logo {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 1.5rem;
-  color: var(--text);
+  font-size: 1.4rem;
   letter-spacing: -0.02em;
   text-decoration: none;
+  flex-shrink: 0;
+  margin-right: auto;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
+/* Theme Colors for Logo */
+html[data-theme="dark"] .evorix-logo {
+  color: #F9FAFB;
+}
+
+html[data-theme="light"] .evorix-logo {
+  color: #0F172A;
+}
+
+.evorix-header.header--hero .evorix-logo {
+  transform: scale(0.95);
+  opacity: 1;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.16);
+}
+
+/* NAVIGATION */
 .evorix-nav {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   align-items: center;
   justify-content: center;
+  flex: 1;
+  /* Takes center stage */
+  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Hide Nav in Hero State */
+.evorix-header.header--hero .evorix-nav {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.98);
+}
+
+.evorix-header.header--nav .evorix-nav {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
 .nav-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
   border: 1px solid transparent;
   background: transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
-  padding: 0;
-}
-
-.nav-icon svg {
-  width: 18px;
-  height: 18px;
-  stroke: #e5e7eb;
-  fill: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-muted);
 }
 
 .nav-icon:hover {
-  background: rgba(59, 130, 246, 0.14);
-  border-color: rgba(59, 130, 246, 0.6);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.nav-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  transition: stroke 0.2s ease;
 }
 
 .nav-icon--active {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--btn-ghost-bg);
+  color: var(--primary);
+  border-color: rgba(var(--primary), 0.2);
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
 }
 
-.nav-icon--active svg {
-  stroke: #f9fafb;
+html[data-theme="light"] .nav-icon:hover {
+  background: rgba(0, 0, 0, 0.06);
 }
 
+/* ACTIONS (Contact + Theme) */
 .evorix-header-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
+/* Hide Contact CTA in Hero */
+.evorix-header.header--hero .btn-contact-cta {
+  opacity: 0;
+  width: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(10px);
+}
+
+.evorix-header.header--nav .btn-contact-cta {
+  opacity: 1;
+  width: auto;
+  transform: translateX(0);
+  /* Reset transition handled by generic class but ensure timing matches */
+  transition: all 0.4s ease;
+}
+
+/* CONTACT BTN */
 .btn-contact-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 1.4rem;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 999px;
-  background: #2563eb;
+  background: var(--primary);
   color: #fff;
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   text-decoration: none;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .btn-contact-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 40px rgba(37, 99, 235, 0.55);
+  background: var(--primary-glow);
+  /* Fallback */
 }
 
-.theme-toggle {
-  background: var(--theme-toggle-bg);
-  border: 2px solid var(--theme-toggle-border);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--theme-toggle-icon);
-  transition: all 0.3s ease;
-}
+/* =========================================
+   MOBILE / TABLET SPECIFIC (< 768px)
+   ========================================= */
+@media (max-width: 768px) {
+  .evorix-header {
+    padding: 0.5rem 1rem;
+    flex-wrap: nowrap;
+    /* Prevent wrap */
+  }
 
-.theme-toggle:hover {
-  background: var(--surface-hover);
-  transform: rotate(15deg);
-}
+  /* Compact Hero Mobile */
+  .evorix-header.header--hero {
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    backdrop-filter: none;
+  }
 
-.icon-theme::before {
-  content: '\2600';
-  font-size: 1.2rem;
-}
+  /* Navbar Layout Mobile */
+  .header-primary-actions {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    /* Right align actions */
+    gap: 0.5rem;
+  }
 
-:root[data-theme="light"] .icon-theme::before {
-  content: '\263E';
+  /* LOGO MOBILE */
+  .evorix-logo {
+    font-size: 1.25rem;
+    margin-right: auto;
+  }
+
+  /* NAVIGATION MOBILE */
+  /* In mobile, nav is visible in header--nav state, but compact */
+
+  .evorix-nav {
+    position: static;
+    transform: none;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    width: auto;
+    gap: 0;
+    /* Use padding on icons instead for touch target */
+  }
+
+  /* Mobile Icons */
+  .nav-icon {
+    width: 38px;
+    height: 38px;
+    padding: 8px;
+  }
+
+  .nav-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Hero State: Nav Hidden */
+  .evorix-header.header--hero .evorix-nav {
+    display: none;
+    /* Clean removal for mobile hero */
+  }
+
+  /* Nav State: Nav Visible */
+  .evorix-header.header--nav .evorix-nav {
+    display: flex;
+    overflow-x: auto;
+    max-width: 60vw;
+    /* confine to avoid overlap */
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    justify-content: flex-start;
+    /* Alignment */
+  }
+
+  .evorix-header.header--nav .evorix-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ACTIONS MOBILE */
+  .evorix-header-actions {
+    margin-left: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  /* Contact Btn Mobile - Icon Only */
+  .btn-contact-cta span {
+    display: none;
+  }
+
+  .btn-contact-cta {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* Theme Toggle Mobile */
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 /* =========================================
@@ -691,33 +874,189 @@ video {
   gap: 8px;
 }
 
-/* Base style for both header buttons */
-.evorix-header-actions button {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
+/* =========================================
+   LIGHT MODE HEADER CONTRAST OVERRIDES
+   ========================================= */
+
+/* 1. Header Background & Blur in Light Mode */
+html[data-theme="light"] .evorix-header {
+  background: rgba(248, 250, 252, 0.92);
+  /* Slight off-white glass */
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 2. Header Elements High Contrast */
+html[data-theme="light"] .evorix-logo,
+html[data-theme="light"] .nav-icon,
+html[data-theme="light"] .nav-icon svg,
+html[data-theme="light"] .btn-contact-cta span {
+  color: #0F172A;
+  /* Dark text */
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+html[data-theme="light"] .nav-icon:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #000;
+}
+
+html[data-theme="light"] .btn-contact-cta {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="light"] .btn-contact-cta span {
+  color: #fff;
+  /* Ensure text inside button stays white */
+}
+
+/* 3. Theme Toggle Fixes (Strict Dark Circle, White Icon) */
+html[data-theme="light"] .theme-toggle {
+  background-color: #000000;
+  color: #ffffff;
+  /* Icon inherits this white color */
+  border: none;
+}
+
+/* Ensure no override breaks the dark circle */
+html[data-theme="light"] .evorix-header.header--hero .theme-toggle {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+html[data-theme="light"] .evorix-header.header--nav .theme-toggle {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Clean up duplicate blocks if any */
+/* =========================================
+   THEME TOGGLE (BICOLOR REAL & SUMMON)
+   ========================================= */
+
+/* 1. Base Logic & Colors */
+.theme-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
+  border-radius: 999px;
+  position: relative;
+  z-index: 50;
+  border: none;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  outline: none;
 }
 
-.evorix-header-actions button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.theme-toggle:hover {
+  transform: scale(1.05);
 }
 
-/* Ensure SVG icons follow the text color */
-.evorix-header-actions button svg {
-  width: 18px;
-  height: 18px;
-  stroke: currentColor;
-  fill: none;
+/* Theme variable setup locally or via root if widely used */
+:root {
+  --toggle-glow: rgba(0, 224, 255, 0.6);
 }
+
+html[data-theme="light"] {
+  --toggle-glow: rgba(0, 0, 0, 0.3);
+  /* Dark glow for light mode hero */
+}
+
+/* DARK MODE (Default Context): White Btn, Black Icon */
+.theme-toggle {
+  background-color: #ffffff;
+  color: #0F172A;
+  box-shadow: none;
+}
+
+/* Icons */
+.icon-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  /* Ensures icon takes the button's text color */
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.icon-theme::before {
+  content: '\2600';
+  /* Sun */
+}
+
+html[data-theme="light"] .icon-theme::before {
+  content: '\263E';
+  /* Moon */
+}
+
+
+/* 2. HEADER--HERO STATE (Summoned) */
+.evorix-header.header--hero .theme-toggle {
+  /* Mobile Size */
+  width: 60px;
+  height: 60px;
+
+  /* Persistent Hero Glow */
+  box-shadow: 0 0 50px var(--toggle-glow);
+
+  /* Animation */
+  animation: themeSummon 1.8s ease-out 0.3s 2;
+  opacity: 1;
+}
+
+/* Desktop Sizing */
+@media (min-width: 768px) {
+  .evorix-header.header--hero .theme-toggle {
+    width: 68px;
+    height: 68px;
+  }
+
+  .evorix-header.header--hero .icon-theme {
+    font-size: 1.8rem;
+  }
+}
+
+/* 3. HEADER--NAV STATE (Integrated) */
+.evorix-header.header--nav .theme-toggle {
+  width: 40px;
+  height: 40px;
+  box-shadow: none !important;
+  /* Force no glow */
+  animation: none;
+}
+
+/* 4. THEME SUMMON ANIMATION */
+@keyframes themeSummon {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+
+  20% {
+    transform: scale(1.35);
+    box-shadow: 0 0 45px var(--toggle-glow);
+  }
+
+  45% {
+    transform: scale(0.85);
+    box-shadow: 0 0 25px var(--toggle-glow);
+  }
+
+  70% {
+    transform: scale(1.2);
+    box-shadow: 0 0 40px var(--toggle-glow);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 50px var(--toggle-glow);
+  }
+}
+
 
 /* THEME SPECIFIC CONTRAST */
 
@@ -865,8 +1204,27 @@ body>*:not(#evorix-canvas) {
 
 /* Versión móvil: que no se vea aplastado */
 @media (max-width: 768px) {
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: clamp(4rem, 10vh, 6rem);
+    padding-bottom: 3rem;
+  }
+
+  .hero .content {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
   .hero-title {
     font-size: 1.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-sub {
+    margin-bottom: 1.5rem;
   }
 
   .hero-title .hero-line-accent {
@@ -2440,106 +2798,7 @@ footer {
 }
 
 
-/* =========================================
-   14. MOBILE NAVIGATION COMPONENTS
-   ========================================= */
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 
-.mobile-menu-btn {
-  display: none;
-  /* Hidden on desktop */
-  background: transparent;
-  border: none;
-  color: var(--text);
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background 0.3s ease;
-  z-index: 1001;
-}
-
-.mobile-menu-btn:hover {
-  background: var(--surface-hover);
-}
-
-.mobile-menu {
-  position: fixed;
-  top: var(--header-height);
-  left: 0;
-  width: 100%;
-  height: calc(100vh - var(--header-height));
-  background: var(--mobile-menu-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  z-index: 999;
-  transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-}
-
-.mobile-menu[aria-hidden="false"] {
-  transform: translateX(0);
-}
-
-.mobile-menu-container {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  height: 100%;
-}
-
-.mobile-link {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px;
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--text);
-  font-weight: 600;
-  font-size: 1rem;
-  border: 1px solid var(--border);
-  transition: all 0.2s ease;
-  text-decoration: none;
-}
-
-.mobile-link:hover,
-.mobile-link:active {
-  background: var(--surface-hover);
-  border-color: var(--primary);
-  transform: translateX(4px);
-}
-
-.mobile-link.highlight {
-  background: rgba(0, 102, 255, 0.1);
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.nav-icon {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2px;
-  opacity: 0.8;
-  transition: color 0.2s ease;
-}
-
-.mobile-link:hover .nav-icon {
-  opacity: 1;
-  color: var(--primary);
-}
 
 /* =========================================
    13. RESPONSIVE OVERRIDES
@@ -3132,39 +3391,9 @@ body.tour-active {
   margin-right: auto;
 }
 
-/* =========================================
-   MOBILE HEADER & MENU RE-DESIGN
-   ========================================= */
 
-/* Default: Hidden on Desktop */
-.mobile-menu-btn {
-  display: none;
-}
 
-.mobile-menu-overlay {
-  display: none;
-}
-
-/* Mobile Styles */
-/* Mobile Styles */
 @media (max-width: 768px) {
-
-  /* 1. Remove Mobile Menu & Nav completely */
-  .mobile-menu-btn {
-    display: none !important;
-  }
-
-  .evorix-nav {
-    display: none !important;
-  }
-
-  .evorix-nav.open {
-    display: none !important;
-  }
-
-  .mobile-menu-overlay {
-    display: none !important;
-  }
 
   /* 2. Hide Contact Button (Keep only Theme Toggle) */
   .evorix-header-actions .btn-contact-cta {
@@ -3198,13 +3427,9 @@ body.tour-active {
     stroke: currentColor;
     fill: none;
   }
-
-  /* 5. Ensure header stays above canvas */
-  .evorix-header {
-    position: relative;
-    z-index: 9999;
-  }
 }
+
+
 
 .recognition-card .accordion-content {
   display: none;
@@ -3496,4 +3721,14 @@ html[data-theme="dark"] .about-layout h3,
 html[data-theme="dark"] .about-layout p {
   color: var(--text-on-surface, #e5e7eb);
   /* o el token que uses para texto en oscuro */
+}
+
+/* =========================================
+   FINAL LOGO VISIBILITY FIX (LIGHT MODE)
+   ========================================= */
+html[data-theme="light"] .evorix-logo {
+  color: #0F172A !important;
+  /* texto oscuro legible */
+  text-shadow: none !important;
+  /* sin halo blanco */
 }
