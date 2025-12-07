@@ -495,56 +495,118 @@
     // MOBILE ENGINE (New Optimized Logic)
     // -------------------------------------------------------------
     function startMobileEngine() {
-      // Mobile Config - Better Interactivity
-      const MOBILE_PARTICLE_COUNT = 75; // Increased from 55
-      const MOBILE_TOUCH_FORCE = 0.35; // Increased
-      const MOBILE_SCROLL_FORCE = 0.08;
-      const MOBILE_FRICTION = 0.95;
+      // -----------------------------------------------------------
+      // MOBILE CONFIGURATION
+      // -----------------------------------------------------------
+      const config = {
+        particleCount: 70,
+        magneticRadius: 0,
+        magneticRadiusFactor: 0.85,
+        attractionStrength: 0.04,
+        burstCount: 45,
+        burstSpeed: 2.5,
+        baseSpeed: 0.4,
+        friction: 0.94
+      };
+
+      // -----------------------------------------------------------
+      // STATE & REFERENCES
+      // -----------------------------------------------------------
+      let particles = [];
+      let burstParticles = [];
+      let ctaTarget = null; // { x, y }
+      let ctaButton = document.querySelector('.hero-cta');
+
+      let isMobile = window.matchMedia('(max-width: 768px)').matches;
+      const mediaListener = (e) => { isMobile = e.matches; };
+      window.matchMedia('(max-width: 768px)').addEventListener('change', mediaListener);
 
       let lastScrollY = window.scrollY;
       let touchX = null, touchY = null, touchActive = false;
-
-      // Create mobile particles
-      function createMobileParticle() {
-        return {
-          x: Math.random() * vw,
-          y: Math.random() * vh,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          size: 1.5 + Math.random() * 2.5,
-          hueShift: Math.random()
-        };
-      }
-
-      function buildMobileParticles() {
-        particles = new Array(MOBILE_PARTICLE_COUNT);
-        for (let i = 0; i < MOBILE_PARTICLE_COUNT; i++) {
-          particles[i] = createMobileParticle();
-        }
-      }
-      buildMobileParticles();
-
-      // Mobile Events
-      function onPointerMove(e) {
-        touchX = e.clientX;
-        touchY = e.clientY;
-        touchActive = true;
-      }
-      function onPointerEnd() {
-        touchActive = false;
-      }
-
-      window.addEventListener('pointermove', onPointerMove, { passive: true });
-      window.addEventListener('pointerdown', onPointerMove, { passive: true });
-      window.addEventListener('pointerup', onPointerEnd, { passive: true });
-      window.addEventListener('pointercancel', onPointerEnd, { passive: true });
-
+      let rafId = null;
       let lastTime = performance.now();
 
+      // -----------------------------------------------------------
+      // UTILS: CTA TARGET TRACKING (Logical Pixels)
+      // -----------------------------------------------------------
+      function updateCtaTarget() {
+        if (!ctaButton) {
+          ctaButton = document.querySelector('.hero-cta');
+        }
+        if (ctaButton && canvas) {
+          const rect = ctaButton.getBoundingClientRect();
+          const cr = canvas.getBoundingClientRect();
+
+          // Calculate center relative to viewport/canvas
+          // Since ctx is scaled by dpr, we work in logical pixels (CSS pixels).
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+
+          const targetX = cx - cr.left;
+          const targetY = cy - cr.top;
+
+          ctaTarget = { x: targetX, y: targetY };
+        } else {
+          ctaTarget = null;
+        }
+      }
+
+      // -----------------------------------------------------------
+      // PARTICLE FACTORY (Logical Pixels)
+      // -----------------------------------------------------------
+      function createParticle(isBurst = false, originX = 0, originY = 0) {
+        const p = {
+          x: isBurst ? originX : Math.random() * vw,
+          y: isBurst ? originY : Math.random() * vh,
+          vx: 0,
+          vy: 0,
+          size: isBurst ? (1.2 + Math.random() * 2.0) : (1.5 + Math.random() * 2.5),
+          hueShift: Math.random(),
+          life: isBurst ? 1.0 : 1.0,
+          isBurst: isBurst
+        };
+
+        if (isBurst) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * config.burstSpeed;
+          p.vx = Math.cos(angle) * speed;
+          p.vy = Math.sin(angle) * speed;
+        } else {
+          p.vx = (Math.random() - 0.5) * config.baseSpeed;
+          p.vy = (Math.random() - 0.5) * config.baseSpeed;
+        }
+        return p;
+      }
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < config.particleCount; i++) {
+          particles.push(createParticle(false));
+        }
+      }
+
+      // -----------------------------------------------------------
+      // BURST LOGIC
+      // -----------------------------------------------------------
+      function spawnBurst() {
+        if (!ctaTarget) return;
+        for (let i = 0; i < config.burstCount; i++) {
+          const ox = ctaTarget.x + (Math.random() - 0.5) * 20;
+          const oy = ctaTarget.y + (Math.random() - 0.5) * 10;
+          burstParticles.push(createParticle(true, ox, oy));
+        }
+      }
+
+      if (ctaButton) {
+        ctaButton.addEventListener('click', spawnBurst);
+        ctaButton.addEventListener('touchstart', spawnBurst, { passive: true });
+      }
+
+      // -----------------------------------------------------------
+      // LOOP
+      // -----------------------------------------------------------
       function step(now) {
         rafId = requestAnimationFrame(step);
-
-        // Time & Scroll delta
         const dt = Math.min(0.06, (now - lastTime) / 1000);
         lastTime = now;
 
@@ -552,65 +614,112 @@
         const scrollDelta = currentScroll - lastScrollY;
         lastScrollY = currentScroll;
 
+        updateCtaTarget();
+
+        // Clear using logical dimensions (vw, vh)
         ctx.clearRect(0, 0, vw, vh);
 
+        // 1. UPDATE & DRAW STANDARD PARTICLES
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
 
-          // 1. Idle Drift (very subtle noise)
+          // Magnetic Attraction
+          if (isMobile && ctaTarget) {
+            const dx = ctaTarget.x - p.x;
+            const dy = ctaTarget.y - p.y;
+            const d2 = dx * dx + dy * dy;
+            const magRad = 180; // value in logical pixels
+            const magRad2 = magRad * magRad;
+
+            if (d2 < magRad2) {
+              const d = Math.sqrt(d2);
+              const force = config.attractionStrength * (1 - d / magRad);
+              if (d > 1) {
+                p.vx += (dx / d) * force;
+                p.vy += (dy / d) * force;
+              }
+            }
+          }
+
           p.vx += (Math.random() - 0.5) * 0.02;
           p.vy += (Math.random() - 0.5) * 0.02;
 
-          // 2. Touch Attraction
-          if (touchActive && touchX !== null) {
-            const dx = touchX - p.x;
-            const dy = touchY - p.y;
-            // Simple linear pull
-            p.vx += dx * MOBILE_TOUCH_FORCE * dt * 0.1;
-            p.vy += dy * MOBILE_TOUCH_FORCE * dt * 0.1;
-          }
-
-          // 3. Scroll Influence (vertical drift)
           if (Math.abs(scrollDelta) > 0.1) {
-            p.vy += scrollDelta * MOBILE_SCROLL_FORCE * 0.1;
+            p.vy += scrollDelta * 0.01;
           }
 
-          // 4. Apply Velocity & Friction
-          p.vx *= MOBILE_FRICTION;
-          p.vy *= MOBILE_FRICTION;
-
+          p.vx *= config.friction;
+          p.vy *= config.friction;
           p.x += p.vx;
           p.y += p.vy;
 
-          // 5. Wrap
-          if (p.x < -10) p.x = vw + 10;
-          if (p.x > vw + 10) p.x = -10;
-          if (p.y < -10) p.y = vh + 10;
-          if (p.y > vh + 10) p.y = -10;
+          if (p.x < -20) p.x = vw + 20;
+          if (p.x > vw + 20) p.x = -20;
+          if (p.y < -20) p.y = vh + 20;
+          if (p.y > vh + 20) p.y = -20;
 
-          // 6. Draw
           const alpha = 0.35 + (p.size / 3.0) * 0.3;
           ctx.fillStyle = mixColor(p.hueShift, alpha);
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fill();
         }
+
+        // 2. UPDATE & DRAW BURST PARTICLES
+        for (let i = burstParticles.length - 1; i >= 0; i--) {
+          const bp = burstParticles[i];
+
+          bp.x += bp.vx;
+          bp.y += bp.vy;
+          bp.vx *= 0.92;
+          bp.vy *= 0.92;
+
+          bp.life -= 1.5 * dt;
+
+          if (bp.life <= 0) {
+            burstParticles.splice(i, 1);
+            continue;
+          }
+
+          ctx.fillStyle = mixColor(bp.hueShift, bp.life);
+          ctx.beginPath();
+          ctx.arc(bp.x, bp.y, bp.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
+      updateCtaTarget();
+      initParticles();
       rafId = requestAnimationFrame(step);
 
-      // Return cleanup function
+      function onPointerMove(e) {
+        touchX = e.clientX; // Logic pixels
+        touchY = e.clientY;
+        touchActive = true;
+      }
+      function onPointerEnd() { touchActive = false; }
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerdown', onPointerMove, { passive: true });
+      window.addEventListener('pointerup', onPointerEnd, { passive: true });
+
       return function cleanup() {
         if (rafId) cancelAnimationFrame(rafId);
         window.removeEventListener('pointermove', onPointerMove);
         window.removeEventListener('pointerdown', onPointerMove);
         window.removeEventListener('pointerup', onPointerEnd);
-        window.removeEventListener('pointercancel', onPointerEnd);
+        window.matchMedia('(max-width: 768px)').removeEventListener('change', mediaListener);
+
+        if (ctaButton) {
+          ctaButton.removeEventListener('click', spawnBurst);
+          ctaButton.removeEventListener('touchstart', spawnBurst);
+        }
+
         ctx.clearRect(0, 0, vw, vh);
+        particles = [];
+        burstParticles = [];
       };
     } // end startMobileEngine
-
-    // Duplicate block removed
 
 
     // -------------------------------------------------------------
