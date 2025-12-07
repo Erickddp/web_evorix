@@ -2917,6 +2917,83 @@ canvas {
 }
 
 /* =========================================
+   15b. DESKTOP CONTACT OPTIMIZATIONS (>=1024px)
+   ========================================= */
+@media (min-width: 1024px) {
+
+  /* 1. LAYOUT & SPACING */
+  .contact-section {
+    padding: 5rem 0 6rem;
+    /* Vertical breathing room */
+    min-height: auto;
+  }
+
+  /* 2. SINGLE ROW LAYOUT */
+  .contact-grid {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    /* Force single row */
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem 0;
+    /* Space for hover */
+  }
+
+  /* 3. CARD STYLE */
+  .contact-card {
+    /* Dimensions: Big & Prominent */
+    flex: 0 1 auto;
+    width: 260px;
+    min-width: 240px;
+
+    /* Layout Reset */
+    margin: 0 !important;
+
+    /* Visuals */
+    padding: 2.2rem 1.5rem;
+
+    /* Transform Reset (Fixes base scale if any) */
+    transform: translateY(0) rotate(0deg);
+
+    /* Transitions */
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  /* 4. CONTENT SCALING */
+  .contact-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-card h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-action {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  /* 5. INTERACTION (Hover) */
+  .contact-card:hover,
+  .contact-card:focus-visible {
+    transform: translateY(-8px) rotate(-2deg);
+    border-color: var(--primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+  }
+}
+
+/* =========================================
    16. TOUR ANIMATIONS
    ========================================= */
 body.tour-active {
