@@ -2828,36 +2828,91 @@ canvas {
    15. MOBILE CONTACT OPTIMIZATIONS
    ========================================= */
 @media (max-width: 768px) {
+
+  /* 1. SECTION COMPACTNESS */
   .contact-section {
-    padding-block: 3rem;
+    padding-block: 3.5rem;
   }
 
   .contact-container {
-    padding: 0 20px;
+    padding-inline: 1.5rem;
   }
 
   .contact-header {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 
   .contact-header h2 {
-    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-size: 1.7rem;
+    max-width: 95%;
+    margin-inline: auto;
+    line-height: 1.2;
   }
 
-  /* Ensure 1 column full width on mobile */
+  /* 2. DYNAMIC GRID (2 + 1) */
   .contact-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    /* Tight gap */
     max-width: 100%;
+    padding-bottom: 10px;
+    /* Space for hover lift */
   }
 
+  /* 3. CARD & ANIMATION */
   .contact-card {
-    padding: 2rem 1.5rem;
+    /* Layout: 2 per row logic (50% - half gap) */
+    flex: 0 0 calc(50% - 8px);
+    width: auto;
+    max-width: calc(50% - 8px);
+
+    /* Visuals */
+    background: var(--surface);
+    padding: 1.5rem 1rem;
+    border-radius: 1.25rem;
+
+    margin: 0 !important;
+    min-width: 135px;
+    /* Ensure prominence */
+
+    /* Animation Base */
+    transform: translateY(0) rotate(0deg);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.2s ease;
   }
 
+  /* 4. INTERACTION (Touch/Hover) */
+  .contact-card:active,
+  .contact-card:focus-visible,
+  .contact-card:hover {
+    transform: translateY(-4px) rotate(-1.5deg);
+    border-color: var(--primary);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    background: var(--surface-hover);
+    z-index: 5;
+  }
+
+  /* 5. ICON & TEXT */
   .contact-icon {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.75rem;
+  }
+
+  .contact-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-action {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    font-weight: 600;
   }
 }
 
