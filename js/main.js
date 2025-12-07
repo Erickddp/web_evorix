@@ -1034,25 +1034,42 @@
     }, 100);
 
     try {
+
+      const TOUR_FIRST_SCROLL_DURATION = 700;   // Fast entry
+      const TOUR_SCROLL_DURATION = 2000;  // Relaxed flow
+      const TOUR_STEP_DELAY = 1200;  // Pause
+
       // Sequence
       const steps = [
-        { id: 'servicios', delay: 800 },
-        { id: 'ecosistema', delay: 800 },
-        { id: 'reconocimientos', delay: 800 },
-        { id: 'sobre-mi', delay: 800 },
-        { id: 'contacto', delay: 1000 }
+        { id: 'servicios', delay: TOUR_STEP_DELAY },
+        { id: 'ecosistema', delay: TOUR_STEP_DELAY },
+        { id: 'reconocimientos', delay: TOUR_STEP_DELAY },
+        { id: 'sobre-mi', delay: TOUR_STEP_DELAY },
+        { id: 'contacto', delay: 1500 }
       ];
 
-      for (const step of steps) {
+      for (let i = 0; i < steps.length; i++) {
         if (signal.aborted) break;
 
+        const step = steps[i];
         const element = document.getElementById(step.id);
+
         if (element) {
-          await autoScrollTo(element, signal);
+          // First jump is fast/immediate, subsequent are slow
+          const duration = (i === 0) ? TOUR_FIRST_SCROLL_DURATION : TOUR_SCROLL_DURATION;
+
+          await autoScrollTo(element, signal, duration);
+
           if (signal.aborted) break;
 
           highlightSection(element);
           spawnParticles(element);
+
+          // Mobile-specific behavior for Servicios -> Demo horizontal scroll
+          if (step.id === 'servicios' && window.matchMedia('(max-width: 768px)').matches) {
+            demoServicesHorizontalScroll();
+            demoServicesTabSelection();
+          }
 
           await new Promise(r => setTimeout(r, step.delay));
         }
@@ -1070,7 +1087,7 @@
     }
   }
 
-  function autoScrollTo(element, signal) {
+  function autoScrollTo(element, signal, duration) {
     return new Promise((resolve, reject) => {
       if (signal.aborted) {
         reject(new Error('Aborted'));
@@ -1081,7 +1098,7 @@
       const targetY = element === document.body ? 0 : (element.getBoundingClientRect().top + window.scrollY - 80);
       const startY = window.scrollY;
       const distance = targetY - startY;
-      const duration = 1000; // 1s scroll
+      const scrollDuration = duration || 2000;
       let startTime = null;
 
       function step(timestamp) {
@@ -1091,14 +1108,14 @@
         }
         if (!startTime) startTime = timestamp;
         const progress = timestamp - startTime;
-        const percent = Math.min(progress / duration, 1);
+        const percent = Math.min(progress / scrollDuration, 1);
 
         // EaseInOutQuad
         const ease = percent < 0.5 ? 2 * percent * percent : -1 + (4 - 2 * percent) * percent;
 
         window.scrollTo(0, startY + distance * ease);
 
-        if (progress < duration) {
+        if (progress < scrollDuration) {
           requestAnimationFrame(step);
         } else {
           resolve();
@@ -1121,6 +1138,71 @@
     // const rect = element.getBoundingClientRect();
     // ...
   }
+
+  function demoServicesHorizontalScroll() {
+    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
+
+    const servicesList = document.querySelector('.services-list[role="tablist"]');
+    if (!servicesList) return;
+
+    const maxScroll = servicesList.scrollWidth - servicesList.clientWidth;
+    if (maxScroll <= 0) return;
+
+    const targetScroll = Math.min(maxScroll, servicesList.clientWidth * 0.8);
+    const duration = 700;
+    const start = servicesList.scrollLeft;
+    const startTime = performance.now();
+
+    function animate(now) {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+
+      // EaseInOut
+      const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+      servicesList.scrollLeft = start + (targetScroll - start) * ease;
+
+      if (t < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setTimeout(() => {
+          servicesList.scrollTo({
+            left: servicesList.scrollLeft * 0.6,
+            behavior: 'smooth'
+          });
+        }, 200);
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  function demoServicesTabSelection() {
+    // Only on mobile
+    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
+
+    const servicesList = document.querySelector('.services-list[role="tablist"]');
+    if (!servicesList) return;
+
+    const tabs = servicesList.querySelectorAll('[role="tab"]');
+    if (!tabs || tabs.length === 0) return;
+
+    const firstTab = tabs[0];
+    const secondTab = tabs.length > 1 ? tabs[1] : null;
+
+    if (!secondTab) return;
+
+    // Simulate selecting another service
+    setTimeout(() => {
+      secondTab.click();
+    }, 250); // after horizontal scroll starts
+
+    // Return to first
+    setTimeout(() => {
+      firstTab.click();
+    }, 850); // still within tour step delay
+  }
+
 
   // (Legacy carousel code removed)
 
@@ -1244,20 +1326,20 @@
 =============================================================================
 MOBILE EXPERIENCE & ANIMATION SUMMARY (STEP 3)
 =============================================================================
-
+ 
 1. NEW ANIMATIONS & MICRO-INTERACTIONS
    - Hero: Faster, staggered entry + floating particle effect.
    - Services: Active tab underline animation + Mobile slide-in for detail panel.
    - Cards/Buttons: Tactile feedback (scale down) on press/active.
    - Reveal System: Applied to References, Contact, and Recognitions.
-
+ 
 2. CSS ANIMATION CLASSES
    - .reveal / .reveal-section: Base class for scroll entry.
    - .is-visible: Trigger class active state.
    - .floating-element: Continuous float loop (disabled on reduced motion).
    - .cursor-blink: Terminal cursor effect.
    - .scale-on-press: Micro-interaction utility.
-
+ 
 3. PERFORMANCE TRADE-OFFS
    - Used 'will-change' sparingly on reveal elements.
    - Disabled heavier animations (float) on 'prefers-reduced-motion'.
