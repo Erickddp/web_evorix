@@ -3860,7 +3860,357 @@ html[data-theme="dark"] .about-layout p {
    ========================================= */
 html[data-theme="light"] .evorix-logo {
   color: #0F172A !important;
-  /* texto oscuro legible */
-  text-shadow: none !important;
-  /* sin halo blanco */
-}
+
+           @ k e y f r a m e s   h e r o T i t l e P o p    {
+                 t o    {
+                           t r a n s f o r m :    s c a l e ( 1 )   t r a n s l a t e Y ( 0 ) ;
+                           o p a c i t y :    1 ;
+                   
+    }
+
+         
+  }
+
+           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d a s h - m o d u l e    {
+                 o p a c i t y :    0 ;
+                 t r a n s f o r m :    t r a n s l a t e Y ( 2 0 p x )   s c a l e ( 0 . 9 8 ) ;
+                 t r a n s i t i o n :    a l l   0 . 6 s   c u b i c - b e z i e r ( 0 . 2 ,    0 . 8 ,    0 . 2 ,    1 ) ;
+         
+  }
+
+           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d a s h - m o d u l e . i s - v i s i b l e ,
+       b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d a s h - m o d u l e . i n    {
+                 o p a c i t y :    1 ;
+                 t r a n s f o r m :    t r a n s l a t e Y ( 0 )   s c a l e ( 1 ) ;
+         
+  }
+
+           / *   S t a g g e r e d   e n t r y   f o r   t o o l s   p a g e   * /     b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 1    {
+                 t r a n s i t i o n - d e l a y :    0 . 1 s ;
+         
+  }
+
+           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 2    {
+                 t r a n s i t i o n - d e l a y :    0 . 2 5 s ;
+         
+  }
+
+           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 3    {
+                 t r a n s i t i o n - d e l a y :    0 . 4 s ;
+         
+  }
+
+           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 4    {
+                 t r a n s i t i o n - d e l a y :    0 . 5 5 s ;
+         
+  }
+
+           / *   E n h a n c e d   C a r d   i n   H o m e   ( I n d e x )   * /     / *   L i n k   b e h a v i o r   r e s e t   f o r   b l o c k   l i n k   * /     a . d a s h - m o d u l e . t o o l s    {
+                 t e x t - d e c o r a t i o n :    n o n e ;
+                 c u r s o r :    p o i n t e r ;
+                 d i s p l a y :    b l o c k ;
+                 / *   E n s u r e   i t   b e h a v e s   a s   b l o c k   * /             c o l o r :    i n h e r i t ;
+                 / *   I n h e r i t   t e x t   c o l o r   * /     
+  }
+
+           a . d a s h - m o d u l e . t o o l s : h o v e r   h 3 ,
+       a . d a s h - m o d u l e . t o o l s : h o v e r   p    {
+                 c o l o r :    i n h e r i t ;
+         
+  }
+
+           / *   H o v e r   E f f e c t   D e s k t o p   * /     @ m e d i a   ( m i n - w i d t h :   1 0 2 4 p x )    {
+                 . d a s h - m o d u l e . t o o l s    {
+                           t r a n s i t i o n :    t r a n s f o r m   0 . 3 s   c u b i c - b e z i e r ( 0 . 3 4 ,    1 . 5 6 ,    0 . 6 4 ,    1 ) ,                              b o x - s h a d o w   0 . 3 s   e a s e ,                              b o r d e r - c o l o r   0 . 3 s   e a s e    ! i m p o r t a n t ;
+                   
+    }
+
+                     . d a s h - m o d u l e . t o o l s : h o v e r    {
+                           t r a n s f o r m :    t r a n s l a t e Y ( - 6 p x )   s c a l e ( 1 . 0 2 ) ;
+                           b o x - s h a d o w :    0   1 0 p x   4 0 p x   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 2 5 ) ;
+                           b o r d e r - c o l o r :    r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 6 ) ;
+                           z - i n d e x :    1 0 ;
+                   
+    }
+
+         
+  }
+
+           / *   M o b i l e   T o u c h   F e e d b a c k   * /     @ m e d i a   ( m a x - w i d t h :   7 6 8 p x )    {
+                 . d a s h - m o d u l e . t o o l s : a c t i v e    {
+                           t r a n s f o r m :    s c a l e ( 0 . 9 8 ) ;
+                           b a c k g r o u n d :    v a r ( - - s u r f a c e - h o v e r ) ;
+                   
+    }
+
+         
+  }
+
+           / *   A c t i v e   P u l s e   f o r   t h e   D o t   i n s i d e   T o o l s   M o d u l e   * /     . d a s h - m o d u l e . t o o l s   . s t a t u s - d o t    {
+                 a n i m a t i o n :    t o o l P u l s e   2 s   i n f i n i t e ;
+                 b a c k g r o u n d :    v a r ( - - p r i m a r y ) ;
+                 b o x - s h a d o w :    0   0   0   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 7 ) ;
+         
+  }
+
+           @ k e y f r a m e s   t o o l P u l s e    {
+                 0 %    {
+                           b o x - s h a d o w :    0   0   0   0   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 7 ) ;
+                   
+    }
+
+                     7 0 %    {
+                           b o x - s h a d o w :    0   0   0   6 p x   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 ) ;
+                   
+    }
+
+        ```
+
+    /* Prices */
+    html[data-theme="light"] .service-detail-panel .price-tag .price-label,
+    html[data-theme="light"] .service-detail-panel .price-tag .price-value {
+      color: #0f172a !important;
+    }
+
+
+    /* FIX DEFINITIVO: Panel Services – Light Mode */
+    html[data-theme="light"] h3#panel-title {
+      color: #0f172a !important;
+      -webkit-text-fill-color: #0f172a !important;
+      text-shadow: none !important;
+    }
+
+    html[data-theme="light"] .service-detail-panel .panel-header .panel-intro,
+    html[data-theme="light"] .service-detail-panel .panel-bullets li {
+      color: #334155 !important;
+      -webkit-text-fill-color: #334155 !important;
+      text-shadow: none !important;
+    }
+
+    /* =========================================
+   HERO ENHANCEMENTS & TOUR BUTTON
+   ========================================= */
+    .hero .btn.btn-primary.btn-glow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 2.5rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #1f6dff, #23a1ff);
+      box-shadow: 0 0 25px rgba(35, 161, 255, 0.45);
+      font-weight: 600;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+      animation: btn-breath 3.6s ease-in-out infinite;
+    }
+
+    .hero .btn.btn-primary.btn-glow:hover,
+    .hero .btn.btn-primary.btn-glow:focus-visible {
+      transform: scale(1.06);
+      box-shadow: 0 0 35px rgba(35, 161, 255, 0.65);
+    }
+
+    @keyframes btn-breath {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 22px rgba(35, 161, 255, 0.40);
+      }
+
+      50% {
+        transform: scale(1.04);
+        box-shadow: 0 0 32px rgba(35, 161, 255, 0.70);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 22px rgba(35, 161, 255, 0.40);
+      }
+    }
+
+    .hero .btn-helper {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+    }
+
+
+
+    /* Fix texto "Sobre mí" en tema claro y oscuro */
+    .about-layout h3,
+    .about-layout p {
+      color: var(--text-main);
+      /* buen contraste en fondo claro */
+    }
+
+    /* Ajuste específico para modo oscuro */
+    html[data-theme="dark"] .about-layout h3,
+    html[data-theme="dark"] .about-layout p {
+      color: var(--text-on-surface, #e5e7eb);
+      /* o el token que uses para texto en oscuro */
+    }
+
+    /* =========================================
+   FINAL LOGO VISIBILITY FIX (LIGHT MODE)
+   ========================================= */
+    html[data-theme="light"] .evorix-logo {
+      color: #0F172A !important;
+      /* texto oscuro legible */
+      text-shadow: none !important;
+      /* sin halo blanco */
+    }
+
+    /* =========================================
+   EVORIX TOOLS PAGE SPECIFIC
+   ========================================= */
+    body.evorix-tools-page #inicio .hero-title {
+      transform: scale(0.95) translateY(20px);
+      animation: heroTitlePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      opacity: 0;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes heroTitlePop {
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    body.evorix-tools-page #herramientas .dash-module {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    body.evorix-tools-page #herramientas .dash-module.is-visible,
+    body.evorix-tools-page #herramientas .dash-module.in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    body.evorix-tools-page #herramientas {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      border-top: none !important;
+      border-bottom: none !important;
+    }
+
+
+    /* Staggered entry for tools page */
+    body.evorix-tools-page #herramientas .delay-1 {
+      transition-delay: 0.1s;
+    }
+
+    body.evorix-tools-page #herramientas .delay-2 {
+      transition-delay: 0.25s;
+    }
+
+    body.evorix-tools-page #herramientas .delay-3 {
+      transition-delay: 0.4s;
+    }
+
+    body.evorix-tools-page #herramientas .delay-4 {
+      transition-delay: 0.55s;
+    }
+
+    /* =========================================
+   SIMPLIFIED EVORIX TOOLS CARD (Grid Consistent)
+   ========================================= */
+
+    /* Ensure grid alignment with other modules */
+    .grid-dashboard .dash-module {
+      min-height: 260px;
+      /* Ensure uniform height for all modules including Tools */
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* EVORIX Tools Specifics - Subtle Distinction Only */
+    a.dash-module.tools {
+      text-decoration: none;
+      cursor: pointer;
+      color: inherit;
+
+      /* Subtle distinction from normal modules */
+      border-color: rgba(0, 102, 255, 0.45);
+      box-shadow: 0 12px 35px rgba(0, 102, 255, 0.28);
+    }
+
+    /* Simplify internal layout to match standard modules */
+    a.dash-module.tools .module-header {
+      margin-bottom: 1rem;
+      /* Standard spacing */
+    }
+
+    a.dash-module.tools p {
+      margin-bottom: auto;
+      /* Push content down like other modules */
+      opacity: 0.9;
+    }
+
+    /* Button Styling - Simple & Full width on mobile */
+    .dash-module.tools .btn.btn-primary {
+      width: 100%;
+      justify-content: center;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    @media (min-width: 768px) {
+      .dash-module.tools .btn.btn-primary {
+        width: auto;
+        /* Auto width on desktop */
+      }
+    }
+
+    /* Desktop Hover Interaction - Clean & Simple */
+    @media (min-width: 1024px) {
+      a.dash-module.tools {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+
+      a.dash-module.tools:hover {
+        transform: translateY(-4px);
+        /* Subtle lift */
+        box-shadow: 0 15px 40px rgba(0, 102, 255, 0.35);
+        border-color: rgba(0, 102, 255, 0.8);
+        z-index: 5;
+      }
+    }
+
+    /* Mobile Interaction */
+    @media (max-width: 768px) {
+      a.dash-module.tools:active {
+        transform: scale(0.98);
+      }
+    }
+
+    /* Status Dot Pulse */
+    .dash-module.tools .status-dot {
+      animation: toolPulse 2s infinite;
+      background: var(--primary);
+      box-shadow: 0 0 0 rgba(0, 102, 255, 0.7);
+    }
+
+    @keyframes toolPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 6px rgba(0, 102, 255, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(0, 102, 255, 0);
+      }
+    }
+
+    /* Utility for tech-stack links (keep for other areas) */
+    .tech-stack li a {
+      display: inline-block;
+      text-decoration: none;
+      color: inherit;
+    }
