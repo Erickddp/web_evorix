@@ -54,6 +54,8 @@
   --bp-sm: 480px;
   --bp-md: 768px;
   --bp-lg: 1024px;
+
+
 }
 
 /* Light Mode Overrides */
@@ -81,10 +83,12 @@
   --theme-toggle-border: #F59E0B;
   --theme-toggle-bg: transparent;
   --theme-toggle-icon: #0F172A;
-  --icon-color: #0F172A;
+  --icon-color: #ffffff;
   --hero-gradient: linear-gradient(180deg, #0F172A 0%, #64748B 100%);
-  --btn-ghost-bg: rgba(0, 0, 0, 0.05);
+  --btn-ghost-bg: rgba(32, 22, 218, 0.05);
   --badge-bg: rgba(0, 0, 0, 0.05);
+
+
 }
 
 * {
@@ -94,6 +98,8 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Light theme background handled by var(--bg) on body */
 
 body {
   margin: 0;
@@ -558,151 +564,139 @@ video {
    3. HEADER
    ========================================= */
 .evorix-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 9999;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  color: inherit;
+  transition: transform 0.2s ease, opacity 0.2s ease, background 0.25s ease, backdrop-filter 0.25s ease, border-color 0.25s ease;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 0.75rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  padding: 0.75rem 2rem;
-  transition:
-    background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-    backdrop-filter 0.5s ease,
-    padding 0.4s ease,
-    box-shadow 0.4s ease,
-    transform 0.4s ease;
-  border-bottom: 1px solid transparent;
+  gap: 1.5rem;
 }
 
-/* Header States */
-
-/* HEADER--HERO (Minimalist) */
-.evorix-header.header--hero {
-  background: rgba(5, 10, 20, 0.02);
-  backdrop-filter: blur(2px);
-  border-bottom-color: transparent;
-  box-shadow: none;
-  padding: 1.25rem 2rem;
-  /* Larger padding for hero feel */
-}
-
-/* HEADER--NAV (Functional Bar) */
-.evorix-header.header--nav {
-  background: rgba(5, 10, 20, 0.85);
-  /* Glass opaque */
+/* Scrolled state (PROMPT 1) */
+.evorix-header.header--scrolled {
+  background: rgba(2, 6, 23, 0.9);
+  /* oscuro en dark */
   backdrop-filter: blur(16px);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
-  padding: 0.6rem 2rem;
-  /* Compact padding */
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
 }
 
-/* Light mode adjustments */
-html[data-theme="light"] .evorix-header.header--hero {
-  background: rgba(255, 255, 255, 0.02);
+html[data-theme="light"] .evorix-header.header--scrolled {
+  background: rgba(248, 250, 252, 0.95);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
 }
 
-html[data-theme="light"] .evorix-header.header--nav {
-  background: rgba(255, 255, 255, 0.88);
-  border-bottom-color: rgba(0, 0, 0, 0.05);
+/* Ensure no state class hides it */
+.evorix-header.header--hero,
+.evorix-header.header--nav,
+.evorix-header.hide {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  /* Maintain visibility */
+  padding: 0.75rem 2rem;
+}
+
+
+
+
+#evorix-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  display: block;
+  background: transparent;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+html[data-theme="light"] #evorix-canvas {
+  opacity: 1 !important;
+  display: block !important;
+  mix-blend-mode: normal !important;
+  background: transparent !important;
 }
 
 /* Layout Wrapper */
 .header-primary-actions {
-  display: contents;
-  /* Allows children to participate in parent flex layout */
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 /* LOGO */
 /* LOGO */
 .evorix-logo {
   font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 1.4rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   letter-spacing: -0.02em;
   text-decoration: none;
   flex-shrink: 0;
-  margin-right: auto;
   transition: transform 0.3s ease, color 0.3s ease;
+  color: inherit;
 }
 
-/* Theme Colors for Logo */
-html[data-theme="dark"] .evorix-logo {
-  color: #F9FAFB;
-}
-
-html[data-theme="light"] .evorix-logo {
-  color: #0F172A;
-}
-
-.evorix-header.header--hero .evorix-logo {
-  transform: scale(0.95);
-  opacity: 1;
-  text-shadow: 0 0 12px rgba(0, 0, 0, 0.16);
-}
-
-/* NAVIGATION */
+/* NAVIGATION (PROMPT 2) */
 .evorix-nav {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
-  justify-content: center;
-  flex: 1;
-  /* Takes center stage */
-  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  gap: 1rem;
+  position: relative;
+  max-width: 320px;
+  /* nav pequeña para que entren todos los íconos */
+  -webkit-mask-image: linear-gradient(to right,
+      transparent,
+      black 15%,
+      black 85%,
+      transparent);
+  mask-image: linear-gradient(to right,
+      transparent,
+      black 15%,
+      black 85%,
+      transparent);
 }
 
-/* Hide Nav in Hero State */
-.evorix-header.header--hero .evorix-nav {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-8px) scale(0.98);
-}
-
-.evorix-header.header--nav .evorix-nav {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
-}
-
+.evorix-nav button,
 .nav-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-full);
-  border: 1px solid transparent;
-  background: transparent;
-  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--text-muted);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  color: inherit;
 }
 
-.nav-icon:hover {
-  background: rgba(255, 255, 255, 0.08);
+.evorix-nav button:hover,
+.nav-icon:hover,
+.nav-icon.nav-item--active,
+.evorix-nav .nav-item--active {
+  transform: translateY(-1px);
+  border-color: var(--primary);
   color: var(--primary);
-  transform: translateY(-2px);
 }
 
 .nav-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   stroke: currentColor;
   fill: none;
   transition: stroke 0.2s ease;
-}
-
-.nav-icon--active {
-  background: var(--btn-ghost-bg);
-  color: var(--primary);
-  border-color: rgba(var(--primary), 0.2);
-  box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
-}
-
-html[data-theme="light"] .nav-icon:hover {
-  background: rgba(0, 0, 0, 0.06);
 }
 
 /* ACTIONS (Contact + Theme) */
@@ -715,14 +709,14 @@ html[data-theme="light"] .nav-icon:hover {
 }
 
 /* Hide Contact CTA in Hero */
+/* Contact CTA always visible */
 .evorix-header.header--hero .btn-contact-cta {
-  opacity: 0;
-  width: 0;
-  padding: 0;
+  opacity: 1;
+  width: auto;
+  padding: 0.5rem 1.25rem;
   margin: 0;
-  overflow: hidden;
-  pointer-events: none;
-  transform: translateX(10px);
+  pointer-events: auto;
+  transform: none;
 }
 
 .evorix-header.header--nav .btn-contact-cta {
@@ -914,45 +908,82 @@ html[data-theme="light"] .btn-contact-cta span {
 }
 
 /* 3. Theme Toggle Fixes (Strict Dark Circle, White Icon) */
-html[data-theme="light"] .theme-toggle {
-  background-color: #000000;
-  color: #ffffff;
-  /* Icon inherits this white color */
-  border: none;
-}
-
-/* Ensure no override breaks the dark circle */
-html[data-theme="light"] .evorix-header.header--hero .theme-toggle {
-  background-color: #000000;
-  color: #ffffff;
-}
-
-html[data-theme="light"] .evorix-header.header--nav .theme-toggle {
-  background-color: #000000;
-  color: #ffffff;
-}
-
-/* Clean up duplicate blocks if any */
 /* =========================================
-   THEME TOGGLE (BICOLOR REAL & SUMMON)
+   THEME TOGGLE (Unified & Clean)
    ========================================= */
-
-/* 1. Base Logic & Colors */
-.theme-toggle {
-  display: flex;
+.theme-toggle-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: none;
   cursor: pointer;
-  border-radius: 999px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
   position: relative;
   z-index: 50;
-  border: none;
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   outline: none;
 }
 
-.theme-toggle:hover {
-  transform: scale(1.05);
+.theme-toggle-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+}
+
+.theme-toggle-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Colors per Theme */
+
+/* Dark Mode (default) */
+html[data-theme="dark"] .theme-toggle-btn {
+  background: #020617;
+  color: #f9fafb;
+}
+
+/* Light Mode */
+html[data-theme="light"] .theme-toggle-btn {
+  background: #ffffff;
+  color: #020617;
+}
+
+/* Animation */
+@keyframes theme-toggle-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.12);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.theme-toggle-icon.theme-toggle--animating {
+  animation: theme-toggle-pulse 0.22s ease-out;
+}
+
+/* Icons Content */
+.theme-toggle-icon::before {
+  content: '\2600';
+  /* Sun */
+  /* If using a font icon class, ensure this targets it correctly. 
+     Assuming .theme-toggle-icon acts as the icon container/element */
+}
+
+html[data-theme="light"] .theme-toggle-icon::before {
+  content: '\263E';
+  /* Moon */
 }
 
 /* Theme variable setup locally or via root if widely used */
@@ -965,130 +996,12 @@ html[data-theme="light"] {
   /* Dark glow for light mode hero */
 }
 
-/* DARK MODE (Default Context): White Btn, Black Icon */
-.theme-toggle {
-  background-color: #ffffff;
-  color: #0F172A;
-  box-shadow: none;
-}
-
-/* Icons */
-.icon-theme {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: inherit;
-  /* Ensures icon takes the button's text color */
-  font-size: 1.4rem;
-  line-height: 1;
-}
-
-.icon-theme::before {
-  content: '\2600';
-  /* Sun */
-}
-
-html[data-theme="light"] .icon-theme::before {
-  content: '\263E';
-  /* Moon */
-}
+/* Legacy hero overrides removed to strictly follow new clean style */
 
 
-/* 2. HEADER--HERO STATE (Summoned) */
-.evorix-header.header--hero .theme-toggle {
-  /* Mobile Size */
-  width: 60px;
-  height: 60px;
-
-  /* Persistent Hero Glow */
-  box-shadow: 0 0 50px var(--toggle-glow);
-
-  /* Animation */
-  animation: themeSummon 1.8s ease-out 0.3s 2;
-  opacity: 1;
-}
-
-/* Desktop Sizing */
-@media (min-width: 768px) {
-  .evorix-header.header--hero .theme-toggle {
-    width: 68px;
-    height: 68px;
-  }
-
-  .evorix-header.header--hero .icon-theme {
-    font-size: 1.8rem;
-  }
-}
-
-/* 3. HEADER--NAV STATE (Integrated) */
-.evorix-header.header--nav .theme-toggle {
-  width: 40px;
-  height: 40px;
-  box-shadow: none !important;
-  /* Force no glow */
-  animation: none;
-}
-
-/* 4. THEME SUMMON ANIMATION */
-@keyframes themeSummon {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  }
-
-  20% {
-    transform: scale(1.35);
-    box-shadow: 0 0 45px var(--toggle-glow);
-  }
-
-  45% {
-    transform: scale(0.85);
-    box-shadow: 0 0 25px var(--toggle-glow);
-  }
-
-  70% {
-    transform: scale(1.2);
-    box-shadow: 0 0 40px var(--toggle-glow);
-  }
-
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 50px var(--toggle-glow);
-  }
-}
 
 
-/* THEME SPECIFIC CONTRAST */
 
-/* Dark Mode (Default) */
-:root[data-theme="dark"] .evorix-header {
-  background: rgba(5, 10, 20, 0.95);
-  /* Keep dark header */
-}
-
-:root[data-theme="dark"] .evorix-header-actions button {
-  background: rgba(255, 255, 255, 0.05);
-  color: #f9fafb;
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Light Mode */
-:root[data-theme="light"] .evorix-header {
-  background: #020617;
-  /* Force dark header even in light mode for contrast */
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
-:root[data-theme="light"] .evorix-logo {
-  color: #f9fafb;
-  /* Ensure logo is white on the dark header */
-}
-
-:root[data-theme="light"] .evorix-header-actions button {
-  background: rgba(255, 255, 255, 0.1);
-  color: #f9fafb;
-  border-color: rgba(255, 255, 255, 0.2);
-}
 
 /* Old .theme-toggle-btn styles removed in favor of generic .evorix-header-actions button */
 
@@ -1462,6 +1375,49 @@ body>*:not(#evorix-canvas) {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+
+/* Mini Canvas for Tools Module */
+.btn-full {
+  display: inline-flex;
+  justify-content: center;
+  width: auto;
+  margin: 1.25rem auto 0;
+  /* top, auto left/right */
+  min-width: 200px;
+  /* Optional better touch target */
+}
+
+.module-mini-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  margin: 0.75rem 0 1rem;
+  border-radius: 18px;
+  overflow: hidden;
+  background: radial-gradient(circle at top left,
+      rgba(255, 255, 255, 0.06),
+      rgba(0, 0, 0, 0.2));
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02);
+  transition: box-shadow 0.3s ease;
+}
+
+.evoapp-mini-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .module-mini-canvas-wrapper {
+    height: 100px;
+  }
+}
+
+.dash-module.tools:hover .module-mini-canvas-wrapper {
+  box-shadow: 0 0 22px rgba(0, 132, 255, 0.45);
 }
 
 .ui-mockup {
@@ -3856,361 +3812,472 @@ html[data-theme="dark"] .about-layout p {
 }
 
 /* =========================================
+   FIX: Logo visibility in LIGHT MODE
+   ========================================= */
+html[data-theme="light"] .evorix-logo {
+  color: #0F172A !important;
+}
+
+
+/* FIX DEFINITIVO: Panel Services – Light Mode */
+html[data-theme="light"] h3#panel-title {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .service-detail-panel .panel-header .panel-intro,
+html[data-theme="light"] .service-detail-panel .panel-bullets li {
+  color: #334155 !important;
+  -webkit-text-fill-color: #334155 !important;
+  text-shadow: none !important;
+}
+
+/* =========================================
+   HERO ENHANCEMENTS & TOUR BUTTON
+   ========================================= */
+.hero .btn.btn-primary.btn-glow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 2.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1f6dff, #23a1ff);
+  box-shadow: 0 0 25px rgba(35, 161, 255, 0.45);
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+  animation: btn-breath 3.6s ease-in-out infinite;
+}
+
+.hero .btn.btn-primary.btn-glow:hover,
+.hero .btn.btn-primary.btn-glow:focus-visible {
+  transform: scale(1.06);
+  box-shadow: 0 0 35px rgba(35, 161, 255, 0.65);
+}
+
+@keyframes btn-breath {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 22px rgba(35, 161, 255, 0.40);
+  }
+
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 32px rgba(35, 161, 255, 0.70);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 22px rgba(35, 161, 255, 0.40);
+  }
+}
+
+.hero .btn-helper {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: center;
+}
+
+
+
+/* Fix texto "Sobre mí" en tema claro y oscuro */
+.about-layout h3,
+.about-layout p {
+  color: var(--text-main);
+  /* buen contraste en fondo claro */
+}
+
+/* Ajuste específico para modo oscuro */
+html[data-theme="dark"] .about-layout h3,
+html[data-theme="dark"] .about-layout p {
+  color: var(--text-on-surface, #e5e7eb);
+  /* o el token que uses para texto en oscuro */
+}
+
+/* =========================================
    FINAL LOGO VISIBILITY FIX (LIGHT MODE)
    ========================================= */
 html[data-theme="light"] .evorix-logo {
   color: #0F172A !important;
+  /* texto oscuro legible */
+  text-shadow: none !important;
+  /* sin halo blanco */
+}
 
-           @ k e y f r a m e s   h e r o T i t l e P o p    {
-                 t o    {
-                           t r a n s f o r m :    s c a l e ( 1 )   t r a n s l a t e Y ( 0 ) ;
-                           o p a c i t y :    1 ;
-                   
-    }
-
-         
-  }
-
-           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d a s h - m o d u l e    {
-                 o p a c i t y :    0 ;
-                 t r a n s f o r m :    t r a n s l a t e Y ( 2 0 p x )   s c a l e ( 0 . 9 8 ) ;
-                 t r a n s i t i o n :    a l l   0 . 6 s   c u b i c - b e z i e r ( 0 . 2 ,    0 . 8 ,    0 . 2 ,    1 ) ;
-         
-  }
-
-           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d a s h - m o d u l e . i s - v i s i b l e ,
-       b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d a s h - m o d u l e . i n    {
-                 o p a c i t y :    1 ;
-                 t r a n s f o r m :    t r a n s l a t e Y ( 0 )   s c a l e ( 1 ) ;
-         
-  }
-
-           / *   S t a g g e r e d   e n t r y   f o r   t o o l s   p a g e   * /     b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 1    {
-                 t r a n s i t i o n - d e l a y :    0 . 1 s ;
-         
-  }
-
-           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 2    {
-                 t r a n s i t i o n - d e l a y :    0 . 2 5 s ;
-         
-  }
-
-           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 3    {
-                 t r a n s i t i o n - d e l a y :    0 . 4 s ;
-         
-  }
-
-           b o d y . e v o r i x - t o o l s - p a g e   # h e r r a m i e n t a s   . d e l a y - 4    {
-                 t r a n s i t i o n - d e l a y :    0 . 5 5 s ;
-         
-  }
-
-           / *   E n h a n c e d   C a r d   i n   H o m e   ( I n d e x )   * /     / *   L i n k   b e h a v i o r   r e s e t   f o r   b l o c k   l i n k   * /     a . d a s h - m o d u l e . t o o l s    {
-                 t e x t - d e c o r a t i o n :    n o n e ;
-                 c u r s o r :    p o i n t e r ;
-                 d i s p l a y :    b l o c k ;
-                 / *   E n s u r e   i t   b e h a v e s   a s   b l o c k   * /             c o l o r :    i n h e r i t ;
-                 / *   I n h e r i t   t e x t   c o l o r   * /     
-  }
-
-           a . d a s h - m o d u l e . t o o l s : h o v e r   h 3 ,
-       a . d a s h - m o d u l e . t o o l s : h o v e r   p    {
-                 c o l o r :    i n h e r i t ;
-         
-  }
-
-           / *   H o v e r   E f f e c t   D e s k t o p   * /     @ m e d i a   ( m i n - w i d t h :   1 0 2 4 p x )    {
-                 . d a s h - m o d u l e . t o o l s    {
-                           t r a n s i t i o n :    t r a n s f o r m   0 . 3 s   c u b i c - b e z i e r ( 0 . 3 4 ,    1 . 5 6 ,    0 . 6 4 ,    1 ) ,                              b o x - s h a d o w   0 . 3 s   e a s e ,                              b o r d e r - c o l o r   0 . 3 s   e a s e    ! i m p o r t a n t ;
-                   
-    }
-
-                     . d a s h - m o d u l e . t o o l s : h o v e r    {
-                           t r a n s f o r m :    t r a n s l a t e Y ( - 6 p x )   s c a l e ( 1 . 0 2 ) ;
-                           b o x - s h a d o w :    0   1 0 p x   4 0 p x   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 2 5 ) ;
-                           b o r d e r - c o l o r :    r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 6 ) ;
-                           z - i n d e x :    1 0 ;
-                   
-    }
-
-         
-  }
-
-           / *   M o b i l e   T o u c h   F e e d b a c k   * /     @ m e d i a   ( m a x - w i d t h :   7 6 8 p x )    {
-                 . d a s h - m o d u l e . t o o l s : a c t i v e    {
-                           t r a n s f o r m :    s c a l e ( 0 . 9 8 ) ;
-                           b a c k g r o u n d :    v a r ( - - s u r f a c e - h o v e r ) ;
-                   
-    }
-
-         
-  }
-
-           / *   A c t i v e   P u l s e   f o r   t h e   D o t   i n s i d e   T o o l s   M o d u l e   * /     . d a s h - m o d u l e . t o o l s   . s t a t u s - d o t    {
-                 a n i m a t i o n :    t o o l P u l s e   2 s   i n f i n i t e ;
-                 b a c k g r o u n d :    v a r ( - - p r i m a r y ) ;
-                 b o x - s h a d o w :    0   0   0   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 7 ) ;
-         
-  }
-
-           @ k e y f r a m e s   t o o l P u l s e    {
-                 0 %    {
-                           b o x - s h a d o w :    0   0   0   0   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 . 7 ) ;
-                   
-    }
-
-                     7 0 %    {
-                           b o x - s h a d o w :    0   0   0   6 p x   r g b a ( 0 ,    1 0 2 ,    2 5 5 ,    0 ) ;
-                   
-    }
-
-        ```
-
-    /* Prices */
-    html[data-theme="light"] .service-detail-panel .price-tag .price-label,
-    html[data-theme="light"] .service-detail-panel .price-tag .price-value {
-      color: #0f172a !important;
-    }
-
-
-    /* FIX DEFINITIVO: Panel Services – Light Mode */
-    html[data-theme="light"] h3#panel-title {
-      color: #0f172a !important;
-      -webkit-text-fill-color: #0f172a !important;
-      text-shadow: none !important;
-    }
-
-    html[data-theme="light"] .service-detail-panel .panel-header .panel-intro,
-    html[data-theme="light"] .service-detail-panel .panel-bullets li {
-      color: #334155 !important;
-      -webkit-text-fill-color: #334155 !important;
-      text-shadow: none !important;
-    }
-
-    /* =========================================
-   HERO ENHANCEMENTS & TOUR BUTTON
-   ========================================= */
-    .hero .btn.btn-primary.btn-glow {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.9rem 2.5rem;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #1f6dff, #23a1ff);
-      box-shadow: 0 0 25px rgba(35, 161, 255, 0.45);
-      font-weight: 600;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
-      animation: btn-breath 3.6s ease-in-out infinite;
-    }
-
-    .hero .btn.btn-primary.btn-glow:hover,
-    .hero .btn.btn-primary.btn-glow:focus-visible {
-      transform: scale(1.06);
-      box-shadow: 0 0 35px rgba(35, 161, 255, 0.65);
-    }
-
-    @keyframes btn-breath {
-      0% {
-        transform: scale(1);
-        box-shadow: 0 0 22px rgba(35, 161, 255, 0.40);
-      }
-
-      50% {
-        transform: scale(1.04);
-        box-shadow: 0 0 32px rgba(35, 161, 255, 0.70);
-      }
-
-      100% {
-        transform: scale(1);
-        box-shadow: 0 0 22px rgba(35, 161, 255, 0.40);
-      }
-    }
-
-    .hero .btn-helper {
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-      font-size: 0.78rem;
-      line-height: 1.4;
-      color: rgba(255, 255, 255, 0.65);
-      text-align: center;
-    }
-
-
-
-    /* Fix texto "Sobre mí" en tema claro y oscuro */
-    .about-layout h3,
-    .about-layout p {
-      color: var(--text-main);
-      /* buen contraste en fondo claro */
-    }
-
-    /* Ajuste específico para modo oscuro */
-    html[data-theme="dark"] .about-layout h3,
-    html[data-theme="dark"] .about-layout p {
-      color: var(--text-on-surface, #e5e7eb);
-      /* o el token que uses para texto en oscuro */
-    }
-
-    /* =========================================
-   FINAL LOGO VISIBILITY FIX (LIGHT MODE)
-   ========================================= */
-    html[data-theme="light"] .evorix-logo {
-      color: #0F172A !important;
-      /* texto oscuro legible */
-      text-shadow: none !important;
-      /* sin halo blanco */
-    }
-
-    /* =========================================
+/* =========================================
    EVORIX TOOLS PAGE SPECIFIC
    ========================================= */
-    body.evorix-tools-page #inicio .hero-title {
-      transform: scale(0.95) translateY(20px);
-      animation: heroTitlePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-      opacity: 0;
-      animation-delay: 0.2s;
-    }
+body.evorix-tools-page #inicio .hero-title {
+  transform: scale(0.95) translateY(20px);
+  animation: heroTitlePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0;
+  animation-delay: 0.2s;
+}
 
-    @keyframes heroTitlePop {
-      to {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-      }
-    }
+@keyframes heroTitlePop {
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
 
-    body.evorix-tools-page #herramientas .dash-module {
-      opacity: 0;
-      transform: translateY(20px) scale(0.98);
-      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
+body.evorix-tools-page #herramientas .dash-module {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
-    body.evorix-tools-page #herramientas .dash-module.is-visible,
-    body.evorix-tools-page #herramientas .dash-module.in {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+body.evorix-tools-page #herramientas .dash-module.is-visible,
+body.evorix-tools-page #herramientas .dash-module.in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 
-    body.evorix-tools-page #herramientas {
-      background: transparent !important;
-      backdrop-filter: none !important;
-      border-top: none !important;
-      border-bottom: none !important;
-    }
+body.evorix-tools-page #herramientas {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
 
 
-    /* Staggered entry for tools page */
-    body.evorix-tools-page #herramientas .delay-1 {
-      transition-delay: 0.1s;
-    }
+/* Staggered entry for tools page */
+body.evorix-tools-page #herramientas .delay-1 {
+  transition-delay: 0.1s;
+}
 
-    body.evorix-tools-page #herramientas .delay-2 {
-      transition-delay: 0.25s;
-    }
+body.evorix-tools-page #herramientas .delay-2 {
+  transition-delay: 0.25s;
+}
 
-    body.evorix-tools-page #herramientas .delay-3 {
-      transition-delay: 0.4s;
-    }
+body.evorix-tools-page #herramientas .delay-3 {
+  transition-delay: 0.4s;
+}
 
-    body.evorix-tools-page #herramientas .delay-4 {
-      transition-delay: 0.55s;
-    }
+body.evorix-tools-page #herramientas .delay-4 {
+  transition-delay: 0.55s;
+}
 
-    /* =========================================
+/* =========================================
    SIMPLIFIED EVORIX TOOLS CARD (Grid Consistent)
    ========================================= */
 
-    /* Ensure grid alignment with other modules */
-    .grid-dashboard .dash-module {
-      min-height: 260px;
-      /* Ensure uniform height for all modules including Tools */
-      display: flex;
-      flex-direction: column;
-    }
+/* Ensure grid alignment with other modules */
+.grid-dashboard .dash-module {
+  min-height: 260px;
+  /* Ensure uniform height for all modules including Tools */
+  display: flex;
+  flex-direction: column;
+}
 
-    /* EVORIX Tools Specifics - Subtle Distinction Only */
-    a.dash-module.tools {
-      text-decoration: none;
-      cursor: pointer;
-      color: inherit;
+/* EVORIX Tools Specifics - Subtle Distinction Only */
+a.dash-module.tools {
+  text-decoration: none;
+  cursor: pointer;
+  color: inherit;
 
-      /* Subtle distinction from normal modules */
-      border-color: rgba(0, 102, 255, 0.45);
-      box-shadow: 0 12px 35px rgba(0, 102, 255, 0.28);
-    }
+  /* Subtle distinction from normal modules */
+  border-color: rgba(0, 102, 255, 0.45);
+  box-shadow: 0 12px 35px rgba(0, 102, 255, 0.28);
+}
 
-    /* Simplify internal layout to match standard modules */
-    a.dash-module.tools .module-header {
-      margin-bottom: 1rem;
-      /* Standard spacing */
-    }
+/* Simplify internal layout to match standard modules */
+a.dash-module.tools .module-header {
+  margin-bottom: 1rem;
+  /* Standard spacing */
+}
 
-    a.dash-module.tools p {
-      margin-bottom: auto;
-      /* Push content down like other modules */
-      opacity: 0.9;
-    }
+a.dash-module.tools p {
+  margin-bottom: auto;
+  /* Push content down like other modules */
+  opacity: 0.9;
+}
 
-    /* Button Styling - Simple & Full width on mobile */
-    .dash-module.tools .btn.btn-primary {
-      width: 100%;
-      justify-content: center;
-      margin-top: 1rem;
-      font-weight: 600;
-    }
+/* Button Styling - Simple & Full width on mobile */
+.dash-module.tools .btn.btn-primary {
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+  font-weight: 600;
+}
 
-    @media (min-width: 768px) {
-      .dash-module.tools .btn.btn-primary {
-        width: auto;
-        /* Auto width on desktop */
-      }
-    }
+@media (min-width: 768px) {
+  .dash-module.tools .btn.btn-primary {
+    width: auto;
+    /* Auto width on desktop */
+  }
+}
 
-    /* Desktop Hover Interaction - Clean & Simple */
-    @media (min-width: 1024px) {
-      a.dash-module.tools {
-        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-      }
+/* Desktop Hover Interaction - Clean & Simple */
+@media (min-width: 1024px) {
+  a.dash-module.tools {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
 
-      a.dash-module.tools:hover {
-        transform: translateY(-4px);
-        /* Subtle lift */
-        box-shadow: 0 15px 40px rgba(0, 102, 255, 0.35);
-        border-color: rgba(0, 102, 255, 0.8);
-        z-index: 5;
-      }
-    }
+  a.dash-module.tools:hover {
+    transform: translateY(-4px);
+    /* Subtle lift */
+    box-shadow: 0 15px 40px rgba(0, 102, 255, 0.35);
+    border-color: rgba(0, 102, 255, 0.8);
+    z-index: 5;
+  }
+}
 
-    /* Mobile Interaction */
-    @media (max-width: 768px) {
-      a.dash-module.tools:active {
-        transform: scale(0.98);
-      }
-    }
+/* Mobile Interaction */
+@media (max-width: 768px) {
+  a.dash-module.tools:active {
+    transform: scale(0.98);
+  }
+}
 
-    /* Status Dot Pulse */
-    .dash-module.tools .status-dot {
-      animation: toolPulse 2s infinite;
-      background: var(--primary);
-      box-shadow: 0 0 0 rgba(0, 102, 255, 0.7);
-    }
+/* Status Dot Pulse */
+.dash-module.tools .status-dot {
+  animation: toolPulse 2s infinite;
+  background: var(--primary);
+  box-shadow: 0 0 0 rgba(0, 102, 255, 0.7);
+}
 
-    @keyframes toolPulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.7);
-      }
+@keyframes toolPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 102, 255, 0.7);
+  }
 
-      70% {
-        box-shadow: 0 0 0 6px rgba(0, 102, 255, 0);
-      }
+  70% {
+    box-shadow: 0 0 0 6px rgba(0, 102, 255, 0);
+  }
 
-      100% {
-        box-shadow: 0 0 0 0 rgba(0, 102, 255, 0);
-      }
-    }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 102, 255, 0);
+  }
+}
 
-    /* Utility for tech-stack links (keep for other areas) */
-    .tech-stack li a {
-      display: inline-block;
-      text-decoration: none;
-      color: inherit;
-    }
+/* Utility for tech-stack links (keep for other areas) */
+.tech-stack li a {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+}
+
+
+
+
+
+
+
+
+
+
+/* ===== Tarjeta 1 de evotools para visor xml ===== */
+.dash-module {
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: 18px;
+  padding: 20px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+/* Tema claro */
+html[data-theme="light"] .dash-module {
+  background: #ffffff;
+  border-color: rgba(148, 163, 184, 0.20);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.15);
+}
+
+/* Hover sutil, sin payasadas */
+.dash-module:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 26px 55px rgba(15, 23, 42, 0.55);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+/* ===== Header de la tarjeta ===== */
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.module-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Puntito de estado */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.85);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+}
+
+.status-dot.active {
+  animation: status-pulse 1.6s ease-out infinite;
+}
+
+@keyframes status-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* ===== Texto descriptivo ===== */
+#visor-cfdi p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* ===== Tech stack estilo chips ===== */
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 2px;
+  padding: 0;
+  list-style: none;
+}
+
+.tech-stack li {
+  font-size: 0.78rem;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+/* Tema claro para los chips */
+html[data-theme="light"] .tech-stack li {
+  border-color: rgba(148, 163, 184, 0.6);
+}
+
+/* ===== Botón Visor CFDI ===== */
+.module-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0284ff, #00c4ff);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  box-shadow: 0 14px 35px rgba(37, 99, 235, 0.55);
+  border: none;
+
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    filter 0.16s ease;
+}
+
+.module-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.75);
+  filter: brightness(1.05);
+}
+
+.module-btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 10px 26px rgba(30, 64, 175, 0.65);
+}
+
+/* Opcional: iconito a la izquierda si luego le metes un SVG */
+.module-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* tarejeta 5 evotools */
+
+/* Header con avatar lateral */
+.module-header--with-avatar {
+  align-items: center;
+  gap: 12px;
+}
+
+/* Contenedor del avatar */
+.module-avatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, #4ade80, #16a34a);
+  box-shadow: 0 10px 24px rgba(22, 163, 74, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Imagen de la mascota */
+.module-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Título y subtítulo a la derecha del avatar */
+.module-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.module-title h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.module-subtitle {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+/* Ajuste en tema claro */
+html[data-theme="light"] .module-avatar {
+  box-shadow: 0 10px 22px rgba(22, 163, 74, 0.45);
+}
