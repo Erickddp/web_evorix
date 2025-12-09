@@ -733,23 +733,97 @@
   // - Click handlers bound explicitly to .accordion-header with debug logs.
   // - is-open toggle logic simplified and robust for touch.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // =========================================
-  // 12. EVORIX GUIDED TOUR
+  // EVORIX GUIDED TOUR (Refactor Configurable)
   // =========================================
+
+  // ---------- CONFIGURACIÓN GLOBAL DEL TOUR ----------
+  const TOUR_CONFIG = {
+    // Duración del primer scroll (entrada a Servicios)
+    firstScrollDuration: 700,      // ms
+    // Duración estándar de scroll entre secciones
+    scrollDuration: 1500,          // ms (bájalo para ir más rápido)
+    // Pausa después de llegar a cada sección
+    stepDelay: 1000,               // ms
+
+    // Comportamiento en móvil
+    mobile: {
+      extraDelayFirstStep: 1500,   // delay adicional sólo para el primer paso en móvil
+      enableServicesDemo: true,    // activa/desactiva demo horizontal + tabs
+      servicesScrollCycles: 2,     // cuántos ciclos de scroll horizontal
+      servicesScrollDuration: 600, // duración de cada scroll horizontal
+      servicesScrollBackFactor: 0.5, // qué tanto regresa (0.0–1.0)
+      tabSwitchDelay: 350          // ms entre cambio de tabs
+    },
+
+    // Secuencia de secciones del tour
+    // Puedes cambiar el orden, quitar o añadir pasos
+    steps: [
+      { id: 'servicios' },
+      { id: 'ecosistema' },
+      { id: 'reconocimientos' },
+      { id: 'sobre-mi' },
+      { id: 'contacto' }
+    ]
+  };
+
+  // ---------- ESTADO INTERNO ----------
   const tourBtn = document.getElementById('btn-tour');
+  let isTourRunning = false;
+  let tourAbortController = null;
 
   if (tourBtn) {
     tourBtn.addEventListener('click', runEvorixTour);
   }
 
-  let isTourRunning = false;
-  let tourAbortController = null;
-
+  // ---------- FUNCIÓN PRINCIPAL ----------
   async function runEvorixTour() {
     if (isTourRunning) return;
 
-    // Check for reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Si usuario prefiere menos animación -> sólo bajamos a Servicios
     if (prefersReducedMotion) {
       const target = document.getElementById('servicios');
       if (target) target.scrollIntoView({ behavior: 'smooth' });
@@ -762,20 +836,17 @@
 
     document.body.classList.add('tour-active');
 
-    // Allow manual interruption
+    // Permitir que el usuario corte el tour con interacción
     const stopTour = () => {
-      if (isTourRunning) {
-        isTourRunning = false;
-        if (tourAbortController) tourAbortController.abort();
-        document.body.classList.remove('tour-active');
-        window.removeEventListener('wheel', stopTour);
-        window.removeEventListener('touchstart', stopTour);
-        window.removeEventListener('keydown', stopTour);
-      }
+      if (!isTourRunning) return;
+      isTourRunning = false;
+      if (tourAbortController) tourAbortController.abort();
+      document.body.classList.remove('tour-active');
+      window.removeEventListener('wheel', stopTour);
+      window.removeEventListener('touchstart', stopTour);
+      window.removeEventListener('keydown', stopTour);
     };
 
-    // Add listeners with a small delay to avoid immediate trigger by the click itself if needed,
-    // but usually click doesn't trigger these.
     setTimeout(() => {
       window.addEventListener('wheel', stopTour, { passive: true });
       window.addEventListener('touchstart', stopTour, { passive: true });
@@ -783,72 +854,81 @@
     }, 100);
 
     try {
+      const isMobile =
+        window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
 
-      const TOUR_FIRST_SCROLL_DURATION = 700;   // Fast entry
-      const TOUR_SCROLL_DURATION = 2000;  // Relaxed flow
-      const TOUR_STEP_DELAY = 1200;  // Pause
-
-      // Sequence
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      const steps = [
-        { id: 'servicios', delay: isMobile ? 3000 : TOUR_STEP_DELAY },
-        { id: 'ecosistema', delay: TOUR_STEP_DELAY },
-        { id: 'reconocimientos', delay: TOUR_STEP_DELAY },
-        { id: 'sobre-mi', delay: TOUR_STEP_DELAY },
-        { id: 'contacto', delay: 1500 }
-      ];
-
-      for (let i = 0; i < steps.length; i++) {
+      for (let i = 0; i < TOUR_CONFIG.steps.length; i++) {
         if (signal.aborted) break;
 
-        const step = steps[i];
+        const step = TOUR_CONFIG.steps[i];
         const element = document.getElementById(step.id);
+        if (!element) continue;
 
-        if (element) {
-          // First jump is fast/immediate, subsequent are slow
-          const duration = (i === 0) ? TOUR_FIRST_SCROLL_DURATION : TOUR_SCROLL_DURATION;
+        // Duración de scroll para este paso
+        const duration =
+          i === 0 ? TOUR_CONFIG.firstScrollDuration : TOUR_CONFIG.scrollDuration;
 
-          await autoScrollTo(element, signal, duration);
+        // Scroll hacia la sección
+        await autoScrollTo(element, signal, duration);
+        if (signal.aborted) break;
 
-          if (signal.aborted) break;
+        // Pequeño efecto visual
+        highlightSection(element);
+        spawnParticles(element); // aquí puedes reactivar partículas si quieres
 
-          highlightSection(element);
-          spawnParticles(element);
-
-          // Mobile-specific behavior for Servicios -> Demo horizontal scroll
-          if (step.id === 'servicios' && window.matchMedia('(max-width: 768px)').matches) {
-            // Run sequence asynchronously (fire & forget relative to main loop wait)
-            (async () => {
-              // 1. Wait small entry timeout
-              await new Promise(r => setTimeout(r, 150));
-
-              // 2. Trigger Tab Selection (Concurrent)
-              demoServicesTabSelection();
-
-              // 3. Trigger Scroll Cycles
-              for (let k = 0; k < 3; k++) {
-                await demoServicesHorizontalScroll();
-                if (k < 2) await new Promise(r => setTimeout(r, 300));
-              }
-            })();
-          }
-
-          await new Promise(r => setTimeout(r, step.delay));
+        // Comportamiento especial en Servicios para móvil (tabs + scroll horizontal)
+        if (
+          isMobile &&
+          step.id === 'servicios' &&
+          TOUR_CONFIG.mobile.enableServicesDemo
+        ) {
+          // Lo lanzamos en paralelo para no bloquear el flujo principal
+          demoServicesSequence(signal).catch(() => { });
         }
+
+        // Delay después de cada sección
+        const baseDelay = TOUR_CONFIG.stepDelay;
+        const extraMobile =
+          isMobile && i === 0 ? TOUR_CONFIG.mobile.extraDelayFirstStep : 0;
+
+        await waitWithAbort(baseDelay + extraMobile, signal);
       }
 
-      // Return to start
+      // Al final volvemos arriba (si no se abortó)
       if (!signal.aborted) {
-        await autoScrollTo(document.body, signal); // Scroll to top
+        await autoScrollTo(document.body, signal, TOUR_CONFIG.scrollDuration);
       }
-
     } catch (e) {
-      // Tour aborted
+      // ignoramos errores de aborto
     } finally {
       stopTour();
     }
   }
 
+  // ---------- HELPERS GENERALES ----------
+
+  // Espera con soporte de abort
+  function waitWithAbort(ms, signal) {
+    return new Promise((resolve, reject) => {
+      if (signal.aborted) {
+        reject(new Error('Aborted'));
+        return;
+      }
+      const id = setTimeout(() => {
+        resolve();
+      }, ms);
+      signal.addEventListener(
+        'abort',
+        () => {
+          clearTimeout(id);
+          reject(new Error('Aborted'));
+        },
+        { once: true }
+      );
+    });
+  }
+
+  // Scroll suave hacia un elemento (o top de página)
   function autoScrollTo(element, signal, duration) {
     return new Promise((resolve, reject) => {
       if (signal.aborted) {
@@ -856,8 +936,11 @@
         return;
       }
 
-      // If element is body, scroll to 0
-      const targetY = element === document.body ? 0 : (element.getBoundingClientRect().top + window.scrollY - 80);
+      const targetY =
+        element === document.body
+          ? 0
+          : element.getBoundingClientRect().top + window.scrollY - 80;
+
       const startY = window.scrollY;
       const distance = targetY - startY;
       const scrollDuration = duration || 2000;
@@ -873,7 +956,10 @@
         const percent = Math.min(progress / scrollDuration, 1);
 
         // EaseInOutQuad
-        const ease = percent < 0.5 ? 2 * percent * percent : -1 + (4 - 2 * percent) * percent;
+        const ease =
+          percent < 0.5
+            ? 2 * percent * percent
+            : -1 + (4 - 2 * percent) * percent;
 
         window.scrollTo(0, startY + distance * ease);
 
@@ -883,32 +969,50 @@
           resolve();
         }
       }
+
       requestAnimationFrame(step);
     });
   }
 
+  // Marca el título de la sección un momento
   function highlightSection(section) {
     const title = section.querySelector('h2') || section.querySelector('h3');
-    if (title) {
-      title.classList.add('tour-highlight');
-      setTimeout(() => title.classList.remove('tour-highlight'), 1000);
-    }
+    if (!title) return;
+
+    title.classList.add('tour-highlight');
+    setTimeout(() => title.classList.remove('tour-highlight'), 1000);
   }
 
+  // Gancho para partículas locales (ahora desactivado)
   function spawnParticles(element) {
-    // Disabled for reset
-    // const rect = element.getBoundingClientRect();
-    // ...
+    // Aquí puedes reactivar tu lógica de partículas ligada a la sección
+    // Ejemplo:
+    // evorixParticles.spawnBurst(element.getBoundingClientRect());
   }
 
-  function demoServicesHorizontalScroll() {
+  // ---------- SECUENCIA ESPECÍFICA PARA SERVICIOS (MÓVIL) ----------
+
+  async function demoServicesSequence(signal) {
+    if (signal.aborted) return;
+    await waitWithAbort(150, signal); // pequeña pausa de entrada
+
+    await demoServicesTabSelection(signal);
+    await demoServicesHorizontalScroll(signal);
+  }
+
+  // Scroll horizontal de la lista de servicios
+  function demoServicesHorizontalScroll(signal) {
     return new Promise((resolve) => {
-      if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) {
+      const isMobile =
+        window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      if (!isMobile) {
         resolve();
         return;
       }
 
-      const servicesList = document.querySelector('.services-list[role="tablist"]');
+      const servicesList = document.querySelector(
+        '.services-list[role="tablist"]'
+      );
       if (!servicesList) {
         resolve();
         return;
@@ -920,73 +1024,144 @@
         return;
       }
 
-      const targetScroll = Math.min(maxScroll, servicesList.clientWidth * 0.8);
-      const duration = 700;
-      const start = servicesList.scrollLeft;
-      const startTime = performance.now();
+      const cycles = TOUR_CONFIG.mobile.servicesScrollCycles;
+      const duration = TOUR_CONFIG.mobile.servicesScrollDuration;
+      const backFactor = TOUR_CONFIG.mobile.servicesScrollBackFactor;
 
-      function animate(now) {
-        const elapsed = now - startTime;
-        const t = Math.min(elapsed / duration, 1);
+      let currentCycle = 0;
 
-        // EaseInOut
-        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-
-        servicesList.scrollLeft = start + (targetScroll - start) * ease;
-
-        if (t < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          // Scroll back slightly
-          setTimeout(() => {
-            servicesList.scrollTo({
-              left: servicesList.scrollLeft * 0.6,
-              behavior: 'smooth'
-            });
-            resolve(); // Resolve here, allowing next cycle to wait 300ms after this finishes
-          }, 100);
+      const runCycle = () => {
+        if (currentCycle >= cycles || signal.aborted) {
+          resolve();
+          return;
         }
-      }
 
-      requestAnimationFrame(animate);
+        const targetScroll = Math.min(
+          maxScroll,
+          servicesList.clientWidth * 0.8
+        );
+        const start = servicesList.scrollLeft;
+        const startTime = performance.now();
+
+        function animate(now) {
+          if (signal.aborted) {
+            resolve();
+            return;
+          }
+
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+          const ease =
+            t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+          servicesList.scrollLeft =
+            start + (targetScroll - start) * ease;
+
+          if (t < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            setTimeout(() => {
+              servicesList.scrollTo({
+                left: servicesList.scrollLeft * backFactor,
+                behavior: 'smooth'
+              });
+              currentCycle++;
+              // pausa corta entre ciclos
+              setTimeout(runCycle, 200);
+            }, 100);
+          }
+        }
+
+        requestAnimationFrame(animate);
+      };
+
+      runCycle();
     });
   }
 
-  function demoServicesTabSelection() {
-    // Only on mobile
-    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
+  // Secuencia de selección de tabs (Servicios)
+  async function demoServicesTabSelection(signal) {
+    const isMobile =
+      window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+    if (!isMobile) return;
 
-    const servicesList = document.querySelector('.services-list[role="tablist"]');
+    const servicesList = document.querySelector(
+      '.services-list[role="tablist"]'
+    );
     if (!servicesList) return;
 
     const tabs = servicesList.querySelectorAll('[role="tab"]');
     if (!tabs || tabs.length === 0) return;
 
-    // Sequence: tabs[1] -> tabs[2] (if exists) -> tabs[0]
-    // Interval: 400ms
-    (async () => {
-      // 1. Select Tab 2
-      if (tabs.length > 1) {
-        await new Promise(r => setTimeout(r, 400));
-        tabs[1].click();
-      }
+    const delay = TOUR_CONFIG.mobile.tabSwitchDelay;
 
-      // 2. Select Tab 3
-      if (tabs.length > 2) {
-        await new Promise(r => setTimeout(r, 400));
-        tabs[2].click();
-      }
+    // Tab 2
+    if (tabs.length > 1) {
+      await waitWithAbort(delay, signal);
+      if (!signal.aborted) tabs[1].click();
+    }
 
-      // 3. Return to Tab 1
-      if (tabs.length > 0) {
-        await new Promise(r => setTimeout(r, 400));
-        tabs[0].click();
-      }
-    })();
+    // Tab 3
+    if (tabs.length > 2) {
+      await waitWithAbort(delay, signal);
+      if (!signal.aborted) tabs[2].click();
+    }
+
+    // Volver a Tab 1
+    if (tabs.length > 0) {
+      await waitWithAbort(delay, signal);
+      if (!signal.aborted) tabs[0].click();
+    }
   }
 
 
-  // (Legacy carousel code removed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // =========================================
   // 13. TESTIMONIALS ANIMATION
