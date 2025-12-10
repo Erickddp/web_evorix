@@ -4534,3 +4534,17 @@ html[data-theme="light"] .cert-tag {
   color: var(--text-muted);
   margin: 0;
 }
+
+
+
+/* Corrección de alineación para las tarjetas de reconocimiento */
+.recognitions-section .recognition-card,
+.recognitions-section .accordion-content,
+.recognitions-section .accordion-content ul li {
+  text-align: left !important;
+}
+
+/* Ajustar el título también a la izquierda */
+.recognitions-section .accordion-header h3 {
+  text-align: left !important;
+}
