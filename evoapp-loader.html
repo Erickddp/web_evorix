@@ -136,19 +136,69 @@
         </div>
     </div>
 
-    <script>
-        // Configuration
-        const REDIRECT_DELAY = 11500; // milliseconds
-        const EVOAPP_URL = "https://app.evorix.com.mx";
 
-        // Redirect logic
-        window.addEventListener('load', () => {
+
+
+    <script>
+        // Leer parámetro ?go=...
+        const params = new URLSearchParams(window.location.search);
+        const go = params.get("go") || "evoapp";
+
+        // Tabla de destinos (con delay por página)
+        const DESTINOS = {
+            evoapp: {
+                url: "https://app.evorix.com.mx",
+                title: "Conectando con EVOAPP...",
+                subtitle: "Preparando tu entorno de trabajo.<br>EVO Cloud",
+                delay: 3500 // 3.5s
+            },
+            tools: {
+                url: "evorix-tools.html",
+                title: "Cargando EVO Tools...",
+                subtitle: "Preparando tus herramientas inteligentes.<br>EVO Tools",
+                delay: 2000 // 2s (más rápido)
+            },
+            certcv: {
+                url: "certcv.html",
+                title: "Abriendo Certificaciones...",
+                subtitle: "Mostrando tu trayectoria y reconocimientos.<br>EVORIX CV",
+                delay: 2600 // 2.6s (velocidad media)
+            },
+            evolab: {
+                url: "evolab.html",
+                title: "Abriendo EVO LAB...",
+                subtitle: "Proximamente...<br>EVO LAB",
+                delay: 444200 // 4.4s (más lento, )
+            }
+        };
+
+        // Elegir destino (fallback a evoapp)
+        const destino = DESTINOS[go] || DESTINOS.evoapp;
+
+        // Actualizar textos
+        window.addEventListener("DOMContentLoaded", () => {
+            const titleEl = document.querySelector(".loader-title");
+            const subtitleEl = document.querySelector(".loader-subtitle");
+
+            if (titleEl) titleEl.textContent = destino.title;
+            if (subtitleEl) subtitleEl.innerHTML = destino.subtitle;
+        });
+
+        // Redirección con delay por destino
+        window.addEventListener("load", () => {
             setTimeout(() => {
-                window.location.href = EVOAPP_URL;
-            }, REDIRECT_DELAY);
+                window.location.href = destino.url;
+            }, destino.delay); // ← Aquí usa el delay único
         });
     </script>
+
     <script src="js/main.js"></script>
+
+
+
+
+
+
 </body>
 
 </html>
