@@ -895,37 +895,65 @@
 
 
 
+
+
+
   // =========================================
   // EVORIX GUIDED TOUR (Refactor Configurable)
   // =========================================
 
   // ---------- CONFIGURACIÓN GLOBAL DEL TOUR ----------
   const TOUR_CONFIG = {
-    // Duración del primer scroll (entrada a Servicios)
-    firstScrollDuration: 700,      // ms
-    // Duración estándar de scroll entre secciones
-    scrollDuration: 1500,          // ms (bájalo para ir más rápido)
-    // Pausa después de llegar a cada sección
-    stepDelay: 1000,               // ms
+    // Duración estándar del PRIMER scroll (cuando salimos del héroe)
+    firstScrollDuration: 600,      // ms
 
-    // Comportamiento en móvil
+    // Duración estándar de scroll entre secciones (si el paso no define otro)
+    scrollDuration: 1100,          // ms
+
+    // Pausa base después de llegar a cada sección (si el paso no define otro)
+    stepDelay: 700,                // ms
+
+    // Comportamiento en móvil (solo parámetros generales)
     mobile: {
-      extraDelayFirstStep: 1500,   // delay adicional sólo para el primer paso en móvil
-      enableServicesDemo: true,    // activa/desactiva demo horizontal + tabs
-      servicesScrollCycles: 2,     // cuántos ciclos de scroll horizontal
-      servicesScrollDuration: 600, // duración de cada scroll horizontal
-      servicesScrollBackFactor: 0.5, // qué tanto regresa (0.0–1.0)
-      tabSwitchDelay: 350          // ms entre cambio de tabs
+      extraDelayFirstStep: 600,    // delay extra SOLO para el primer paso (ecosistema)
+      enableServicesDemo: true,    // si es true se permite demo horizontal en 'servicios'
+      servicesScrollCycles: 1,
+      servicesScrollDuration: 500,
+      servicesScrollBackFactor: 0.35,
+      tabSwitchDelay: 400
     },
 
     // Secuencia de secciones del tour
-    // Puedes cambiar el orden, quitar o añadir pasos
+    // Cada paso puede sobreescribir duración de scroll y delay
     steps: [
-      { id: 'servicios' },
-      { id: 'ecosistema' },
-      { id: 'reconocimientos' },
-      { id: 'sobre-mi' },
-      { id: 'contacto' }
+      {
+        id: 'ecosistema',
+        scrollDuration: 500,   // entra rápido a EVOAPP
+        stepDelay: 500         // pequeña pausa
+      },
+      {
+        id: 'servicios',
+        scrollDuration: 900,   // un poco más suave
+        stepDelay: 900,
+        mobile: {
+          runServicesDemo: true // aquí SÍ queremos el hint horizontal
+        }
+      },
+      {
+        id: 'referencias',
+        scrollDuration: 900,
+        stepDelay: 600
+      },
+      {
+        id: 'reconocimientos',
+        scrollDuration: 900,
+        stepDelay: 600
+      },
+      {
+        id: 'contacto',
+        scrollDuration: 900,
+        stepDelay: 600
+      }
     ]
   };
 
@@ -942,7 +970,8 @@
   async function runEvorixTour() {
     if (isTourRunning) return;
 
-    const prefersReducedMotion = window.matchMedia &&
+    const prefersReducedMotion =
+      window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Si usuario prefiere menos animación -> sólo bajamos a Servicios
@@ -977,7 +1006,8 @@
 
     try {
       const isMobile =
-        window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+        window.matchMedia &&
+        window.matchMedia('(max-width: 768px)').matches;
 
       for (let i = 0; i < TOUR_CONFIG.steps.length; i++) {
         if (signal.aborted) break;
@@ -986,32 +1016,46 @@
         const element = document.getElementById(step.id);
         if (!element) continue;
 
-        // Duración de scroll para este paso
-        const duration =
-          i === 0 ? TOUR_CONFIG.firstScrollDuration : TOUR_CONFIG.scrollDuration;
+        // 1) Duración de scroll para ESTE paso:
+        const baseDuration =
+          typeof step.scrollDuration === 'number'
+            ? step.scrollDuration
+            : (i === 0
+              ? TOUR_CONFIG.firstScrollDuration
+              : TOUR_CONFIG.scrollDuration);
 
-        // Scroll hacia la sección
-        await autoScrollTo(element, signal, duration);
+        const offsetFactor = typeof step.offsetFactor === 'number' ? step.offsetFactor : null;
+
+        // 2) Scroll hacia la sección
+        await autoScrollTo(element, signal, baseDuration, offsetFactor);
         if (signal.aborted) break;
 
-        // Pequeño efecto visual
+        // 3) Efecto visual
         highlightSection(element);
-        spawnParticles(element); // aquí puedes reactivar partículas si quieres
+        spawnParticles(element);
 
-        // Comportamiento especial en Servicios para móvil (tabs + scroll horizontal)
-        if (
+        // 4) Comportamiento especial en Servicios (solo móvil)
+        const shouldRunServicesDemo =
           isMobile &&
           step.id === 'servicios' &&
-          TOUR_CONFIG.mobile.enableServicesDemo
-        ) {
+          TOUR_CONFIG.mobile.enableServicesDemo &&
+          (!step.mobile || step.mobile.runServicesDemo !== false);
+
+        if (shouldRunServicesDemo) {
           // Lo lanzamos en paralelo para no bloquear el flujo principal
           demoServicesSequence(signal).catch(() => { });
         }
 
-        // Delay después de cada sección
-        const baseDelay = TOUR_CONFIG.stepDelay;
+        // 5) Delay después de cada sección
+        const baseDelay =
+          typeof step.stepDelay === 'number'
+            ? step.stepDelay
+            : TOUR_CONFIG.stepDelay;
+
         const extraMobile =
-          isMobile && i === 0 ? TOUR_CONFIG.mobile.extraDelayFirstStep : 0;
+          isMobile && i === 0
+            ? TOUR_CONFIG.mobile.extraDelayFirstStep
+            : 0;
 
         await waitWithAbort(baseDelay + extraMobile, signal);
       }
@@ -1026,6 +1070,33 @@
       stopTour();
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // ---------- HELPERS GENERALES ----------
 
@@ -1050,42 +1121,71 @@
     });
   }
 
-  // Scroll suave hacia un elemento (o top de página)
-  function autoScrollTo(element, signal, duration) {
+
+
+
+
+
+
+
+
+
+
+  // Scroll suave respetando header y dejando aire arriba
+  // element: sección destino
+  // signal: AbortSignal del tour (opcional)
+  // duration: duración en ms
+  // customOffsetPx: (opcional) píxeles extra de margen arriba para este paso
+  function autoScrollTo(element, signal, duration = 800, customOffsetPx = null) {
+    // Hacemos el signal opcional y seguro
+    const abortSignal =
+      signal && typeof signal.aborted === "boolean" ? signal : null;
+
     return new Promise((resolve, reject) => {
-      if (signal.aborted) {
-        reject(new Error('Aborted'));
-        return;
-      }
+      const startY = window.scrollY || window.pageYOffset;
+      const rect = element.getBoundingClientRect();
+      const viewportH =
+        window.innerHeight || document.documentElement.clientHeight;
 
-      const targetY =
-        element === document.body
-          ? 0
-          : element.getBoundingClientRect().top + window.scrollY - 80;
+      const isMobile =
+        window.matchMedia &&
+        window.matchMedia("(max-width: 768px)").matches;
 
-      const startY = window.scrollY;
-      const distance = targetY - startY;
-      const scrollDuration = duration || 2000;
-      let startTime = null;
+      // Margen base en pixeles (ajustable)
+      const baseOffsetPx = isMobile ? 1 : 1;
 
-      function step(timestamp) {
-        if (signal.aborted) {
-          reject(new Error('Aborted'));
+      // Si algún paso envía un offset extra, lo sumamos
+      const extraOffsetPx =
+        typeof customOffsetPx === "number" ? customOffsetPx : 0;
+
+      // Posición objetivo
+      let targetY = rect.top + startY - (baseOffsetPx + extraOffsetPx);
+
+      // Limitar dentro del documento
+      const docH = document.documentElement.scrollHeight;
+      const maxScroll = docH - viewportH;
+      if (targetY < 0) targetY = 0;
+      if (targetY > maxScroll) targetY = maxScroll;
+
+      const startTime = performance.now();
+
+      function step(now) {
+        if (abortSignal && abortSignal.aborted) {
+          reject(new Error("aborted"));
           return;
         }
-        if (!startTime) startTime = timestamp;
-        const progress = timestamp - startTime;
-        const percent = Math.min(progress / scrollDuration, 1);
 
-        // EaseInOutQuad
-        const ease =
-          percent < 0.5
-            ? 2 * percent * percent
-            : -1 + (4 - 2 * percent) * percent;
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1);
 
-        window.scrollTo(0, startY + distance * ease);
+        // easing suave (easeInOutQuad)
+        const eased =
+          t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
-        if (progress < scrollDuration) {
+        const currentY = startY + (targetY - startY) * eased;
+        window.scrollTo(0, currentY);
+
+        if (t < 1) {
           requestAnimationFrame(step);
         } else {
           resolve();
@@ -1095,6 +1195,54 @@
       requestAnimationFrame(step);
     });
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*
+    ---------------------------------------------------------------------------
+    NOTA SOBRE EL CENTRADO DE SECCIONES (autoScrollTo):
+    
+    La función calcula la posición de scroll restando un porcentaje de la altura 
+    de la ventana (viewport) a la posición superior del elemento.
+    
+    - 'offsetFactor' = Porcentaje de espacio libre que se deja ARRIBA del elemento.
+    
+    VALORES POR DEFECTO ACTUALES:
+    - Mobile (~30%): offsetFactor = 0.30
+    - Desktop (~18%): offsetFactor = 0.18
+    
+    CÓMO AJUSTAR:
+    - Para que la sección quede MÁS ARRIBA: REDUCE el número (ej. 0.20).
+    - Para que la sección quede MÁS ABAJO (más al centro): AUMENTA el número (ej. 0.40).
+    
+    Puedes personalizar esto por paso en TOUR_CONFIG añadiendo la propiedad:
+    offsetFactor: 0.25 (por ejemplo).
+    ---------------------------------------------------------------------------
+  */
 
   // Marca el título de la sección un momento
   function highlightSection(section) {
