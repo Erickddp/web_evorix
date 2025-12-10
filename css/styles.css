@@ -4299,3 +4299,238 @@ html[data-theme="light"] .tech-stack li {
 html[data-theme="light"] .module-avatar {
   box-shadow: 0 12px 26px rgba(22, 163, 74, 0.35);
 }
+
+/* =========================================
+   CERTCV PAGE – Carrusel de certificaciones
+   ========================================= */
+
+.certcv-page {
+  padding-top: calc(var(--header-height) + 4rem);
+  padding-bottom: 6rem;
+  overflow: hidden;
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.certcv-wrapper {
+  /* Inherits .section logic */
+}
+
+.certcv-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .certcv-layout {
+    grid-template-columns: minmax(300px, 1.2fr) minmax(0, 2fr);
+    gap: 4rem;
+  }
+}
+
+/* --- Center Text Block --- */
+.certcv-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 2;
+}
+
+@media (min-width: 900px) {
+  .certcv-center {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.certcv-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.certcv-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  max-width: 38rem;
+}
+
+/* --- Button --- */
+.certcv-more-btn {
+  /* Extends .btn styles */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.certcv-more-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 102, 255, 0.2);
+  color: var(--primary);
+}
+
+/* --- Marquee Container --- */
+.certcv-marquee {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 0;
+  /* Mask fade effect on edges */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+
+  /* Update for rows */
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.certcv-row {
+  overflow: hidden;
+  width: 100%;
+}
+
+.certcv-track {
+  display: flex;
+  align-items: stretch;
+  gap: 1.5rem;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Animation Top */
+.certcv-track--top {
+  animation: certcv-slide-1 40s linear infinite;
+}
+
+/* Animation Bottom (Reverse & slower) */
+.certcv-track--bottom {
+  animation: certcv-slide-2 55s linear infinite reverse;
+}
+
+/* Pause on hover per row */
+.certcv-row:hover .certcv-track {
+  animation-play-state: paused;
+}
+
+@keyframes certcv-slide-1 {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes certcv-slide-2 {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .certcv-marquee {
+    gap: 1.25rem;
+  }
+
+  .certcv-track--top {
+    animation-duration: 50s;
+  }
+
+  .certcv-track--bottom {
+    animation-duration: 65s;
+  }
+}
+
+/* --- Cards --- */
+.cert-card {
+  min-width: 280px;
+  max-width: 320px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 1.2rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /* Top aligned */
+  gap: 1rem;
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  white-space: normal;
+  /* Allow text wrap inside card */
+  position: relative;
+}
+
+.cert-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary-glow);
+  z-index: 5;
+}
+
+/* --- Tag --- */
+.cert-tag {
+  align-self: flex-start;
+  display: inline-flex;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(0, 102, 255, 0.1);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(0, 102, 255, 0.2);
+}
+
+/* Light Mode Adjustment for Tag */
+html[data-theme="light"] .cert-tag {
+  background: rgba(0, 85, 212, 0.08);
+  color: var(--primary);
+  border-color: rgba(0, 85, 212, 0.15);
+}
+
+/* Typography inside Card */
+.cert-card h2 {
+  font-size: 1.15rem;
+  line-height: 1.4;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+}
+
+.cert-card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
