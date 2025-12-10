@@ -205,176 +205,298 @@
   });
 
   // =========================================
-  // EVORIX PIXEL ENGINE – GLOBAL BACKGROUND (REBUILT)
+  // EVORIX PIXEL ENGINE – ADVANCED GLOBAL SYSTEM
   // =========================================
-  (function initGlobalEvorixCanvas() {
+  (function initEvorixAdvancedEngine() {
     const canvas = document.getElementById('evorix-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    let mode = 'hero'; // 'hero' | 'apps' | 'free'
+    // --- Configurations ---
+    const PARTICLES_DESKTOP = 1800;
+    const PARTICLES_MOBILE = 1000;
+    const BASE_SPEED = 0.14;
+    const EXTRA_SPEED = 0.50; // Extra speed factor for explosive modes
+    const MOUSE_RADIUS = 120; // Radius for mouse interaction
+    const GHOST_TEXT = "EVORIX";
+
+    // --- State & Variables ---
     let width = 0;
     let height = 0;
     let particles = [];
-    let rafId = null;
+    let dpr = 1;
+    let isMobile = false;
 
-    // Expose mode setter
-    function setMode(next) {
-      if (next === 'hero' || next === 'apps' || next === 'free') {
-        mode = next;
+    // Modes: 'free' | 'hero_index' | 'hero_tools' | 'hero_certs' | 'hero_loader' | 'apps' | 'tools' | 'certs' | 'evorixGhost'
+    let currentMode = 'free';
+
+    // Interaction
+    const mouse = { x: -1000, y: -1000, active: false };
+
+    // Offscreen for Text Sampling (Ghost Mode)
+    let ghostPoints = [];
+    let isGhostReady = false;
+
+    // --- Global Mode Setter ---
+    window.__evorixCanvasSetMode = function (mode) {
+      if (mode && mode !== currentMode) {
+        // console.log(`[EVORIX] Switching mode: ${currentMode} -> ${mode}`);
+        currentMode = mode;
+
+        // Trigger specific entry effects if needed
+        if (mode === 'evorixGhost' && !isGhostReady) {
+          initGhostPoints();
+        }
       }
-    }
-    window.__evorixCanvasSetMode = setMode;
+    };
 
+    // --- Initialization ---
     function resize() {
-      const dpr = window.devicePixelRatio || 1;
+      dpr = window.devicePixelRatio || 1;
       width = window.innerWidth;
       height = window.innerHeight;
+      isMobile = width <= 768;
+
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = width + 'px';
       canvas.style.height = height + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      initParticles();
+      if (currentMode === 'evorixGhost') initGhostPoints();
     }
 
     function initParticles() {
       particles = [];
-      const count = (width < 768) ? 80 : 180; // Optimized count
-      for (let i = 0; i < count; i++) {
+      const count = isMobile ? PARTICLES_MOBILE : PARTICLES_DESKTOP;
+
+      // Safety cap for extremely small screens or performance
+      const effectiveCount = (width < 360) ? Math.round(count * 0.7) : count;
+
+      for (let i = 0; i < effectiveCount; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
         particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: (Math.random() - 0.5) * 0.35,
-          r: 1.4 + Math.random() * 1.6
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * BASE_SPEED,
+          vy: (Math.random() - 0.5) * BASE_SPEED,
+          // Base/Home coordinates could be used for formation, 
+          // but we'll use dynamic targets for Ghost
+          baseX: x,
+          baseY: y,
+          r: isMobile ? (0.8 + Math.random() * 1.2) : (1.0 + Math.random() * 1.5),
+          alpha: 0.5 + Math.random() * 0.5,
+          // Extra properties for modes
+          tx: 0,
+          ty: 0,
+          inFormation: false
         });
       }
     }
 
-    function update() {
-      const centerX = width * 0.5;
-      const centerY = height * 0.45;
-      const appsX = width * 0.65;
-      const appsY = height * 0.75;
+    function initGhostPoints() {
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = width;
+      offCanvas.height = height;
+      const offCtx = offCanvas.getContext('2d');
 
-      for (const p of particles) {
-        // Base drift
-        p.x += p.vx;
-        p.y += p.vy;
+      // Font params
+      const fontSize = isMobile ? width * 0.18 : width * 0.12;
+      offCtx.font = `900 ${fontSize}px "Inter", "Manrope", sans-serif`;
+      offCtx.textAlign = 'center';
+      offCtx.textBaseline = 'middle';
+      offCtx.fillStyle = '#ffffff';
 
-        // Section-based attraction
-        if (mode === 'hero') {
-          p.vx += (centerX - p.x) * 0.0004;
-          p.vy += (centerY - p.y) * 0.0004;
-        } else if (mode === 'apps') {
-          p.vx += (appsX - p.x) * 0.0004;
-          p.vy += (appsY - p.y) * 0.0004;
+      // Draw text centered
+      offCtx.fillText(GHOST_TEXT, width / 2, height / 2);
+
+      // Sample pixels
+      const imageData = offCtx.getImageData(0, 0, width, height).data;
+      ghostPoints = [];
+
+      // Sampling density (higher = sparse)
+      const step = isMobile ? 4 : 5;
+
+      for (let y = 0; y < height; y += step) {
+        for (let x = 0; x < width; x += step) {
+          const idx = (y * width + x) * 4 + 3; // alpha
+          if (imageData[idx] > 128) {
+            ghostPoints.push({ x, y });
+          }
         }
-
-        // Wrap around
-        if (p.x < -10) p.x = width + 10;
-        if (p.x > width + 10) p.x = -10;
-        if (p.y < -10) p.y = height + 10;
-        if (p.y > height + 10) p.y = -10;
       }
+      isGhostReady = true;
     }
 
-    function draw() {
+    // --- Animation Logic ---
+    function animate() {
       ctx.clearRect(0, 0, width, height);
-      // Fixed bright blue for visibility in both themes
-      ctx.fillStyle = '#1f6bff';
-      ctx.globalAlpha = 0.8;
 
-      for (const p of particles) {
+      // Visual Style
+      ctx.fillStyle = '#1f6bff';
+
+      // Mode-specific constants
+      const isIndexHero = (currentMode === 'hero_index');
+      const isGhost = (currentMode === 'evorixGhost' && isGhostReady && ghostPoints.length > 0);
+
+      // Adjust speed factor dynamically per mode
+      let speedMult = 1.0;
+      if (isIndexHero) speedMult = 1.4; // Explosive/Fast for Index Hero
+      else if (currentMode.includes('hero')) speedMult = 1.1; // Mildly fast for other heroes
+      else if (currentMode === 'apps' || currentMode === 'tools') speedMult = 0.8; // Calmer for content
+
+      // Ghost formation helpers
+      let assignedPoints = 0;
+      const ghostRatio = 0.6; // % of particles used for text
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // 1. Movement
+        let moveX = p.vx * speedMult;
+        let moveY = p.vy * speedMult;
+
+        // Apply "Explosive" / "Extra" speed component purely as noise usually, 
+        // but here we just made velocity higher. 
+        // We can add slight drift based on mode.
+        if (isIndexHero) {
+          moveX *= (1 + Math.random() * EXTRA_SPEED);
+          moveY *= (1 + Math.random() * EXTRA_SPEED);
+        }
+
+        // 2. Ghost Mode Attraction
+        if (isGhost) {
+          // Use a subset of particles to form text
+          if (assignedPoints < ghostPoints.length && i % Math.round(1 / ghostRatio) === 0) {
+            // Assign a target if not yet capable, or map index to ghost point linearly (simplest)
+            // or random map (more noise). Linear is stable.
+            const target = ghostPoints[assignedPoints % ghostPoints.length];
+            const dx = target.x - p.x;
+            const dy = target.y - p.y;
+
+            // Ease into position
+            moveX += dx * 0.04; // Attraction strength
+            moveY += dy * 0.04;
+
+            // Dampen velocity to stop at target
+            p.vx *= 0.90;
+            p.vy *= 0.90;
+
+            assignedPoints++;
+          }
+        }
+        // 3. Central Attraction for certain modes (Apps)
+        else if (currentMode === 'apps' || currentMode === 'tools') {
+          // Slight pull to center or specific area? 
+          // Let's keep it 'free' but bounded, maybe slight pull to Y center
+          const cy = height * 0.5;
+          moveY += (cy - p.y) * 0.0002;
+        }
+
+        // 4. Mouse Interaction (Repulsion or Attraction)
+        if (mouse.active) {
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < MOUSE_RADIUS) {
+            const angle = Math.atan2(dy, dx);
+            const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
+            const push = force * 2.0; // Push strength
+
+            // Repulsion usually feels better for "clearing the way"
+            // Attraction feels like "magic control".
+            // User asked for "atracción clara al mouse".
+            const interactionDir = -1; // -1 for Attraction, 1 for Repulsion
+
+            // However, attraction can trap particles. 
+            // Let's do attraction but with a limit so they orbit or pass through.
+            moveX += Math.cos(angle) * push * interactionDir * 0.5;
+            moveY += Math.sin(angle) * push * interactionDir * 0.5;
+          }
+        }
+
+        // Apply
+        p.x += moveX;
+        p.y += moveY;
+
+        // Verify Bounds (Wrap around)
+        // If in Ghost mode & assigned to target, don't wrap tightly?
+        // Actually, if they overshoot target, they come back. 
+        // Only wrap if they go WAY off screen.
+        if (!isGhost) {
+          if (p.x < -20) p.x = width + 20;
+          if (p.x > width + 20) p.x = -20;
+          if (p.y < -20) p.y = height + 20;
+          if (p.y > height + 20) p.y = -20;
+        } else {
+          // Loose bounds for stray particles
+          if (p.x < -50 || p.x > width + 50 || p.y < -50 || p.y > height + 50) {
+            // Respawn closer to center to help formation
+            p.x = Math.random() * width;
+            p.y = Math.random() * height;
+          }
+        }
+
+        // Draw
+        ctx.globalAlpha = p.alpha;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.globalAlpha = 1.0;
+      requestAnimationFrame(animate);
     }
 
-    function loop() {
-      update();
-      draw();
-      rafId = requestAnimationFrame(loop);
-    }
-
-    // Startup
-    resize();
-    initParticles();
-    loop();
-
-    // Listeners
-    window.addEventListener('resize', () => {
-      resize();
-      initParticles();
+    // --- Inputs ---
+    window.addEventListener('mousemove', e => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
     });
-  })();
 
-  // =========================================
-  // EVORIX CANVAS SECTION OBSERVER
-  // =========================================
-  (function initEvorixCanvasSections() {
-    const setMode = window.__evorixCanvasSetMode;
-    // Wait slightly for main engine to init if needed, though script runs seq
-    if (typeof setMode !== 'function') return;
+    // Auto-disable mouse effect if idle? 
+    // Not strictly needed but good for performance logic if complex.
 
-    // Selectors matching index.html
-    const hero = document.getElementById('inicio'); // Hero section
-    const apps = document.getElementById('ecosistema'); // EVOAPPs section
+    window.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+        mouse.active = true;
+      }
+    }, { passive: true });
 
-    if (!hero || !apps) return;
+    window.addEventListener('touchend', () => { mouse.active = false; });
+    window.addEventListener('resize', resize);
 
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(entries => {
-        // Simple heuristic: check who is intersecting effectively
-        // We just want to know if specific sections are "mostly" in view
+    // Boot
+    resize();
+    animate();
+
+    // =========================================
+    // SECTION OBSERVER (Mode Switcher)
+    // =========================================
+    // This logic automatically finds sections with data-particle-mode
+    // and tells the engine to switch.
+    (function initModeObserver() {
+      if (!('IntersectionObserver' in window)) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        // Find the most visible target
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            if (entry.target.id === 'inicio') setMode('hero');
-            else if (entry.target.id === 'ecosistema') setMode('apps');
-          } else {
-            // If leaving hero or apps, revert to free? 
-            // Logic: keep last set mode until new one overrides, or default free if none.
-            // Simplification: Let the observer entry logic handle the "entrance" triggers.
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            const mode = entry.target.getAttribute('data-particle-mode');
+            if (mode) window.__evorixCanvasSetMode(mode);
           }
         });
-      }, { threshold: 0.5 }); // 50% visible triggers mode
+      }, { threshold: [0.1, 0.3, 0.6] });
 
-      io.observe(hero);
-      io.observe(apps);
+      const targets = document.querySelectorAll('[data-particle-mode]');
+      targets.forEach(el => observer.observe(el));
+    })();
 
-      // Also observe "in-between" sections to switch to free?
-      // For now, let's keep it robust: Hero -> Hero Mode, Eco -> Apps Mode.
-      // We can add a catch-all scroller if needed, but IO is lighter.
-
-      // Better approach for strict mode switching: 
-      // Observe ALL main sections and decide.
-      const mixedIO = new IntersectionObserver(entries => {
-        // Sort by intersection ratio to find dominant section
-        const visible = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible.length > 0) {
-          const id = visible[0].target.id;
-          if (id === 'inicio') setMode('hero');
-          else if (id === 'ecosistema') setMode('apps');
-          else setMode('free');
-        }
-      }, { threshold: [0.2, 0.5, 0.8] });
-
-      document.querySelectorAll('section[id]').forEach(s => mixedIO.observe(s));
-
-    } else {
-      // Fallback
-      window.addEventListener('scroll', () => {
-        const scroll = window.scrollY;
-        const hHeight = hero.offsetHeight;
-        const appsTop = apps.offsetTop;
-
-        if (scroll < hHeight * 0.6) setMode('hero');
-        else if (scroll > appsTop - 400 && scroll < appsTop + apps.offsetHeight) setMode('apps');
-        else setMode('free');
-      }, { passive: true });
-    }
   })();
 
   // =========================================
