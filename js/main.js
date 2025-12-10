@@ -918,8 +918,8 @@
       extraDelayFirstStep: 600,    // delay extra SOLO para el primer paso (ecosistema)
       enableServicesDemo: true,    // si es true se permite demo horizontal en 'servicios'
       servicesScrollCycles: 1,
-      servicesScrollDuration: 500,
-      servicesScrollBackFactor: 0.35,
+      servicesScrollDuration: 280,
+      servicesScrollBackFactor: 0.15,
       tabSwitchDelay: 400
     },
 
@@ -928,13 +928,13 @@
     steps: [
       {
         id: 'ecosistema',
-        scrollDuration: 500,   // entra rápido a EVOAPP
-        stepDelay: 500         // pequeña pausa
+        scrollDuration: 90,   // entra rápido a EVOAPP
+        stepDelay: 900         // pequeña pausa
       },
       {
         id: 'servicios',
-        scrollDuration: 900,   // un poco más suave
-        stepDelay: 900,
+        scrollDuration: 2200,   // un poco más suave
+        stepDelay: 2200,
         mobile: {
           runServicesDemo: true // aquí SÍ queremos el hint horizontal
         }
@@ -1279,6 +1279,12 @@
         resolve();
         return;
       }
+
+      if (signal.aborted) {
+        resolve();
+        return;
+      }
+
 
       const servicesList = document.querySelector(
         '.services-list[role="tablist"]'
