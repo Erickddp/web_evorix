@@ -546,18 +546,20 @@
     // =========================================
     const servicesData = {
       asesoria: {
-        title: "Asesoría fiscal inteligente",
+        // OJO: la key "asesoria" la puedes conservar para no tocar HTML/JS extra.
+        // Solo estamos renombrando el contenido visible.
+        title: "Asesoría fiscal y contable",
         intro:
-          "Sesiones uno a uno para resolver dudas fiscales y contables, ajustar tu RFC y tomar decisiones con claridad.",
+          "Ordeno tu situación con el SAT y tus finanzas para que tomes decisiones claras y evites riesgos.",
         bullets: [
-          "Atención directa para altas, bajas y cambios en RFC, así como dudas de impuestos y obligaciones.",
-          "Revisión rápida para detectar errores, riesgos o anomalías ante el SAT.",
-          "Guía paso a paso en trámites y revisiones para que no los enfrentes solo."
+          "Diagnóstico rápido: qué está bien, qué falta y qué urge.",
+          "Ajustes de RFC, obligaciones y trámites (paso a paso).",
+          "Ruta clara: qué conviene hacer hoy y cómo sostenerlo."
         ],
         ideal: [
-          "Personas físicas que quieren saber si están bien ante el SAT.",
+          "Personas físicas que quieren estar en regla sin complicarse.",
           "Negocios que necesitan orden antes de crecer o formalizarse.",
-          "Empresas que buscan claridad fiscal antes de automatizar o escalar."
+          "Quienes quieren claridad antes de requisiciones o multas."
         ],
         scopeUrl: "https://taller.evorix.com/alcance-asesoria",
         cost: "$350 MXN / sesión"
@@ -566,57 +568,49 @@
       contabilidad: {
         title: "Contabilidad para personas y empresas",
         intro:
-          "Gestión mensual clara y ordenada para que tengas tus impuestos y reportes siempre al día.",
+          "Gestión mensual simple y confiable: impuestos al día, registros limpios y control real.",
         bullets: [
-          "Registros contables mensuales limpios y conciliados.",
-          "Cumplimiento puntual de declaraciones y obligaciones (PF y PM).",
-          "Reportes simples con lo que realmente necesitas saber: ingresos, gastos e impuestos."
+          "Contabilidad mensual + conciliación (sin desorden).",
+          "Declaraciones y obligaciones puntuales (PF y PM).",
+          "Resumen entendible: ingresos, gastos, impuestos y alertas."
         ],
         ideal: [
           "Freelancers y profesionales independientes.",
-          "Pequeñas y medianas empresas (Pymes) en crecimiento.",
-          "Quienes buscan delegar su contabilidad con confianza total."
+          "Pymes que ya venden y necesitan orden.",
+          "Quien quiere delegar contabilidad con claridad total."
         ],
-        scopeUrl: "https://taller.evorix.com/alcance-asesoria",
-        cost: "$800 MXN mensuales"
+        scopeUrl: "https://taller.evorix.com/alcance-contabilidad",
+        cost: "$800 MXN / mes"
       },
 
       automatizacion: {
-        title: "Automatización contable",
+        // Si tu HTML/JS usa data-service="automatizacion", deja la key así.
+        // Pero el texto visible será “Digitalización de negocios”.
+        title: "Digitalización de negocios",
         intro:
-          "Scripts y herramientas a la medida para reducir tareas repetitivas y errores humanos.",
+          "Implemento automatizaciones y sistemas simples para que tu operación sea más rápida y controlable.",
         bullets: [
-          "Integración de XML, Excel y sistemas contables en un solo flujo.",
-          "Bots y scripts para conciliaciones, validaciones y reportes automáticos.",
-          "Reducción real de tiempo operativo para enfocarte en decisiones, no en capturas."
+          "Flujos con Excel/XML/drive: menos captura, más control.",
+          "Dashboards o reportes automáticos según tu operación.",
+          "Estandarización: tu negocio trabaja con proceso, no con memoria."
         ],
         ideal: [
-          "Despachos contables que buscan eficiencia.",
-          "Empresas con alto volumen de transacciones.",
-          "Equipos financieros que desean eliminar el trabajo manual."
+          "Negocios que dependen de Excel y ya se les está saliendo de control.",
+          "Operaciones con tareas repetitivas y errores constantes.",
+          "Equipos que quieren orden y velocidad sin software caro."
         ],
-        scopeUrl: "https://github.com/Erickddp/evorix-automations",
-        cost: "$1,500 MXN / proyecto"
-      },
-
-      proyecciones: {
-        title: "Proyecciones e impuestos",
-        intro:
-          "Escenarios y simulaciones para que sepas cuánto pagar, cuándo y cómo prepararte.",
-        bullets: [
-          "Análisis histórico de ingresos, gastos e impuestos pagados.",
-          "Proyección del siguiente año fiscal con diferentes escenarios.",
-          "Alertas de fechas clave y montos estimados para evitar sorpresas."
-        ],
-        ideal: [
-          "Empresarios que planifican su flujo de efectivo.",
-          "Personas con ingresos variables o estacionales.",
-          "Quienes buscan optimizar estratégicamente su carga fiscal."
-        ],
-        scopeUrl: "https://taller.evorix.com/alcance-asesoria",
-        cost: "a convenir por análisis"
+        scopeUrl: "https://taller.evorix.com/alcance-digitalizacion",
+        cost: "$2,500 MXN / proyecto"
       }
     };
+
+
+
+
+
+
+
+
 
 
     const pills = document.querySelectorAll('.service-pill');
