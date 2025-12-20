@@ -2339,16 +2339,7 @@ html[data-theme="light"] .service-detail-panel {
   margin-top: 0.25rem;
 }
 
-/* Button override for panel */
-#panel-cta {
-  width: 100%;
-}
-
-@media (min-width: 600px) {
-  #panel-cta {
-    width: auto;
-  }
-}
+/* Global #panel-cta removed */
 
 
 
@@ -2357,47 +2348,52 @@ html[data-theme="light"] .service-detail-panel {
 
 
 
-/* NEW STYLES: Subtitles & Secondary Actions */
-.panel-subtitle {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  font-weight: 700;
-  margin: 1.5rem 0 1rem;
-  opacity: 0.9;
-}
 
-.panel-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-  width: 100%;
-}
 
-.btn-secondary {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: var(--radius-full);
-  transition: all 0.3s ease;
-  text-decoration: none;
-  font-size: 1rem;
-}
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--text-muted);
-  color: var(--text);
-}
 
-html[data-theme="light"] .btn-secondary:hover {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: var(--text);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Global .panel-subtitle, .panel-actions, .btn-secondary removed */
 
 /* Redesign Mobile Layout (Tabs) */
 @media (max-width: 768px) {
@@ -4661,88 +4657,121 @@ html[data-theme="light"] .evorix-header::before {
   /* <- apagamos el cristal solo en light */
 }
 
+/* =========================================
+   SERVICES PANEL — SCOPED FIX
+   ========================================= */
+#servicios .services-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  /* Fixed width + flexible */
+  gap: 2rem;
+  align-items: start;
+}
 
+@media (max-width: 900px) {
+  #servicios .services-layout {
+    grid-template-columns: 1fr;
+    /* Stack vertically on tablet/mobile */
+  }
+}
 
+#servicios .service-detail-panel {
+  max-width: 860px;
+  /* Limit width on desktop */
+  width: 100%;
+}
 
+@media (min-width: 901px) {
+  #servicios .service-detail-panel {
+    /* Ensure it doesn't stretch infinitely if flex is used elsewhere, 
+       but here in grid it's fine. 
+       Just ensuring it doesn't get too wide if container is huge. */
+  }
+}
 
+#servicios .panel-footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  /* Price (left) - Actions (right) */
+  gap: 1.5rem;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+  margin-top: auto;
+  /* Push to bottom if flex column */
+}
 
+@media (max-width: 600px) {
+  #servicios .panel-footer {
+    grid-template-columns: 1fr;
+    /* Stack */
+    text-align: center;
+    gap: 2rem;
+  }
 
+  #servicios .price-tag {
+    align-items: center;
+    /* Center price in stack */
+  }
+}
 
-
-
-
-.panel-actions {
+/* Scoped Actions */
+#servicios .panel-actions {
   display: flex;
   gap: 12px;
   align-items: center;
   justify-content: flex-end;
-  margin-left: auto;
-  /* empuja acciones a la derecha */
-  flex-wrap: wrap;
+  /* Align right on desktop */
 }
 
+@media (max-width: 600px) {
+  #servicios .panel-actions {
+    flex-direction: column;
+    width: 100%;
+  }
 
-
-
-
-
-
-
-
-
-
-/* === FIX: Panel footer actions (keep stable with 1 or 2 buttons) === */
-.panel-actions {
-  display: flex;
-  gap: 0.9rem;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
+  #servicios .panel-actions .btn {
+    width: 100%;
+    /* Full width mobile buttons */
+  }
 }
 
-/* evita que el CTA se estire y rompa el layout */
-#panel-cta {
-  width: auto !important;
+/* Scoped Subtitle */
+#servicios .panel-subtitle {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+  opacity: 0.9;
 }
 
-/* el secundario debe verse igual de alineado */
-#panel-cta-secondary {
+/* Scoped Secondary Button */
+#servicios .btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-size: 1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  white-space: nowrap;
 }
 
-/* En mobile sí queremos full-width para ambos */
-@media (max-width: 599px) {
-  .panel-actions {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  #panel-cta,
-  #panel-cta-secondary {
-    width: 100% !important;
-  }
+#servicios .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-muted);
+  color: var(--text);
 }
 
-@media (min-width: 900px) {
-  .services-layout {
-    align-items: flex-start;
-  }
-
-  .service-detail-panel {
-    flex-grow: 0;
-    flex: 0 1 860px;
-    /* ancho “tarjeta” controlado */
-    max-width: 860px;
-  }
-
-  .services-tabs-wrapper {
-    flex: 0 0 320px;
-    /* ancho del menú */
-  }
+html[data-theme="light"] #servicios .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: var(--text);
 }
 
 
@@ -4756,81 +4785,136 @@ html[data-theme="light"] .evorix-header::before {
 
 
 
+/* =========================================================
+   EVORIX — SERVICIOS (SCOPED + MOBILE-FIRST, STABLE)
+   Solo afecta: #servicios
+   Pegar AL FINAL de styles.css
+========================================================= */
 
+#servicios,
+#servicios * {
+  box-sizing: border-box;
+}
 
-
-
-/* ================================
-   SERVICES PANEL — STABILIZER PATCH
-   (pegar al final del styles.css)
-================================== */
-
-/* 1) Layout: menú + panel siempre juntos */
+/* --- Layout base (mobile first): todo apilado --- */
 #servicios .services-layout {
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  gap: 2.25rem;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
   align-items: start;
 }
 
-/* Ajuste responsive */
-@media (max-width: 900px) {
-  #servicios .services-layout {
-    grid-template-columns: 1fr;
-  }
+/* Contenedor: evita desbordes raros en móvil */
+#servicios .container {
+  width: min(1100px, 100%);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 28px);
 }
 
-/* 2) Panel: evita “crecer” raro en primer render */
+/* --- Menú izquierda (en mobile sigue arriba) --- */
+#servicios .services-tabs-wrapper,
+#servicios .services-selector,
+#servicios .services-list {
+  width: 100%;
+}
+
+#servicios .services-list {
+  display: flex;
+  flex-direction: column;
+  /* CLAVE: evita que se vuelvan fila en móvil */
+  gap: 10px;
+}
+
+/* Pills: siempre full width y consistentes */
+#servicios .service-pill {
+  width: 100%;
+  max-width: 360px;
+  /* control visual */
+  border-radius: 999px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* En móvil, centra el bloque de pills (se ve limpio) */
+#servicios .services-tabs-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* --- Panel derecho --- */
 #servicios .service-detail-panel {
-  flex-grow: 0 !important;
-  /* anula el “se estira infinito” */
   width: 100%;
   max-width: 860px;
-  /* tamaño tipo “tarjeta” */
+  /* “tarjeta” */
   justify-self: start;
-  /* se queda junto al menú */
   align-self: start;
+  margin: 0;
+  flex: none !important;
+  /* neutraliza flex viejo */
+  flex-grow: 0 !important;
+  /* neutraliza flex viejo */
 }
 
-/* 3) Footer: precio a la izquierda, acciones centradas/estables */
+/* Footer estable: precio + acciones */
 #servicios .panel-footer {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1.25rem;
-  align-items: center;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  align-items: start;
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
 }
 
-/* En móvil, apila */
-@media (max-width: 600px) {
-  #servicios .panel-footer {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 4) Acciones: siempre visibles y alineadas igual en todos los servicios */
+/* Acciones: en móvil, stack y full width */
 #servicios .panel-actions {
-  display: inline-flex;
-  gap: 0.9rem;
-  align-items: center;
-  justify-content: center;
-  /* centra botones */
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-/* 5) Botones del panel: evita widths raros */
 #servicios #panel-cta,
 #servicios #panel-cta-secondary {
-  width: auto !important;
-  min-width: 180px;
-  /* opcional: look consistente */
+  width: 100% !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
+  /* tap-friendly */
+  white-space: nowrap;
 }
 
-/* Si alguna regla vieja fuerza 100% en desktop, lo anulamos */
-@media (min-width: 600px) {
-  #servicios #panel-cta {
+/* --- Desktop: 2 columnas (menú + tarjeta) --- */
+@media (min-width: 900px) {
+  #servicios .services-layout {
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  #servicios .services-tabs-wrapper {
+    justify-content: flex-start;
+  }
+
+  #servicios .service-detail-panel {
+    justify-self: start;
+  }
+
+  /* Footer en desktop: precio izq, botones der */
+  #servicios .panel-footer {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  #servicios .panel-actions {
+    display: inline-flex;
+    gap: 0.9rem;
+    width: auto;
+  }
+
+  #servicios #panel-cta,
+  #servicios #panel-cta-secondary {
     width: auto !important;
+    min-width: 170px;
   }
 }
