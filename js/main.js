@@ -518,6 +518,27 @@
     }, PULSE_INTERVAL);
   })();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // =========================================
   // 7. SERVICES & TOOLS (Legacy Wrapper)
   // =========================================
@@ -533,6 +554,12 @@
           "Revisión rápida para detectar errores, riesgos o anomalías ante el SAT.",
           "Guía paso a paso en trámites y revisiones para que no los enfrentes solo."
         ],
+        ideal: [
+          "Personas físicas que quieren saber si están bien ante el SAT.",
+          "Negocios que necesitan orden antes de crecer o formalizarse.",
+          "Empresas que buscan claridad fiscal antes de automatizar o escalar."
+        ],
+        scopeUrl: "https://taller.evorix.com/alcance-asesoria",
         cost: "$350 MXN / sesión"
       },
 
@@ -545,6 +572,12 @@
           "Cumplimiento puntual de declaraciones y obligaciones (PF y PM).",
           "Reportes simples con lo que realmente necesitas saber: ingresos, gastos e impuestos."
         ],
+        ideal: [
+          "Freelancers y profesionales independientes.",
+          "Pequeñas y medianas empresas (Pymes) en crecimiento.",
+          "Quienes buscan delegar su contabilidad con confianza total."
+        ],
+        scopeUrl: "https://taller.evorix.com/alcance-asesoria",
         cost: "$800 MXN mensuales"
       },
 
@@ -557,6 +590,12 @@
           "Bots y scripts para conciliaciones, validaciones y reportes automáticos.",
           "Reducción real de tiempo operativo para enfocarte en decisiones, no en capturas."
         ],
+        ideal: [
+          "Despachos contables que buscan eficiencia.",
+          "Empresas con alto volumen de transacciones.",
+          "Equipos financieros que desean eliminar el trabajo manual."
+        ],
+        scopeUrl: "https://github.com/Erickddp/evorix-automations",
         cost: "$1,500 MXN / proyecto"
       },
 
@@ -569,6 +608,12 @@
           "Proyección del siguiente año fiscal con diferentes escenarios.",
           "Alertas de fechas clave y montos estimados para evitar sorpresas."
         ],
+        ideal: [
+          "Empresarios que planifican su flujo de efectivo.",
+          "Personas con ingresos variables o estacionales.",
+          "Quienes buscan optimizar estratégicamente su carga fiscal."
+        ],
+        scopeUrl: "https://taller.evorix.com/alcance-asesoria",
         cost: "a convenir por análisis"
       }
     };
@@ -578,10 +623,13 @@
     const panelContentWrapper = document.getElementById('panel-content-wrapper');
 
     // Elements to update
+    // Elements to update
     const pTitle = document.getElementById('panel-title');
     const pIntro = document.getElementById('panel-intro');
     const pBullets = document.getElementById('panel-bullets');
+    const pIdeal = document.getElementById('panel-ideal'); // Nuevo
     const pCost = document.getElementById('panel-cost');
+    const pCtaSecondary = document.getElementById('panel-cta-secondary'); // Nuevo
 
     if (pills.length > 0 && panelContentWrapper) {
       pills.forEach(pill => {
@@ -622,6 +670,20 @@
               pCost.textContent = data.cost;
               pBullets.innerHTML = data.bullets.map(b => `<li>${b}</li>`).join('');
 
+              // New fields
+              if (pIdeal && data.ideal) {
+                pIdeal.innerHTML = data.ideal.map(i => `<li>${i}</li>`).join('');
+              }
+
+              if (pCtaSecondary) {
+                if (data.scopeUrl) {
+                  pCtaSecondary.href = data.scopeUrl;
+                  pCtaSecondary.style.display = 'inline-flex';
+                } else {
+                  pCtaSecondary.style.display = 'none';
+                }
+              }
+
               // Fade in
               panelContentWrapper.classList.remove('fade-out');
               panelContentWrapper.classList.add('fade-in');
@@ -630,6 +692,27 @@
         });
       });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // 8. PILLS STAGGERED ANIMATION
     // =========================================
