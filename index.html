@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es" data-theme="dark">
+<html lang="es" data-theme="light">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EVORIX | Erick Domínguez</title>
+  <title>Contador | Erick Domínguez</title>
   <meta name="description"
     content="Erick Domínguez — Estratega Tecnológico, Contador Moderno y Fundador de EVORIX. Donde la inteligencia se diseña, y el futuro aprende de ti." />
   <meta name="theme-color" content="#004CFF" />
@@ -23,7 +23,9 @@
   <canvas id="evorix-canvas"></canvas>
 
   <header class="evorix-header header--hero">
-    <div class="evorix-logo">EVORIX</div>
+    <a href="#inicio" class="evorix-logo" aria-label="Inicio">
+      <img src="assets/images/4.png" alt="EVORIX Logo">
+    </a>
 
     <div class="header-primary-actions">
       <nav class="evorix-nav">
@@ -105,18 +107,120 @@
     <section class="hero" id="inicio" data-particle-mode="hero_index">
 
       <div class="container content">
-        <h1 class="hero-title reveal delay-0">Construye tu propio sistema</h1>
-        <p class="sub hero-sub hero-subtitle reveal delay-1">Contabilidad, datos y procesos diseñados para darte control
-          real.</p>
+        <h1 class="hero-title reveal delay-0">Diseño sistemas que ordenan tu negocio.</h1>
+        <p class="sub hero-sub hero-subtitle reveal delay-1">Elimino fricción operativa y fiscal con sistemas hechos a
+          tu medida.</p>
         <div class="ctas reveal delay-2">
-          <a href="javascript:void(0)" id="btn-tour" class="btn btn-primary btn-glow hero-cta">Conoce EVORIX</a>
+          <a href="javascript:void(0)" id="btn-tour" class="btn btn-primary btn-glow hero-cta">Ver recorrido guiado</a>
           <p class="btn-helper">
 
           </p>
-          <a href="#contacto" class="link-minimal">Contacto</a>
+          <a href="#contacto" class="link-minimal"></a>
         </div>
       </div>
     </section>
+
+    <!-- SECCIÓN PROBLEMA/DIAGNÓSTICO -->
+    <section id="problema" class="section problem-section" data-particle-mode="free">
+      <div class="container">
+        <div class="problem-card reveal">
+          <div class="problem-left">
+            <h2 class="problem-title">EL PROBLEMA NO SON LOS IMPUESTOS.</h2>
+            <p class="problem-punchline">SON LOS PROCESOS.</p>
+
+            <div class="problem-chips">
+              <div class="problem-chip chip-blue">
+                <span class="chip-dot"></span>
+                <span class="chip-label">Captura manual.</span>
+              </div>
+              <div class="problem-chip chip-amber">
+                <span class="chip-dot"></span>
+                <span class="chip-label">Errores que se repiten.</span>
+              </div>
+              <div class="problem-chip chip-red">
+                <span class="chip-dot"></span>
+                <span class="chip-label">Dependencia total de personas.</span>
+              </div>
+            </div>
+
+            <p class="problem-footer-phrase">El negocio funciona, pero no está diseñado.</p>
+          </div>
+
+          <div class="problem-right">
+            <div class="flow-diagnostic" aria-label="Diagnóstico de flujo de procesos" role="button" tabindex="0">
+
+
+
+              <!-- Dentro de .flow-diagnostic, reemplaza SOLO el bloque .nodes-wrap por este -->
+              <div class="nodes-wrap nodes-wrap--multi">
+                <!-- Node 1-2-3 (flujo principal) -->
+                <div class="node n1"></div>
+                <div class="node n2"></div>
+                <div class="node n3"></div>
+
+                <!-- Nodos “rotos/extra” -->
+                <div class="node n4 node-broken"></div>
+                <div class="node n5 node-broken"></div>
+                <div class="node n6 node-warning"></div>
+
+                <svg class="links-svg" viewBox="0 0 200 160" fill="none" aria-hidden="true">
+                  <!-- Flujo principal (ya lo tenías) -->
+                  <line x1="40" y1="40" x2="100" y2="80" class="link l1" />
+                  <line x1="100" y1="80" x2="160" y2="120" class="link l2" />
+
+                  <!-- Ramal roto hacia n4 -->
+                  <line x1="100" y1="80" x2="150" y2="35" class="link link-broken lb1" />
+                  <!-- Ramal roto hacia n5 -->
+                  <line x1="40" y1="40" x2="35" y2="118" class="link link-broken lb2" />
+                  <!-- Ramal “warning” hacia n6 -->
+                  <line x1="160" y1="120" x2="120" y2="140" class="link link-warning lw1" />
+                </svg>
+              </div>
+
+
+
+
+              <div class="diagnostic-status-label">Scanner status: <span class="status-indicator"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -133,8 +237,8 @@
     <section id="servicios" class="section" data-particle-mode="free">
       <div class="container">
         <div class="section-header reveal">
-          <h2>Cómo te ayudo a construirlo</h2>
-          <p>Acompañamiento, estructura y tecnología aplicados a tu realidad.</p>
+          <h2>Cómo trabajo</h2>
+          <p>Te entiendo, te escucho y diseño sistemas claros, simples y funcionales para tu día a día.</p>
         </div>
 
         <div class="services-layout">
@@ -164,8 +268,7 @@
               <div class="panel-header">
                 <h3 id="panel-title">Asesoría Estratégica</h3>
                 <p class="panel-intro" id="panel-intro">
-                  Analizamos tu situación fiscal, financiera y operativa para decirte exactamente qué hacer, sin ruido
-                  ni improvisación.
+                  Analizo tu situación fiscal y te indico qué hacer y cómo hacerlo, de forma clara y directa.
                 </p>
               </div>
 
@@ -174,19 +277,19 @@
                 <!-- Fallback content matches Asesoria -->
                 <li>Diagnóstico rápido: qué está bien, qué falta y qué urge.</li>
                 <li>Ajustes de RFC, obligaciones y trámites, paso a paso.</li>
-                <li>Ruta concreta para sostener el orden y evitar errores futuros.</li>
+                <li>Ruta clara para mantener el orden y evitar errores futuros.</li>
               </ul>
 
               <h4 class="panel-subtitle">Ideal para</h4>
               <ul class="panel-bullets" id="panel-ideal">
                 <!-- Fallback content matches Asesoria -->
-                <li>Personas físicas PF y negocios que quieren estar en regla y crecer con orden.</li>
+                <li>Personas físicas y negocios que buscan estar en regla y crecer con orden.</li>
               </ul>
 
               <div class="panel-footer">
                 <div class="price-tag">
                   <span class="price-label">Inversión desde:</span>
-                  <span class="price-value" id="panel-cost">$350 MXN / sesión</span>
+                  <span class="price-value" id="panel-cost">$399 MXN / sesión</span>
                 </div>
 
 
@@ -238,8 +341,8 @@
         <section id="ecosistema" class="section alt" data-particle-mode="apps">
           <div class="container">
             <div class="section-header reveal">
-              <h2>EVOAPPs</h2>
-              <p>Innovación y herramientas propias para el control total.</p>
+              <h2>HERRAMIENTAS</h2>
+              <p>Sistemas y utilidades creadas a partir de problemas reales de operación diaria.</p>
             </div>
 
             <div class="grid-dashboard">
@@ -249,9 +352,11 @@
                   <h3>EVO APP</h3>
                   <span class="status-dot active"></span>
                 </div>
-                <p>Sistema unificado para la gestión financiera, análisis de datos y automatización contable y fiscal,
-                  diseñado para transformar información dispersa en control real, claridad inmediata y decisiones bien
-                  fundamentadas.</p>
+                <p>
+                  Es el resultado de años diseñando sistemas contables y fiscales que eliminan tareas repetitivas,
+                  errores humanos y la dependencia constante y la dependencia constante de procesos manuales.
+                </p>
+
                 <div class="module-visual">
                   <!-- Abstract UI representation -->
                   <div class="evoapp-terminal">
@@ -259,14 +364,14 @@
                       <span class="terminal-dot red"></span>
                       <span class="terminal-dot yellow"></span>
                       <span class="terminal-dot green"></span>
-                      <span class="terminal-title">EVOAPP · TypeScript Automation</span>
+                      <span class="terminal-title">EVOAPP · Automatización en proceso</span>
                     </div>
                     <div class="terminal-body">
                       <pre class="terminal-code" id="evoapp-terminal-code"></pre>
                     </div>
                   </div>
                 </div>
-                <a href="evoapp-loader.html" class="btn btn-sm btn-outline full-width">Abrir EVO-APP</a>
+                <a href="evoapp-loader.html" class="btn btn-sm btn-outline full-width">Explorar EVO APP</a>
               </div>
 
               <!-- EVORIX Tools Module -->
@@ -280,11 +385,9 @@
                   <canvas class="evoapp-mini-canvas" aria-hidden="true"></canvas>
                 </div>
 
-                <p>Repositorio central de utilidades profesionales: módulos de validación, automatización y análisis
-                  que
-                  fortalecen las operaciones</p>
+                <p>Herramientas técnicas diseñadas para eliminar tareas manuales y errores operativos.</p>
                 <span class="btn btn-sm btn-outline full-width">
-                  Abrir EVO-TOOLS
+                  Explorar EVO TOOLS
                 </span>
               </a>
 
@@ -294,9 +397,8 @@
                   <h3>EVO LAB</h3>
                   <span class="status-dot warning"></span>
                 </div>
-                <p>Espacio dedicado al estudio de datos, visualización avanzada y diseño de modelos predictivos
-                  orientados a
-                  resolver problemas reales.</p>
+                <p>Laboratorio de investigación y experimentación enfocado en datos, modelos y visualización avanzada.
+                </p>
                 <!-- TODO: update href when the IA Lab site is ready -->
 
                 <div class="lab-ia-visual">
@@ -330,7 +432,7 @@
                     <div class="stream"></div>
                   </div>
                   <a href="evoapp-loader.html?go=evolab" class="btn btn-sm btn-outline-full-width lab-ia-button">
-                    EVO-LAB
+                    Ver investigaciones
                   </a>
                 </div>
               </div>
@@ -354,7 +456,10 @@
 
         <!-- REFERENCIAS / TESTIMONIOS -->
         <section id="referencias" class="references-section">
-          <h2 class="section-title">Referencias</h2>
+          <div class="section-header reveal">
+            <h2>REFERENCIAS</h2>
+            <p>Experiencias reales con resultados.</p>
+          </div>
 
           <div class="references-viewport">
             <div class="references-track">
@@ -369,7 +474,7 @@
                   <p class="reference-text">
                     “Erick ha simplificado nuestra carga fiscal y automatizado procesos clave. Confiamos en sus
                     soluciones
-                    EVORIX para el día a día.”
+                    para el día a día.”
                   </p>
                 </div>
               </div>
@@ -383,7 +488,7 @@
                   <h3 class="reference-name">Dra. Raquel H.</h3>
                   <p class="reference-role">Médico especialista · Consultorio privado</p>
                   <p class="reference-text">
-                    “Ahora tengo mis impuestos al día sin preocuparme por detalles técnicos. EVORIX me da claridad y
+                    “Ahora tengo mis impuestos al día sin preocuparme por detalles técnicos. Erick me da claridad y
                     tranquilidad.”
                   </p>
                 </div>
@@ -412,7 +517,7 @@
                   <h3 class="reference-name">María S.</h3>
                   <p class="reference-role">Directora Contable · Sector Privado</p>
                   <p class="reference-text">
-                    “EVORIX transformó nuestro sistema contable. Automatización impecable y métricas claras para
+                    “Erick transformó nuestro sistema contable. Automatización impecable y métricas claras para
                     decisiones
                     rápidas.”
                   </p>
@@ -427,7 +532,7 @@
                   <h3 class="reference-name">Carlos R.</h3>
                   <p class="reference-role">Empresario · Comercio Nacional</p>
                   <p class="reference-text">
-                    “Desde que trabajamos con EVORIX reducimos errores y mejoramos la eficiencia en un 40%.”
+                    “Desde que trabajamos con Erick reducimos errores y mejoramos la eficiencia en un 40%.”
                   </p>
                 </div>
               </div>
@@ -440,7 +545,7 @@
                   <h3 class="reference-name">Andrea M.</h3>
                   <p class="reference-role">Consultora Fiscal · Freelance</p>
                   <p class="reference-text">
-                    “Herramientas claras, soporte impecable y resultados reales. EVORIX es un aliado indispensable.”
+                    “Herramientas claras, soporte impecable y resultados reales. Erick es un aliado indispensable.”
                   </p>
                 </div>
               </div>
@@ -474,24 +579,30 @@
           <div class="container about-layout">
             <div class="about-text reveal">
               <h2>Sobre mí</h2>
-              <p class="lead">Soy Erick, contador público y fundador de EVORIX.</p>
+              <p class="lead">Soy Erick Domínguez. Contador titulado. Enfoque en tecnología.</p>
               <p class="about-desktop">
-                Fundé EVORIX para transformar la contabilidad en un sistema claro, accionable y orientado a decisiones
-                inteligentes. Ayudo a personas y empresas a dominar sus impuestos,
-                automatizar procesos y utilizar sus datos como una verdadera ventaja estratégica. Combino disciplina
-                fiscal,
-                diseño de sistemas e ingeniería digital para crear estructuras
-                precisas y eficientes que impulsan una evolución
-                financiera constante, sostenible y totalmente alineada con el crecimiento de cada proyecto.</p>
-              <p class="about-mobile">
-                Transformo la contabilidad en un sistema simple, claro y útil. Así ayudo a dominar impuestos y
-                automatizar
-                procesos con tecnología.
+                Empecé en la contabilidad tradicional, pero pronto entendí que el verdadero problema
+                no eran los números, sino los procesos lentos, repetitivos y mal diseñados.
+
+                Hoy utilizo tecnología y automatización para convertir la contabilidad y la gestión
+                de negocios en sistemas claros, prácticos y eficientes.
+                Mi enfoque es simple: entender cómo trabajas y diseñar soluciones que se adapten a ti,
+                no obligarte a adaptarte a la tecnología.
+
+                Creo en sistemas bien pensados, no en soluciones genéricas.
+                Cada negocio es distinto, y así debe ser su forma de operar.
               </p>
+
+              <p class="about-mobile">
+                Automatizo tareas contables y organizo procesos para que tu negocio sea más claro, rápido y controlable.
+                Diseño sistemas que se adaptan a tu forma de trabajar.
+              </p>
+
             </div>
             <div class="about-visual reveal delay-2">
               <div class="avatar-placeholder">
-                <img src="./assets/img/v7.png" alt="Erick Domínguez - EVORIX" class="avatar-photo" loading="lazy" />
+                <img src="./assets/images/fprof.png" alt="Erick Domínguez - EVORIX" class="avatar-photo"
+                  loading="lazy" />
               </div>
             </div>
           </div>
@@ -524,14 +635,19 @@
         <!-- RECONOCIMIENTOS -->
         <section id="reconocimientos" class="section alt recognitions-section">
           <div class="container">
-            <h2 class="reveal">Formación y Reconocimientos</h2>
-            <p class="section-subtitle reveal delay-1">Aprendizaje continuo, especialización técnica y proyectos
-              reales.</p>
+            <div class="section-header reveal">
+              <h2>FORMACIÓN Y RECONOCIMIENTOS</h2>
+              <p>Aprendizaje constante aplicado a proyectos reales.</p>
+            </div>
 
             <!-- Summary moved above -->
             <div class="recognitions-summary reveal delay-2">
               <p class="recognitions-intro">
-                He construido mi perfil combinando contabilidad, automatización y análisis de datos.
+
+
+                Algunos logros que respaldan mi experiencia.
+
+
               </p>
 
               <div class="recognitions-stats">
@@ -559,17 +675,17 @@
             <div class="recognitions-grid reveal delay-3">
               <article class="recognition-card accordion-card">
                 <div class="accordion-header">
-                  <h3>Formación clave</h3>
+                  <h3>Conocimiento base</h3>
                   <span class="accordion-icon"></span>
                 </div>
                 <div class="accordion-content">
                   <ul>
-                    <li>Fundamentos sólidos en fiscalidad mexicana y normativa empresarial.</li>
-                    <li>Manejo intermedio de Excel, Power Query y análisis de datos.</li>
-                    <li>Principios de Business Intelligence aplicados a decisiones financieras reales.</li>
-                    <li><a href="certcv.html" target="_blank" rel="noopener noreferrer">Experiencia profesional
-                        documentada
-                        que respalda mi evolución técnica.</a></li>
+                    <li>Fundamentos sólidos en normas fiscales mexicanas.</li>
+                    <li>Manejo usual de portales gubernamentales.</li>
+                    <li>Uso de software contable, ERP y herramientas de BI.</li>
+                    <li><a href="certcv.html" target="_blank" rel="noopener noreferrer">
+                        actualización constante de conocimientos.
+                      </a></li>
 
                   </ul>
                 </div>
@@ -577,15 +693,15 @@
 
               <article class="recognition-card accordion-card">
                 <div class="accordion-header">
-                  <h3>Especialización técnica</h3>
+                  <h3>Especialización</h3>
                   <span class="accordion-icon"></span>
                 </div>
                 <div class="accordion-content">
                   <ul>
-                    <li>Automatización con Python y TypeScript.</li>
-                    <li>Diseño de validadores inteligentes para CFDI y controles tributarios.</li>
-                    <li>Construcción de modelos de proyección de impuestos y simuladores SAT</li>
-                    <li>Arquitectura de sistemas para manejo de datos financieros, limpieza y estandarización.</li>
+                    <li>Automatizaciónes con scripts de python o bash.</li>
+                    <li>Diseño de validadores inteligentes para CFDI.</li>
+                    <li>Construcción de modelos de proyección fiscal y fiannciero.</li>
+                    <li>Flujos de automatización con herramientas como n8n, Zapier, ComfyUI, entre otros.</li>
                   </ul>
                 </div>
               </article>
@@ -642,13 +758,14 @@
         <!-- CONTACTO -->
         <section id="contacto" class="section contact-section">
           <div class="container contact-container">
-            <header class="section-header contact-header reveal">
-              <h2>Hablemos de tu futuro inteligente.</h2>
-            </header>
+            <div class="section-header reveal">
+              <h2>HABLEMOS DE TU SISTEMA</h2>
+              <p>Cuéntame tu caso y diseñamos una solución clara.</p>
+            </div>
 
             <div class="contact-grid reveal delay-1">
               <!-- WhatsApp -->
-              <a href="https://wa.me/525534806184?text=Hola%2C%20soy%20Rick%20y%20llego%20desde%20tu%20web%20EVORIX%E2%80%A6"
+              <a href="https://wa.me/525534806184?text=Hola%2C%20soy%20Erick%20y%20llego%20desde%20tu%20web%20EDDP%E2%80%A6"
                 target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="Escribir por WhatsApp">
                 <div class="contact-icon">
                   <!-- WhatsApp SVG -->
@@ -698,7 +815,7 @@
 
   <footer>
     <div class="container">
-      <p>© EVORIX 2025 — Erick D. Todos los derechos reservados.</p>
+      <p>© EDDP 2026 — Todos los derechos reservados.</p>
       <div class="footer-links">
         <a href="privacy.html">Política de Privacidad</a>
       </div>

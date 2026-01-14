@@ -10,6 +10,25 @@
     const root = document.documentElement;
     const THEME_KEY = 'evorix-theme';
     const btn = document.querySelector('.theme-toggle-btn, [data-theme-toggle]');
+    const logoImg = document.querySelector('.evorix-logo img');
+
+    function syncLogoByTheme() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      logoImg.src = theme === 'dark'
+        ? 'assets/images/favicon.png'
+        : 'assets/images/4.png';
+    }
+
+    syncLogoByTheme();
+
+    const obs = new MutationObserver(syncLogoByTheme);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+
+
+
+
+
 
     function applyTheme(theme) {
       const value = (theme === 'light' || theme === 'dark') ? theme : 'dark';
@@ -23,15 +42,9 @@
     }
 
     function detectInitialTheme() {
-      try {
-        const stored = localStorage.getItem(THEME_KEY);
-        if (stored === 'light' || stored === 'dark') {
-          return stored;
-        }
-      } catch (_) { }
-      const prefersDark = window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return prefersDark ? 'dark' : 'light';
+      // Force light mode on every reload/first entry.
+      // Persistence in localStorage is ignored for the initial state.
+      return 'light';
     }
 
     const initial = detectInitialTheme();
@@ -191,7 +204,26 @@
     });
   }
 
+  // Diagnostic Visual Toggle (Mobile)
+  const diagnostic = document.querySelector('.flow-diagnostic');
+  if (diagnostic) {
+    diagnostic.addEventListener('click', () => {
+      // Solo en móviles/tablets para evitar conflictos con hover en PC
+      if (window.innerWidth <= 768) {
+        diagnostic.classList.toggle('is-fixed');
+      }
+    });
+
+    // Accesibilidad: permitir tecla "Enter"
+    diagnostic.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        diagnostic.classList.toggle('is-fixed');
+      }
+    });
+  }
+
   // =========================================
+
   // 5. WHATSAPP LINK HANDLER
   // =========================================
   const waLinks = document.querySelectorAll('[data-whatsapp]');
@@ -204,6 +236,56 @@
     link.rel = 'noopener noreferrer';
   });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // =========================================
   // EVORIX PIXEL ENGINE – ADVANCED GLOBAL SYSTEM
   // =========================================
@@ -213,12 +295,12 @@
     const ctx = canvas.getContext('2d');
 
     // --- Configurations ---
-    const PARTICLES_DESKTOP = 1800;
-    const PARTICLES_MOBILE = 1000;
+    const PARTICLES_DESKTOP = 300;
+    const PARTICLES_MOBILE = 80;
     const BASE_SPEED = 0.14;
-    const EXTRA_SPEED = 0.50; // Extra speed factor for explosive modes
-    const MOUSE_RADIUS = 120; // Radius for mouse interaction
-    const GHOST_TEXT = "EVORIX";
+    const EXTRA_SPEED = 0.90; // Extra speed factor for explosive modes
+    const MOUSE_RADIUS = 180; // Radius for mouse interaction
+    const GHOST_TEXT = "EDDP";
 
     // --- State & Variables ---
     let width = 0;
@@ -231,7 +313,7 @@
     let currentMode = 'free';
 
     // Interaction
-    const mouse = { x: -1000, y: -1000, active: false };
+    const mouse = { x: -2000, y: -2000, active: false };
 
     // Offscreen for Text Sampling (Ghost Mode)
     let ghostPoints = [];
@@ -249,6 +331,47 @@
         }
       }
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // --- Initialization ---
     function resize() {
@@ -995,9 +1118,10 @@
       extraDelayFirstStep: 600,    // delay extra SOLO para el primer paso (ecosistema)
       enableServicesDemo: true,    // si es true se permite demo horizontal en 'servicios'
       servicesScrollCycles: 1,
-      servicesScrollDuration: 280,
+      servicesScrollDuration: 1300,
       servicesScrollBackFactor: 0.15,
-      tabSwitchDelay: 400
+      tabSwitchDelay: 1300
+
     },
 
     // Secuencia de secciones del tour
@@ -1006,12 +1130,12 @@
       {
         id: 'ecosistema',
         scrollDuration: 90,   // entra rápido a EVOAPP
-        stepDelay: 900         // pequeña pausa
+        stepDelay: 1400         // pequeña pausa
       },
       {
         id: 'servicios',
         scrollDuration: 2200,   // un poco más suave
-        stepDelay: 2200,
+        stepDelay: 2800,
         mobile: {
           runServicesDemo: true // aquí SÍ queremos el hint horizontal
         }
@@ -1019,17 +1143,17 @@
       {
         id: 'referencias',
         scrollDuration: 900,
-        stepDelay: 600
+        stepDelay: 1200
       },
       {
         id: 'reconocimientos',
         scrollDuration: 900,
-        stepDelay: 600
+        stepDelay: 1500
       },
       {
         id: 'contacto',
         scrollDuration: 900,
-        stepDelay: 600
+        stepDelay: 500
       }
     ]
   };
